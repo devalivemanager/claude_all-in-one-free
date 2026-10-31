@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>업무 할 일 관리</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>업무 할 일 관리</h1>
+
+      <section class="card">
+        <h2 id="form-title">새 할 일 추가</h2>
+        <form id="todo-form" novalidate>
+          <label>
+            제목
+            <input name="title" type="text" maxlength="100" placeholder="예: 주간 보고서 작성" required />
+          </label>
+          <label>
+            담당자
+            <input name="assignee" type="text" maxlength="30" placeholder="예: 김민수" required />
+          </label>
+          <label>
+            우선순위
+            <select name="priority">
+              <option value="high">높음</option>
+              <option value="medium" selected>보통</option>
+              <option value="low">낮음</option>
+            </select>
+          </label>
+          <label>
+            마감일
+            <input name="dueDate" type="date" />
+          </label>
+          <div class="form-actions">
+            <button type="submit" id="submit-button">추가</button>
+            <button type="button" id="cancel-edit" class="secondary" hidden>취소</button>
+          </div>
+        </form>
+        <p id="form-error" class="error" role="alert"></p>
+      </section>
+
+      <section class="card">
+        <div class="filters">
+          <label>
+            상태
+            <select id="status-filter">
+              <option value="all">전체</option>
+              <option value="active">진행 중</option>
+              <option value="completed">완료</option>
+              <option value="overdue">마감 지남</option>
+            </select>
+          </label>
+          <label>
+            담당자
+            <select id="assignee-filter">
+              <option value="">전체</option>
+            </select>
+          </label>
+          <span id="summary" class="summary"></span>
+        </div>
+        <ul id="todo-list" class="todo-list"></ul>
+        <p id="empty-message" class="empty" hidden>표시할 할 일이 없습니다.</p>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

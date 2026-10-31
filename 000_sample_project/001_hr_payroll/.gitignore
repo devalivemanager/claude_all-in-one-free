@@ -1,0 +1,16 @@
+# Maven 빌드 산출물
+target/
+
+# IDE 설정
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS 파일
+.DS_Store
+
+# 로그
+*.log
