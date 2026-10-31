@@ -10,11 +10,11 @@
     <text x="70" y="170">📁 claude_all-in-one-free/</text>
     <text x="70" y="200">├── 📄 CLAUDE.md</text>
     <text x="310" y="200" font-size="13" fill="#6b7280">프로젝트 지침</text>
-    <text x="70" y="230">└── 📁 docs/</text>
-    <text x="106" y="260">└── 🖼 structure.svg</text>
-    <text x="310" y="260" font-size="13" fill="#6b7280">이 구조도</text>
+    <text x="70" y="230">└── 📁 000_sample_project/</text>
+    <text x="106" y="260">└── 📁 docs/</text><text x="142" y="290">└── 🖼 structure.svg</text>
+    <text x="340" y="290" font-size="13" fill="#6b7280">이 구조도</text>
   </g>
-  <text x="60" y="320" font-size="13" fill="#9ca3af">.git 폴더는 생략</text>
+  <text x="60" y="335" font-size="13" fill="#9ca3af">.git 폴더는 생략</text>
 
   <!-- 2. CLAUDE.md 지침 -->
   <rect x="520" y="100" width="440" height="250" rx="12" fill="#fff" stroke="#d1d5db"/>
