@@ -1,0 +1,8 @@
+[package]
+name = "attendance_cli"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.97"
+description = "ERP 인사 근태 집계 CLI 교육용 샘플"
+
+[dependencies]

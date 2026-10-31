@@ -1,0 +1,18 @@
+{
+  "name": "04-web-game",
+  "private": true,
+  "version": "1.0.0",
+  "description": "야근 탈출 - TypeScript + Vite + Canvas 오리지널 미니 게임 샘플",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}
