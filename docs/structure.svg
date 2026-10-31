@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <rect width="1000" height="640" fill="#f8f9fb"/>
+  <text x="40" y="50" font-size="24" font-weight="700" fill="#1f2937">claude_all-in-one-free 구조도</text>
+  <text x="40" y="76" font-size="14" fill="#6b7280">브랜치: claude_all-in-one-free/000_sample_project · 2026-10-31 기준</text>
+
+  <!-- 1. 폴더 구조 -->
+  <rect x="40" y="100" width="440" height="250" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <text x="60" y="132" font-size="17" font-weight="700" fill="#1f2937">① 폴더 구조</text>
+  <g font-family="'D2Coding','Consolas',monospace" font-size="15" fill="#374151" xml:space="preserve">
+    <text x="70" y="170">📁 claude_all-in-one-free/</text>
+    <text x="70" y="200">├── 📄 CLAUDE.md</text>
+    <text x="310" y="200" font-size="13" fill="#6b7280">프로젝트 지침</text>
+    <text x="70" y="230">└── 📁 docs/</text>
+    <text x="106" y="260">└── 🖼 structure.svg</text>
+    <text x="310" y="260" font-size="13" fill="#6b7280">이 구조도</text>
+  </g>
+  <text x="60" y="320" font-size="13" fill="#9ca3af">.git 폴더는 생략</text>
+
+  <!-- 2. CLAUDE.md 지침 -->
+  <rect x="520" y="100" width="440" height="250" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <text x="540" y="132" font-size="17" font-weight="700" fill="#1f2937">② CLAUDE.md 지침 구성</text>
+  <g font-size="14">
+    <rect x="540" y="150" width="400" height="40" rx="8" fill="#e0ecff"/>
+    <text x="555" y="175" font-weight="700" fill="#1e40af">응답 언어</text>
+    <text x="660" y="175" fill="#374151">응답·리뷰·설명은 한글</text>
+    <rect x="540" y="198" width="400" height="40" rx="8" fill="#e3f6ea"/>
+    <text x="555" y="223" font-weight="700" fill="#166534">산출물 언어</text>
+    <text x="660" y="223" fill="#374151">커밋·주석·PR·문서 한글 (식별자는 영어)</text>
+    <rect x="540" y="246" width="400" height="40" rx="8" fill="#fdf0dc"/>
+    <text x="555" y="271" font-weight="700" fill="#9a3412">실행 환경</text>
+    <text x="660" y="271" fill="#374151">클라우드는 클라우드 전용 작업만</text>
+    <rect x="540" y="294" width="400" height="40" rx="8" fill="#f1e8fd"/>
+    <text x="555" y="319" font-weight="700" fill="#6b21a8">Git 저장</text>
+    <text x="660" y="319" fill="#374151">이 클라우드 세션 내역만 커밋</text>
+  </g>
+
+  <!-- 3. 작업 흐름 -->
+  <rect x="40" y="380" width="920" height="230" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <text x="60" y="412" font-size="17" font-weight="700" fill="#1f2937">③ 작업 흐름</text>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <g font-size="14" text-anchor="middle">
+    <rect x="70" y="440" width="230" height="90" rx="10" fill="#fdf0dc" stroke="#f59e0b"/>
+    <text x="185" y="475" font-weight="700" fill="#9a3412">☁ 클라우드 컨테이너</text>
+    <text x="185" y="500" fill="#374151">Claude Code 세션에서 작업</text>
+    <rect x="385" y="440" width="230" height="90" rx="10" fill="#f1e8fd" stroke="#a855f7"/>
+    <text x="500" y="475" font-weight="700" fill="#6b21a8">🔍 확인 후 커밋</text>
+    <text x="500" y="500" fill="#374151">git status · git diff</text>
+    <rect x="700" y="440" width="230" height="90" rx="10" fill="#e0ecff" stroke="#3b82f6"/>
+    <text x="815" y="475" font-weight="700" fill="#1e40af">🐙 GitHub 원격</text>
+    <text x="815" y="500" font-size="12" fill="#374151">devalivemanager/</text><text x="815" y="517" font-size="12" fill="#374151">claude_all-in-one-free</text>
+  </g>
+  <line x1="300" y1="485" x2="380" y2="485" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="615" y1="485" x2="695" y2="485" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="657" y="475" font-size="12" fill="#6b7280" text-anchor="middle">push</text>
+  <text x="500" y="575" font-size="13" fill="#6b7280" text-anchor="middle">로컬 PC와 연결하지 않음 · 컨테이너가 사라지기 전에 반드시 푸시</text>
+</svg>
