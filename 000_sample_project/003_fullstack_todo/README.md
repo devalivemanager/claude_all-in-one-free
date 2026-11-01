@@ -132,3 +132,7 @@ curl 'http://localhost:3000/api/todos?status=overdue'
 curl -X PATCH http://localhost:3000/api/todos/1 -H 'Content-Type: application/json' -d '{"completed":true}'
 curl -X DELETE http://localhost:3000/api/todos/1
 ```
+
+---
+
+Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)

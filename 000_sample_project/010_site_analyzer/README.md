@@ -192,3 +192,7 @@ npm test
 - 통합 테스트: BFS 방문 순서, `/private/` 를 요청조차 하지 않는지, 모든 요청의 User-Agent, 요청 간격, alt 누락 1개, 브레이크포인트, 애니메이션·IntersectionObserver, `GET /api/data`, 스크린샷 3장과 보고서 파일
 - CLI 테스트: `--help`, 잘못된 인자, robots 금지 시 종료 코드 2
 - playwright 가 없으면 브라우저가 필요한 테스트는 건너뜁니다.
+
+---
+
+Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)

@@ -107,3 +107,7 @@ python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt && .venv/b
 | `GET` | `/journal-entries/{id}` | 전표 단건 조회 | 200, 404 |
 | `GET` | `/trial-balance` | 시산표(계정별 차변·대변 합계와 잔액, 전체 합계, 균형 여부) | 200 |
 | `GET` | `/accounts/{code}/ledger` | 계정별 원장(일자순 거래 내역과 누적 잔액) | 200, 404 |
+
+---
+
+Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)

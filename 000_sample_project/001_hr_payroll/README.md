@@ -194,3 +194,7 @@ curl -X POST localhost:8080/api/payrolls/calculate \
 | `BAD_REQUEST` | 400 | 입사월 이전 급여 계산 요청 |
 | `NOT_FOUND` | 404 | 부서·사원 없음 |
 | `CONFLICT` | 409 | 사번 중복, 사원이 있는 부서 삭제 |
+
+---
+
+Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)
