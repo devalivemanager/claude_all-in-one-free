@@ -66,7 +66,7 @@
 |---|---|---|---|
 | [001_hr_payroll](001_hr_payroll/) | ERP 인사(HR): 부서·사원 관리, 월 급여 계산(4대보험·소득세) | Java 21 · Spring Boot 3 · Maven · JUnit 5 | 48개 |
 | [002_fi_ledger](002_fi_ledger/) | ERP 회계(FI): 계정과목, 분개 전표, 시산표, 계정별 원장 | Python 3.13 · FastAPI · pytest | 35개 |
-| [003_fullstack_todo](003_fullstack_todo/) | 풀스택 업무 할 일 관리 웹 앱 | TypeScript · Express · esbuild · Vitest | 35개 |
+| [003_fullstack_todo](003_fullstack_todo/) | 풀스택 업무 할 일 관리 웹 앱 | TypeScript · Express · esbuild · Vitest | 39개 |
 | [004_web_game](004_web_game/) | 오리지널 미니 게임 「야근 탈출」 | TypeScript · Vite · Canvas · Vitest | 27개 |
 | [005_inventory_api](005_inventory_api/) | ERP 재고(MM): 입출고, 현재고, 안전재고 미달 조회 | Go 1.24 · net/http · go test | 53개(서브테스트 포함) |
 | [006_ai_agent](006_ai_agent/) | Claude 도구 호출 기반 HR·회계 도우미 에이전트 | TypeScript · Anthropic SDK · Vitest | 31개 |
