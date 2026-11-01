@@ -19,7 +19,7 @@ claude_all-in-one-free/
 
 ## 저작권과 라이선스
 
-Copyright (c) 2026 devalivemanager
+Copyright (c) 2026 devalive
 
 [MIT 라이선스](LICENSE)로 공개합니다. 누구나 자유롭게 복사·수정·배포하고 상업적으로 사용할 수 있습니다.
 **단, 사용할 때 위 저작권 표시와 라이선스 문구를 반드시 남겨 주세요.**

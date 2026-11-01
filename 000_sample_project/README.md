@@ -43,7 +43,7 @@ cd 000_sample_project/010_site_analyzer   && npm test
 
 ## 라이선스
 
-Copyright (c) 2026 devalivemanager
+Copyright (c) 2026 devalive
 
 [MIT 라이선스](../LICENSE)입니다. 누구나 자유롭게 복사·수정·배포하고 상업적으로 사용할 수 있습니다. 단, 저작권 표시와 라이선스 문구는 남겨 주세요.
 

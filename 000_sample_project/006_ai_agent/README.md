@@ -124,4 +124,4 @@ client.messages.create({ model, system, tools, messages })
 
 ---
 
-Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
