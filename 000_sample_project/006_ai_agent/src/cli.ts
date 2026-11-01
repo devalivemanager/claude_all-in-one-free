@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import Anthropic from '@anthropic-ai/sdk';
-import { MaxIterationsError, runAgent } from './agent.js';
+import { IncompleteAnswerError, MaxIterationsError, runAgent } from './agent.js';
 import { getModel, hasApiKey } from './config.js';
 
 async function main(): Promise<void> {
@@ -43,7 +43,7 @@ async function main(): Promise<void> {
     console.log(`\n[답변]\n${result.answer}`);
     console.log(`\n(모델 호출 ${result.iterations}회, 종료 사유: ${result.stopReason})`);
   } catch (error) {
-    if (error instanceof MaxIterationsError) {
+    if (error instanceof MaxIterationsError || error instanceof IncompleteAnswerError) {
       console.error(error.message);
     } else if (error instanceof Anthropic.APIError) {
       console.error(`API 오류(${error.status}): ${error.message}`);

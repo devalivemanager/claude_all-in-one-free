@@ -105,6 +105,8 @@ messages = [user: 질문]
    ▼  (반복, 최대 maxIterations 회)
 client.messages.create({ model, system, tools, messages })
    │
+   ├─ stop_reason === 'max_tokens' / 'refusal' ──▶ IncompleteAnswerError (끊긴·빈 답변을 답으로 쓰지 않음)
+   │
    ├─ stop_reason !== 'tool_use' ──▶ text 블록을 모아 최종 답변 반환
    │
    └─ stop_reason === 'tool_use'
