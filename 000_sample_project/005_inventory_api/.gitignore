@@ -1,0 +1,14 @@
+# 빌드 산출물
+/inventory
+/bin/
+*.exe
+*.test
+*.out
+
+# 커버리지 결과
+coverage.*
+
+# 에디터/OS 파일
+.idea/
+.vscode/
+.DS_Store

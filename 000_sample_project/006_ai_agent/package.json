@@ -1,0 +1,24 @@
+{
+  "name": "06-ai-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Claude 도구 호출(tool use) 기반 사내 HR/회계 도우미 에이전트 샘플",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
