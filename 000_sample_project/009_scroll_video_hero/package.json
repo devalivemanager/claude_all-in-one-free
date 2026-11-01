@@ -1,0 +1,16 @@
+{
+  "name": "scroll-video-hero",
+  "version": "1.0.0",
+  "private": true,
+  "description": "영상을 프레임으로 쪼개 스크롤에 맞춰 재생하는 히어로 섹션 샘플 (외부 라이브러리 없음)",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "demo": "node scripts/make-demo-video.mjs demo.mp4 && node scripts/extract-frames.mjs demo.mp4 --fps 15 --width 960",
+    "extract": "node scripts/extract-frames.mjs",
+    "test": "node --test \"test/**/*.test.mjs\""
+  }
+}

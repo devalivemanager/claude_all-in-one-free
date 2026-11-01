@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>루미웨이브 - 스크롤 스크러빙 히어로 샘플</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <span class="logo">LUMIWAVE</span>
+      <nav>
+        <a href="#about">회사 소개</a>
+        <a href="#service">서비스</a>
+        <a href="#contact">문의</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 히어로: 섹션은 화면보다 길고, 안쪽 sticky 영역이 화면에 붙어 있는 동안 프레임이 바뀝니다 -->
+      <section class="hero" id="hero" aria-label="소개 영상">
+        <div class="hero__sticky">
+          <canvas class="hero__canvas" id="hero-canvas" data-frame="-1" aria-hidden="true"></canvas>
+
+          <div class="hero__copy">
+            <p class="hero__eyebrow">흩어진 데이터를 하나로</p>
+            <h1>작은 점들이 모여<br />하나의 빛이 됩니다</h1>
+            <p class="hero__hint">아래로 스크롤해 보세요 ↓</p>
+          </div>
+
+          <div class="hero__loader" id="hero-loader" role="status" aria-live="polite">
+            <p class="hero__loader-text" id="hero-loader-text">프레임 불러오는 중…</p>
+            <div class="hero__loader-bar"><span id="hero-loader-fill"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content" id="about">
+        <h2>회사 소개</h2>
+        <p>
+          루미웨이브는 여러 시스템에 흩어진 업무 데이터를 한곳에 모아 보여 주는 가상의 스타트업입니다.
+          2024년 판교의 작은 사무실에서 다섯 명이 시작했습니다.
+        </p>
+      </section>
+
+      <section class="content content--grid" id="service">
+        <h2>서비스</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>데이터 연결</h3>
+            <p>ERP, 그룹웨어, 엑셀 파일을 클릭 몇 번으로 연결합니다.</p>
+          </article>
+          <article class="card">
+            <h3>실시간 대시보드</h3>
+            <p>매출과 재고 현황을 하나의 화면에서 실시간으로 확인합니다.</p>
+          </article>
+          <article class="card">
+            <h3>자동 리포트</h3>
+            <p>매주 월요일 아침, 지난주 요약 리포트를 메일로 받아 보세요.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="content" id="contact">
+        <h2>문의</h2>
+        <p>도입 상담은 hello@lumiwave.example 로 연락해 주세요. (가상의 주소입니다)</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">© 2026 LUMIWAVE (교육용 샘플 · 가상의 회사)</footer>
+
+    <script type="module" src="hero.js"></script>
+  </body>
+</html>

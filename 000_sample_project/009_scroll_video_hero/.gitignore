@@ -1,0 +1,15 @@
+# 의존성
+node_modules/
+
+# 추출된 프레임 (npm run demo 또는 npm run extract 로 다시 생성)
+public/frames/
+
+# 영상 파일
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.avi
+
+# 확인용 스크린샷
+*.png
