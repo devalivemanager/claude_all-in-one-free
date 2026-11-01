@@ -150,7 +150,8 @@ func TestListMovements(t *testing.T) {
 	if list[0].Type != MovementIn || list[0].BalanceAfter != 50 || list[0].ID != 1 {
 		t.Errorf("첫 이력이 잘못됨: %+v", list[0])
 	}
-	if list[1].Type != MovementOut || list[1].BalanceAfter != 35 || list[1].Note != "생산출고" {
+	// 이동 번호는 1, 2 로 이어져야 한다. 번호가 겹치면 이력을 하나로 가리킬 수 없다.
+	if list[1].Type != MovementOut || list[1].BalanceAfter != 35 || list[1].Note != "생산출고" || list[1].ID != 2 {
 		t.Errorf("두 번째 이력이 잘못됨: %+v", list[1])
 	}
 
