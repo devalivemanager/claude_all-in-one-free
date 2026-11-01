@@ -198,6 +198,22 @@ mod tests {
 
     /// 주말은 휴일근무
     #[test]
+    fn night_window_on_next_evening() {
+        // 22:30 출근 → 다음 날 22:10 퇴근. 첫 밤 7:30 + 다음 날 22:00~22:10 의 10분.
+        // 세 번째 야간 구간 [다음날 22:00, 24:00) 이 없으면 10분이 빠진다.
+        assert_eq!(calc("E1,2026-10-26,22:30,22:10").night, 7 * H + 40);
+    }
+
+    #[test]
+    fn long_weekend_shift_has_no_overtime() {
+        // 주말 10시간 근무: 휴일근무로만 세고 연장은 0 이어야 한다(중복 집계 방지).
+        let r = calc("E1,2026-10-31,08:00,19:00");
+        assert_eq!(r.worked, 10 * H);
+        assert_eq!(r.holiday, 10 * H);
+        assert_eq!(r.overtime, 0);
+    }
+
+    #[test]
     fn weekend_is_holiday_work() {
         // 2026-10-31 토요일 10:00~15:00 → 체류 5시간, 실근무 4시간 30분
         let r = calc("E1,2026-10-31,10:00,15:00");
