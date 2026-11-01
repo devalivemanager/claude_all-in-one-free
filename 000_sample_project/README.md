@@ -14,7 +14,7 @@ ERP(인사·회계·재고·근태), 풀스택 웹, 게임, AI 에이전트, 유
 | [005_inventory_api](005_inventory_api/) | ERP 재고(MM): 입출고, 현재고, 안전재고 미달 조회 | Go 1.24 · net/http · go test | 53개(서브테스트 포함) |
 | [006_ai_agent](006_ai_agent/) | Claude 도구 호출 기반 HR·회계 도우미 에이전트 | TypeScript · Anthropic SDK · Vitest | 31개 |
 | [007_attendance_cli](007_attendance_cli/) | ERP 인사 근태 집계 CLI(연장·야간·휴일·지각) | Rust · cargo test · clippy | 27개 |
-| [008_youtube_analyzer](008_youtube_analyzer/) | 유튜브 영상을 대본·장면 캡처·보고서로 변환해 Claude가 통째로 분석 | Python · yt-dlp · ffmpeg · pytest | 38개 |
+| [008_youtube_analyzer](008_youtube_analyzer/) | 유튜브 영상을 대본·장면 캡처·보고서로 변환해 Claude가 통째로 분석 | Python · yt-dlp · ffmpeg · pytest | 48개 |
 
 ## 테스트 실행
 

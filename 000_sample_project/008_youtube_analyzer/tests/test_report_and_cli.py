@@ -67,16 +67,13 @@ def test_cli_rejects_missing_file(tmp_path, capsys):
 def test_cli_url_flow_with_fake_downloader(tmp_path, monkeypatch):
     """URL 경로: 내려받기 → 자막 파싱 → 보고서. 장면은 생략."""
     monkeypatch.setattr(downloader, "_default_ydl_class", lambda: FakeYoutubeDL)
-    monkeypatch.setattr(FakeYoutubeDL, "files", ("source.ko.vtt",))
-    original = FakeYoutubeDL.extract_info
 
-    def extract_with_subtitle(self, url, download):
-        info = original(self, url, download)
+    def process_with_subtitle(self, info, download):
         out = Path(self.options["outtmpl"]).parent
         (out / "source.ko.vtt").write_text("WEBVTT\n\n00:00:01.000 --> 00:00:02.000\n안녕하세요\n", encoding="utf-8")
         return info
 
-    monkeypatch.setattr(FakeYoutubeDL, "extract_info", extract_with_subtitle)
+    monkeypatch.setattr(FakeYoutubeDL, "process_ie_result", process_with_subtitle)
 
     assert cli.main(["https://youtu.be/abc123", "-o", str(tmp_path), "--no-frames"]) == 0
     assert "[00:00:01] 안녕하세요" in (tmp_path / "transcript.txt").read_text(encoding="utf-8")
