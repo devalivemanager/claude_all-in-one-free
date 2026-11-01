@@ -31,6 +31,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--section", type=float, default=60.0, help="보고서 구간 길이(초) (기본: 60)")
     parser.add_argument("--max-height", type=int, default=720, help="내려받을 영상 최대 세로 해상도 (기본: 720)")
     parser.add_argument("--no-frames", action="store_true", help="장면 캡처 생략(자막만)")
+    parser.add_argument("--scenes", action="store_true",
+                        help="컷 전환 감지 + 컷마다 장면 캡처 (쇼츠·광고 분석용)")
+    parser.add_argument("--scene-threshold", type=float, default=0.3,
+                        help="컷 전환 민감도 0~1, 낮을수록 민감 (기본: 0.3)")
     return parser
 
 
@@ -59,21 +63,29 @@ def run(args: argparse.Namespace) -> Path:
     print(f"      대본 {len(transcript)}개 구간" + ("" if subtitle_path else " (자막 없음)"))
 
     captured: list[frames.Frame] = []
+    cuts: list[float] | None = None
     if video_path and not args.no_frames:
         print(f"[2/3] {args.interval:g}초 간격으로 장면 캡처 중")
         if not info.duration:
             info.duration = frames.probe_duration(video_path)
         captured = frames.extract_frames(video_path, out_dir / "frames", args.interval)
         print(f"      장면 {len(captured)}장")
+        if args.scenes:
+            cuts = frames.detect_scenes(video_path, args.scene_threshold)
+            # 컷 직후 화면을 캡처한다(전환 효과 중간을 피하려고 0.1초 뒤)
+            captured += frames.extract_frames_at(
+                video_path, out_dir / "frames", [c + 0.1 for c in cuts], prefix="cut"
+            )
+            print(f"      컷 전환 {len(cuts)}회 감지, 컷 장면 {len(cuts)}장 캡처")
     else:
-        print("[2/3] 장면 캡처 생략")
+        print("[2/3] 장면 캡처 생략" + (" (영상이 없어 컷 전환 감지도 생략)" if args.scenes else ""))
 
     print("[3/3] 보고서 작성 중")
     (out_dir / "transcript.txt").write_text(report.build_transcript_text(transcript), encoding="utf-8")
     (out_dir / "info.json").write_text(json.dumps(asdict(info), ensure_ascii=False, indent=2), encoding="utf-8")
     report_path = out_dir / "report.md"
     report_path.write_text(
-        report.build_report(info, transcript, captured, out_dir, args.section), encoding="utf-8"
+        report.build_report(info, transcript, captured, out_dir, args.section, cuts), encoding="utf-8"
     )
     print(f"완료: {report_path}")
     return report_path
@@ -86,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("유튜브 URL 또는 --video/--subtitle 중 하나는 필요합니다.")
     if args.url and (args.video or args.subtitle):
         parser.error("URL과 로컬 파일(--video/--subtitle)은 함께 쓸 수 없습니다.")
+    if not 0 < args.scene_threshold < 1:
+        parser.error("--scene-threshold는 0과 1 사이여야 합니다.")
     for path in (args.video, args.subtitle):
         if path and not path.is_file():
             parser.error(f"파일이 없습니다: {path}")
