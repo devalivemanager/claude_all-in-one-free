@@ -110,4 +110,4 @@ python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt && .venv/b
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)
