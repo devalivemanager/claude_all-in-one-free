@@ -115,3 +115,7 @@ go test -race -v ./...    # 레이스 검출 + 상세 출력
 // 이동 기록
 {"id":2,"itemCode":"P-001","type":"OUT","quantity":25,"balanceAfter":5,"note":"생산출고","createdAt":"2026-01-01T09:00:00Z"}
 ```
+
+---
+
+Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)

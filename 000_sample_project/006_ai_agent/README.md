@@ -121,3 +121,7 @@ client.messages.create({ model, system, tools, messages })
 
 핵심 코드는 `src/agent.ts` 의 `runAgent` 한 함수에 모여 있습니다.
 `MessagesClient` 인터페이스(필요한 `messages.create` 만 정의)에 의존하기 때문에 실제 `Anthropic` 클라이언트와 테스트용 가짜 클라이언트를 똑같이 주입할 수 있습니다.
+
+---
+
+Copyright (c) 2026 devalivemanager · [MIT 라이선스](../../LICENSE)
