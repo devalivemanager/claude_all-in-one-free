@@ -131,4 +131,4 @@ ffmpeg 가 없으면 추출 테스트와 E2E 테스트도 건너뜁니다.
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)

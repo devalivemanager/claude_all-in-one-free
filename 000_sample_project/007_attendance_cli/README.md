@@ -116,4 +116,4 @@ E001,2026-10-26,08:55,18:00
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)
