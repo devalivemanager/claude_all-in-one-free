@@ -64,7 +64,7 @@
 
 | 폴더 | 주제 | 기술 스택 | 테스트 |
 |---|---|---|---|
-| [001_hr_payroll](001_hr_payroll/) | ERP 인사(HR): 부서·사원 관리, 월 급여 계산(4대보험·소득세) | Java 21 · Spring Boot 3 · Maven · JUnit 5 | 47개 |
+| [001_hr_payroll](001_hr_payroll/) | ERP 인사(HR): 부서·사원 관리, 월 급여 계산(4대보험·소득세) | Java 21 · Spring Boot 3 · Maven · JUnit 5 | 48개 |
 | [002_fi_ledger](002_fi_ledger/) | ERP 회계(FI): 계정과목, 분개 전표, 시산표, 계정별 원장 | Python 3.13 · FastAPI · pytest | 34개 |
 | [003_fullstack_todo](003_fullstack_todo/) | 풀스택 업무 할 일 관리 웹 앱 | TypeScript · Express · esbuild · Vitest | 35개 |
 | [004_web_game](004_web_game/) | 오리지널 미니 게임 「야근 탈출」 | TypeScript · Vite · Canvas · Vitest | 27개 |

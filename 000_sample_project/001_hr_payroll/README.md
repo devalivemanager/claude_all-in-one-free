@@ -48,6 +48,28 @@ mvn package -DskipTests && java -jar target/hr-payroll-0.0.1-SNAPSHOT.jar
 
 기본 포트는 `8080` 입니다.
 
+### 처음부터 따라 하기 (부서 → 사원 → 급여)
+
+데이터는 메모리에만 있어서 서버를 켤 때마다 비어 있습니다. 아래 순서대로 호출합니다. 주석의 응답은 실제 실행 결과입니다.
+
+```bash
+# 1) 부서 등록 → id 가 1번으로 만들어진다
+curl -X POST localhost:8080/api/departments \
+  -H 'Content-Type: application/json' -d '{"name":"인사팀"}'
+# {"id":1,"name":"인사팀"}
+
+# 2) 사원 등록 (departmentId 는 1번에서 받은 id)
+curl -X POST localhost:8080/api/employees \
+  -H 'Content-Type: application/json' \
+  -d '{"employeeNo":"E0001","name":"김민준","departmentId":1,"basePay":3000000,"hireDate":"2025-03-02"}'
+
+# 3) 2026년 10월 급여 계산 (식대 20만원)
+curl -X POST localhost:8080/api/payrolls/calculate \
+  -H 'Content-Type: application/json' \
+  -d '{"employeeNo":"E0001","payMonth":"2026-10","mealAllowance":200000}'
+# ... "totalDeduction":324802,"netPay":2875198 ...
+```
+
 ## 테스트 방법
 
 ```bash
@@ -55,7 +77,8 @@ cd 000_sample_project/001_hr_payroll
 mvn -q test
 ```
 
-- `PayrollCalculatorTest`: 표준 케이스, 원 단위 절사, 식대 비과세 한도 경계(199,999 / 200,000 / 200,001원), 누진세 구간 경계 등
+- 전체 48개 (`PayrollCalculatorTest` 23개 + 컨트롤러 시험 25개)
+- `PayrollCalculatorTest`: 표준 케이스, 원 단위 절사, 장기요양보험료의 중간 절사(1,000,050원), 식대 비과세 한도 경계(199,999 / 200,000 / 200,001원), 누진세 구간 경계 등
 - `DepartmentControllerTest`, `EmployeeControllerTest`, `PayrollControllerTest`: CRUD, 검증 실패(400), 없는 리소스(404), 충돌(409)
 
 ## 급여 계산 규칙
