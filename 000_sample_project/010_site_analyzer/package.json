@@ -1,0 +1,18 @@
+{
+  "name": "site-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "웹사이트 구조·기술·디자인 특징을 분석해 보고서로 정리하는 교육용 CLI (복제하지 않음)",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "site-analyzer": "src/cli.mjs"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "fixture": "node tests/helpers/fixture-server.mjs",
+    "test": "node --test \"tests/*.test.mjs\""
+  }
+}

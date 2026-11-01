@@ -1,0 +1,3 @@
+# 테스트용 robots.txt: /private/ 는 수집 금지
+User-agent: *
+Disallow: /private/

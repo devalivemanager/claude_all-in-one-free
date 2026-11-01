@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>봄날 꽃집 - 문의</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav>
+      <a href="/">홈</a>
+      <a href="/about.html">소개</a>
+    </nav>
+  </header>
+  <main>
+    <h1>문의하기</h1>
+    <form action="/api/contact" method="post">
+      <label>이름 <input name="name" required></label>
+      <label>내용 <textarea name="message" required></textarea></label>
+      <button type="submit">보내기</button>
+    </form>
+  </main>
+  <footer><p>© 봄날 꽃집</p></footer>
+</body>
+</html>

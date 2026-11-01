@@ -1,0 +1,74 @@
+/* 업무 할 일 관리 앱 스타일 */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.container { max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+h1 { margin: 0 0 16px; font-size: 1.6rem; }
+h2 { margin: 0 0 12px; font-size: 1.1rem; }
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; align-items: end; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: #4b5563; }
+input, select { padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem; }
+.form-actions { grid-column: 1 / -1; display: flex; gap: 8px; }
+
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+button:hover { background: #1d4ed8; }
+button.secondary { background: #e5e7eb; color: #374151; }
+button.danger { background: #fee2e2; color: #b91c1c; }
+
+.error { color: #b91c1c; margin: 8px 0 0; min-height: 1em; white-space: pre-line; }
+
+.filters { display: flex; gap: 12px; align-items: end; margin-bottom: 12px; }
+.summary { margin-left: auto; font-size: 0.85rem; color: #6b7280; }
+
+.todo-list { list-style: none; margin: 0; padding: 0; }
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.todo-item:last-child { border-bottom: none; }
+.todo-item.completed .todo-title { text-decoration: line-through; color: #9ca3af; }
+.todo-item.overdue { background: #fef2f2; }
+
+.todo-main { flex: 1; min-width: 0; }
+.todo-title { font-weight: 600; }
+.todo-meta { font-size: 0.8rem; color: #6b7280; margin-top: 2px; }
+.todo-actions { display: flex; gap: 6px; }
+
+.badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 0.75rem; margin-right: 6px; }
+.badge.high { background: #fee2e2; color: #b91c1c; }
+.badge.medium { background: #fef3c7; color: #92400e; }
+.badge.low { background: #dcfce7; color: #166534; }
+.badge.overdue { background: #b91c1c; color: #fff; }
+
+.empty { text-align: center; color: #9ca3af; }
+
+@media (max-width: 640px) {
+  form { grid-template-columns: 1fr; }
+  .filters { flex-wrap: wrap; }
+}
