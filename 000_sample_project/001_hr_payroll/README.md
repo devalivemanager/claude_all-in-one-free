@@ -197,4 +197,4 @@ curl -X POST localhost:8080/api/payrolls/calculate \
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)

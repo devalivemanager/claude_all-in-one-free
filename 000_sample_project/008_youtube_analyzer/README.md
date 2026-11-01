@@ -145,4 +145,4 @@ Claude Code 클라우드 세션은 네트워크 정책 때문에 유튜브 접�
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)

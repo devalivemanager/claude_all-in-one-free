@@ -118,4 +118,4 @@ go test -race -v ./...    # 레이스 검출 + 상세 출력
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)

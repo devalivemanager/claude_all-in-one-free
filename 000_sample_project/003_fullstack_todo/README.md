@@ -135,4 +135,4 @@ curl -X DELETE http://localhost:3000/api/todos/1
 
 ---
 
-Copyright (c) 2026 devalive · [MIT 라이선스](../../LICENSE)
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)

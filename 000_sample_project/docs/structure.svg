@@ -1,84 +1,62 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="884" viewBox="0 0 1000 884" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
-  <rect width="1000" height="884" fill="#f8f9fb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="932" viewBox="0 0 1000 932" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <rect width="1000" height="932" fill="#f8f9fb"/>
   <text x="40" y="50" font-size="24" font-weight="700" fill="#1f2937">claude_all-in-one-free 구조도</text>
-  <text x="40" y="76" font-size="14" fill="#6b7280">브랜치: claude_all-in-one-free/000_sample_project · 2026-11-01 기준</text>
-
-  <!-- 1. 폴더 구조 -->
-  <rect x="40" y="100" width="560" height="484" rx="12" fill="#fff" stroke="#d1d5db"/>
-  <text x="60" y="132" font-size="17" font-weight="700" fill="#1f2937">① 폴더 구조</text>
+  <text x="40" y="76" font-size="14" fill="#6b7280">데브얼라이브(DevAlive) 클로드 코드 무료 참고 묶음 · 2026-11-01 기준</text>
+  <rect x="40" y="100" width="920" height="792" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <text x="60" y="132" font-size="17" font-weight="700" fill="#1f2937">폴더 구조</text>
   <g font-family="'D2Coding','Consolas',monospace" font-size="14" fill="#374151">
-    <text x="70" y="165">📁 claude_all-in-one-free/</text>
-    <text x="70" y="192">├── 📄 CLAUDE.md</text>
-    <text x="70" y="219">└── 📁 000_sample_project/</text>
-    <text x="106" y="246">├── 📄 README.md</text>
-    <text x="106" y="273">├── 📁 001_hr_payroll/</text>
-    <text x="106" y="300">├── 📁 002_fi_ledger/</text>
-    <text x="106" y="327">├── 📁 003_fullstack_todo/</text>
-    <text x="106" y="354">├── 📁 004_web_game/</text>
-    <text x="106" y="381">├── 📁 005_inventory_api/</text>
-    <text x="106" y="408">├── 📁 006_ai_agent/</text>
-    <text x="106" y="435">├── 📁 007_attendance_cli/</text>
-    <text x="106" y="462">├── 📁 008_youtube_analyzer/</text>
-    <text x="106" y="489">├── 📁 009_scroll_video_hero/</text>
-    <text x="106" y="516">├── 📁 010_site_analyzer/</text>
-    <text x="106" y="543">└── 📁 docs/ (이 구조도)</text>
+    <text x="70" y="160">📁 claude_all-in-one-free/</text>
+    <text x="106" y="186">├── 📄 README.md</text>
+    <text x="106" y="212">├── 📄 LICENSE.txt</text>
+    <text x="106" y="238">├── 📄 CLAUDE.md</text>
+    <text x="106" y="264" font-weight="700" fill="#1e40af">├── 📁 000_sample_project/</text>
+    <text x="142" y="290">├── 📄 CLAUDE.md · .claude/</text>
+    <text x="142" y="316">├── 📁 docs/</text>
+    <text x="142" y="342">├── 📄 LICENSE-MIT</text>
+    <text x="142" y="368">├── 📁 001_hr_payroll/</text>
+    <text x="142" y="394">├── 📁 002_fi_ledger/</text>
+    <text x="142" y="420">├── 📁 003_fullstack_todo/</text>
+    <text x="142" y="446">├── 📁 004_web_game/</text>
+    <text x="142" y="472">├── 📁 005_inventory_api/</text>
+    <text x="142" y="498">├── 📁 006_ai_agent/</text>
+    <text x="142" y="524">├── 📁 007_attendance_cli/</text>
+    <text x="142" y="550">├── 📁 008_youtube_analyzer/</text>
+    <text x="142" y="576">├── 📁 009_scroll_video_hero/</text>
+    <text x="142" y="602">└── 📁 010_site_analyzer/</text>
+    <text x="106" y="628" font-weight="700" fill="#166534">├── 📁 999_agent-kit/skills/</text>
+    <text x="142" y="654">├── verification-loop · token-saving</text>
+    <text x="142" y="680">├── youtube-to-skill · loop-engineering</text>
+    <text x="142" y="706">├── game-dev-planning · godot · unity</text>
+    <text x="142" y="732">└── publishing-workflow</text>
+    <text x="106" y="758" font-weight="700" fill="#9a3412">└── 📁 999_document/</text>
+    <text x="142" y="784">├── 01 클로드코드·AI도구 · 02 게임개발</text>
+    <text x="142" y="810">├── 03 AI미디어(영상·음성) · 04 무료·상업이용 도구</text>
+    <text x="142" y="836">└── 05 일반 SI·ERP</text>
   </g>
-  <g font-size="12" fill="#6b7280">
-    <text x="368" y="192">프로젝트 지침</text>
-    <text x="368" y="246">샘플 목록·테스트 방법</text>
-    <text x="368" y="273">ERP 인사 급여 · Java/Spring Boot</text>
-    <text x="368" y="300">ERP 회계 원장 · Python/FastAPI</text>
-    <text x="368" y="327">할 일 관리 웹 · TypeScript/Express</text>
-    <text x="368" y="354">게임 「야근 탈출」 · TypeScript/Vite</text>
-    <text x="368" y="381">ERP 재고 · Go</text>
-    <text x="368" y="408">Claude 에이전트 · TypeScript/SDK</text>
-    <text x="368" y="435">ERP 근태 집계 · Rust</text>
-    <text x="368" y="462">유튜브 분석 · Python/yt-dlp/ffmpeg</text>
-    <text x="368" y="489">스크롤 영상 히어로 · JS/Canvas</text>
-    <text x="368" y="516">웹사이트 분석 · JS/Playwright</text>
+  <g font-size="12.5" fill="#6b7280">
+    <text x="560" y="186">묶음 소개·읽는 순서</text>
+    <text x="560" y="212">데브얼라이브 이용 조건(판매 금지)</text>
+    <text x="560" y="238">이 저장소 작업 지침</text>
+    <text x="560" y="264">시작용 틀 + 실습 샘플</text>
+    <text x="560" y="290">틀: 규칙·권한·예시 에이전트·스킬</text>
+    <text x="560" y="316">초급·중급 안내서 7편, 이 구조도</text>
+    <text x="560" y="342">샘플 코드 001~010 라이선스</text>
+    <text x="560" y="368">ERP 인사 급여 · Java/Spring Boot</text>
+    <text x="560" y="394">ERP 회계 원장 · Python/FastAPI</text>
+    <text x="560" y="420">할 일 관리 웹 · TypeScript/Express</text>
+    <text x="560" y="446">게임 「야근 탈출」 · TypeScript/Vite</text>
+    <text x="560" y="472">ERP 재고 · Go</text>
+    <text x="560" y="498">Claude 에이전트 · TypeScript/SDK</text>
+    <text x="560" y="524">ERP 근태 집계 · Rust</text>
+    <text x="560" y="550">유튜브 분석 · Python/yt-dlp</text>
+    <text x="560" y="576">스크롤 영상 히어로 · JS/Canvas</text>
+    <text x="560" y="602">웹사이트 분석 · JS/Playwright</text>
+    <text x="560" y="628">가져다 쓰는 스킬 8개</text>
+    <text x="560" y="654">검증 루프 · 토큰 절약</text>
+    <text x="560" y="680">영상→스킬 · 자율 루프</text>
+    <text x="560" y="706">게임 기획 · 엔진 함정</text>
+    <text x="560" y="732">블로그·전자책 원고</text>
+    <text x="560" y="758">핵심 정리 5편</text>
   </g>
-  <text x="60" y="569" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더는 생략</text>
-
-  <!-- 2. CLAUDE.md 지침 -->
-  <rect x="630" y="100" width="330" height="484" rx="12" fill="#fff" stroke="#d1d5db"/>
-  <text x="650" y="132" font-size="17" font-weight="700" fill="#1f2937">② CLAUDE.md 지침</text>
-  <g font-size="13">
-    <rect x="650" y="152" width="290" height="70" rx="8" fill="#e0ecff"/>
-    <text x="665" y="180" font-weight="700" fill="#1e40af">응답 언어</text>
-    <text x="665" y="204" fill="#374151">응답·리뷰·설명은 한글</text>
-    <rect x="650" y="232" width="290" height="70" rx="8" fill="#e3f6ea"/>
-    <text x="665" y="260" font-weight="700" fill="#166534">산출물 언어</text>
-    <text x="665" y="284" fill="#374151">커밋·주석·PR·문서 한글, 식별자는 영어</text>
-    <rect x="650" y="312" width="290" height="70" rx="8" fill="#fdf0dc"/>
-    <text x="665" y="340" font-weight="700" fill="#9a3412">실행 환경</text>
-    <text x="665" y="364" fill="#374151">클라우드는 클라우드 전용 작업만</text>
-    <rect x="650" y="392" width="290" height="70" rx="8" fill="#f1e8fd"/>
-    <text x="665" y="420" font-weight="700" fill="#6b21a8">Git 저장</text>
-    <text x="665" y="444" fill="#374151">이 클라우드 세션 내역만 커밋</text>
-  </g>
-
-  <!-- 3. 작업 흐름 -->
-  <rect x="40" y="614" width="920" height="230" rx="12" fill="#fff" stroke="#d1d5db"/>
-  <text x="60" y="646" font-size="17" font-weight="700" fill="#1f2937">③ 작업 흐름</text>
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
-    </marker>
-  </defs>
-  <g font-size="14" text-anchor="middle">
-    <rect x="70" y="674" width="230" height="90" rx="10" fill="#fdf0dc" stroke="#f59e0b"/>
-    <text x="185" y="709" font-weight="700" fill="#9a3412">☁ 클라우드 컨테이너</text>
-    <text x="185" y="734" fill="#374151">작업 · 테스트 실행</text>
-    <rect x="385" y="674" width="230" height="90" rx="10" fill="#f1e8fd" stroke="#a855f7"/>
-    <text x="500" y="709" font-weight="700" fill="#6b21a8">🔍 확인 후 커밋</text>
-    <text x="500" y="734" fill="#374151">git status · git diff</text>
-    <rect x="700" y="674" width="230" height="90" rx="10" fill="#e0ecff" stroke="#3b82f6"/>
-    <text x="815" y="709" font-weight="700" fill="#1e40af">🐙 GitHub 원격</text>
-    <text x="815" y="734" font-size="12" fill="#374151">devalivemanager/</text>
-    <text x="815" y="751" font-size="12" fill="#374151">claude_all-in-one-free</text>
-  </g>
-  <line x1="300" y1="719" x2="380" y2="719" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
-  <line x1="615" y1="719" x2="695" y2="719" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="657" y="709" font-size="12" fill="#6b7280" text-anchor="middle">push</text>
-  <text x="500" y="809" font-size="13" fill="#6b7280" text-anchor="middle">로컬 PC와 연결하지 않음 · 컨테이너가 사라지기 전에 반드시 푸시</text>
+  <text x="60" y="878" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더와 스킬 내부 파일은 생략 · 이용 조건: 묶음 LICENSE.txt, 샘플 코드 MIT</text>
 </svg>
