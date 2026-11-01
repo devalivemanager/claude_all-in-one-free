@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="830" viewBox="0 0 1000 830" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
-  <rect width="1000" height="830" fill="#f8f9fb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="884" viewBox="0 0 1000 884" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <rect width="1000" height="884" fill="#f8f9fb"/>
   <text x="40" y="50" font-size="24" font-weight="700" fill="#1f2937">claude_all-in-one-free 구조도</text>
-  <text x="40" y="76" font-size="14" fill="#6b7280">브랜치: claude_all-in-one-free/000_sample_project · 2026-10-31 기준</text>
+  <text x="40" y="76" font-size="14" fill="#6b7280">브랜치: claude_all-in-one-free/000_sample_project · 2026-11-01 기준</text>
 
   <!-- 1. 폴더 구조 -->
-  <rect x="40" y="100" width="560" height="430" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <rect x="40" y="100" width="560" height="484" rx="12" fill="#fff" stroke="#d1d5db"/>
   <text x="60" y="132" font-size="17" font-weight="700" fill="#1f2937">① 폴더 구조</text>
   <g font-family="'D2Coding','Consolas',monospace" font-size="14" fill="#374151">
     <text x="70" y="165">📁 claude_all-in-one-free/</text>
@@ -19,24 +19,28 @@
     <text x="106" y="408">├── 📁 006_ai_agent/</text>
     <text x="106" y="435">├── 📁 007_attendance_cli/</text>
     <text x="106" y="462">├── 📁 008_youtube_analyzer/</text>
-    <text x="106" y="489">└── 📁 docs/ (이 구조도)</text>
+    <text x="106" y="489">├── 📁 009_scroll_video_hero/</text>
+    <text x="106" y="516">├── 📁 010_site_analyzer/</text>
+    <text x="106" y="543">└── 📁 docs/ (이 구조도)</text>
   </g>
   <g font-size="12" fill="#6b7280">
-    <text x="352" y="192">프로젝트 지침</text>
-    <text x="352" y="246">샘플 목록·테스트 방법</text>
-    <text x="352" y="273">ERP 인사 급여 · Java/Spring Boot</text>
-    <text x="352" y="300">ERP 회계 원장 · Python/FastAPI</text>
-    <text x="352" y="327">할 일 관리 웹 · TypeScript/Express</text>
-    <text x="352" y="354">게임 「야근 탈출」 · TypeScript/Vite</text>
-    <text x="352" y="381">ERP 재고 · Go</text>
-    <text x="352" y="408">Claude 에이전트 · TypeScript/SDK</text>
-    <text x="352" y="435">ERP 근태 집계 · Rust</text>
-    <text x="352" y="462">유튜브 분석 · Python/yt-dlp/ffmpeg</text>
+    <text x="368" y="192">프로젝트 지침</text>
+    <text x="368" y="246">샘플 목록·테스트 방법</text>
+    <text x="368" y="273">ERP 인사 급여 · Java/Spring Boot</text>
+    <text x="368" y="300">ERP 회계 원장 · Python/FastAPI</text>
+    <text x="368" y="327">할 일 관리 웹 · TypeScript/Express</text>
+    <text x="368" y="354">게임 「야근 탈출」 · TypeScript/Vite</text>
+    <text x="368" y="381">ERP 재고 · Go</text>
+    <text x="368" y="408">Claude 에이전트 · TypeScript/SDK</text>
+    <text x="368" y="435">ERP 근태 집계 · Rust</text>
+    <text x="368" y="462">유튜브 분석 · Python/yt-dlp/ffmpeg</text>
+    <text x="368" y="489">스크롤 영상 히어로 · JS/Canvas</text>
+    <text x="368" y="516">웹사이트 분석 · JS/Playwright</text>
   </g>
-  <text x="60" y="515" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더는 생략</text>
+  <text x="60" y="569" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더는 생략</text>
 
   <!-- 2. CLAUDE.md 지침 -->
-  <rect x="630" y="100" width="330" height="430" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <rect x="630" y="100" width="330" height="484" rx="12" fill="#fff" stroke="#d1d5db"/>
   <text x="650" y="132" font-size="17" font-weight="700" fill="#1f2937">② CLAUDE.md 지침</text>
   <g font-size="13">
     <rect x="650" y="152" width="290" height="70" rx="8" fill="#e0ecff"/>
@@ -54,27 +58,27 @@
   </g>
 
   <!-- 3. 작업 흐름 -->
-  <rect x="40" y="560" width="920" height="230" rx="12" fill="#fff" stroke="#d1d5db"/>
-  <text x="60" y="592" font-size="17" font-weight="700" fill="#1f2937">③ 작업 흐름</text>
+  <rect x="40" y="614" width="920" height="230" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <text x="60" y="646" font-size="17" font-weight="700" fill="#1f2937">③ 작업 흐름</text>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
     </marker>
   </defs>
   <g font-size="14" text-anchor="middle">
-    <rect x="70" y="620" width="230" height="90" rx="10" fill="#fdf0dc" stroke="#f59e0b"/>
-    <text x="185" y="655" font-weight="700" fill="#9a3412">☁ 클라우드 컨테이너</text>
-    <text x="185" y="680" fill="#374151">작업 · 테스트 실행</text>
-    <rect x="385" y="620" width="230" height="90" rx="10" fill="#f1e8fd" stroke="#a855f7"/>
-    <text x="500" y="655" font-weight="700" fill="#6b21a8">🔍 확인 후 커밋</text>
-    <text x="500" y="680" fill="#374151">git status · git diff</text>
-    <rect x="700" y="620" width="230" height="90" rx="10" fill="#e0ecff" stroke="#3b82f6"/>
-    <text x="815" y="655" font-weight="700" fill="#1e40af">🐙 GitHub 원격</text>
-    <text x="815" y="680" font-size="12" fill="#374151">devalivemanager/</text>
-    <text x="815" y="697" font-size="12" fill="#374151">claude_all-in-one-free</text>
+    <rect x="70" y="674" width="230" height="90" rx="10" fill="#fdf0dc" stroke="#f59e0b"/>
+    <text x="185" y="709" font-weight="700" fill="#9a3412">☁ 클라우드 컨테이너</text>
+    <text x="185" y="734" fill="#374151">작업 · 테스트 실행</text>
+    <rect x="385" y="674" width="230" height="90" rx="10" fill="#f1e8fd" stroke="#a855f7"/>
+    <text x="500" y="709" font-weight="700" fill="#6b21a8">🔍 확인 후 커밋</text>
+    <text x="500" y="734" fill="#374151">git status · git diff</text>
+    <rect x="700" y="674" width="230" height="90" rx="10" fill="#e0ecff" stroke="#3b82f6"/>
+    <text x="815" y="709" font-weight="700" fill="#1e40af">🐙 GitHub 원격</text>
+    <text x="815" y="734" font-size="12" fill="#374151">devalivemanager/</text>
+    <text x="815" y="751" font-size="12" fill="#374151">claude_all-in-one-free</text>
   </g>
-  <line x1="300" y1="665" x2="380" y2="665" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
-  <line x1="615" y1="665" x2="695" y2="665" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="657" y="655" font-size="12" fill="#6b7280" text-anchor="middle">push</text>
-  <text x="500" y="755" font-size="13" fill="#6b7280" text-anchor="middle">로컬 PC와 연결하지 않음 · 컨테이너가 사라지기 전에 반드시 푸시</text>
+  <line x1="300" y1="719" x2="380" y2="719" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="615" y1="719" x2="695" y2="719" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="657" y="709" font-size="12" fill="#6b7280" text-anchor="middle">push</text>
+  <text x="500" y="809" font-size="13" fill="#6b7280" text-anchor="middle">로컬 PC와 연결하지 않음 · 컨테이너가 사라지기 전에 반드시 푸시</text>
 </svg>

@@ -1,0 +1,37 @@
+/* 테스트용 스타일: 색상, 브레이크포인트, 애니메이션 단서를 일부러 넣었다 */
+body {
+  margin: 0;
+  font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  color: #333333;
+  background: #fffaf3;
+}
+.site-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 24px;
+  background: #2f6b4f;
+}
+.site-header a { color: #ffffff; text-decoration: none; transition: opacity 0.2s ease; }
+.site-header a:hover { opacity: 0.7; }
+.hero { padding: 64px 24px; animation: fade-in 0.8s ease-out both; }
+.cta { background: #e4572e; color: #ffffff; border: 0; padding: 12px 20px; transition: transform 0.2s; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; list-style: none; padding: 0 24px; }
+.cards li { background: #ffffff; padding: 16px; }
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; padding: 0 24px; }
+.reveal.visible { opacity: 1; transform: none; }
+main, footer { padding: 0 24px; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (max-width: 768px) {
+  .cards { grid-template-columns: 1fr; }
+}
+@media (min-width: 1024px) {
+  .hero { padding: 96px 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero, .reveal { animation: none; transition: none; }
+}
