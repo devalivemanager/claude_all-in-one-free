@@ -203,4 +203,40 @@ describe('한 프레임 진행 update', () => {
     expect(after.items).toHaveLength(0);
     expect(after.score).toBe(0);
   });
+
+  it('같은 프레임에 폭탄 두 개를 마지막 생명에서 맞아도 생명은 0이고 게임 오버다', () => {
+    // 생명이 -1 로 내려가면 lives === 0 판정을 지나쳐 게임이 끝나지 않는다.
+    const state = playingState({ lives: 1 });
+    const bomb = itemOnPlayer(state, 'bomb');
+    const after = update({ ...state, items: [bomb, { ...bomb, id: 100 }] }, 0.016, NO_INPUT, fixedRandom(0.5));
+    expect(after.lives).toBe(0);
+    expect(after.phase).toBe('over');
+  });
+
+  it('이번 프레임에 떨어져 플레이어와 겹친 물건도 받은 것으로 친다', () => {
+    // 이동 전에는 플레이어 위에 떨어져 있고, 이동 후에야 겹친다.
+    const state = playingState();
+    const above: Item = { ...itemOnPlayer(state, 'document'), y: state.player.y - ITEM_SIZE - 5, speed: 100 };
+    const after = update({ ...state, items: [above] }, 0.1, NO_INPUT, fixedRandom(0.5));
+    expect(after.score).toBe(DOCUMENT_SCORE);
+  });
+
+  it('진행 시간이 쌓여 15초가 지나면 레벨이 오른다', () => {
+    let state = playingState();
+    for (let i = 0; i < 300; i += 1) state = update(state, 0.05, NO_INPUT, fixedRandom(0.5));
+    expect(state.elapsed).toBeCloseTo(15);
+    expect(getDifficulty(state.elapsed + 0.01).level).toBe(2);
+  });
+});
+
+describe('규칙 경계 보강', () => {
+  it('왼쪽에서 모서리만 맞닿은 경우도 충돌이 아니다', () => {
+    const base = { x: 10, y: 0, width: 10, height: 10 };
+    expect(isColliding(base, { x: 0, y: 0, width: 10, height: 10 })).toBe(false);
+  });
+
+  it('커피는 폭탄 확률 바로 다음 10% 구간이다', () => {
+    expect(pickItemKind(0.29, 0.2)).toBe('coffee');
+    expect(pickItemKind(0.31, 0.2)).toBe('document');
+  });
 });

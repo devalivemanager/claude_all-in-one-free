@@ -27,6 +27,15 @@ describe('최고 점수 저장소', () => {
     expect(loadHighScore(storage)).toBe(50);
   });
 
+  it('기존 기록과 같은 점수는 저장하지 않는다', () => {
+    const storage = createMemoryStorage({ [HIGH_SCORE_KEY]: '50' });
+    expect(saveHighScore(storage, 50)).toBe(false);
+  });
+
+  it('저장소가 없으면 저장했다고 답하지 않는다', () => {
+    expect(saveHighScore(undefined, 10)).toBe(false);
+  });
+
   it('저장소 접근이 막혀 있어도 에러 없이 동작한다', () => {
     const broken: SimpleStorage = {
       getItem: () => {
