@@ -47,6 +47,8 @@ def run(args: argparse.Namespace) -> Path:
             with_video=not args.no_frames, max_height=args.max_height,
         )
         info, subtitle_path, video_path = result.info, result.subtitle, result.video
+        for warning in result.warnings:
+            print(f"      경고: {warning}")
     else:
         print("[1/3] 로컬 파일 사용")
         source = args.video or args.subtitle
@@ -94,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     except Exception as error:  # yt-dlp 네트워크 오류 등
         print(f"오류: {type(error).__name__}: {error}", file=sys.stderr)
-        if "403" in str(error) or "Tunnel connection failed" in str(error):
+        if "Tunnel connection failed" in str(error):
             print(
                 "안내: 네트워크가 유튜브 접속을 막고 있습니다. "
                 "www.youtube.com, *.googlevideo.com 접속을 허용하거나 --video/--subtitle 로컬 파일을 쓰세요.",
