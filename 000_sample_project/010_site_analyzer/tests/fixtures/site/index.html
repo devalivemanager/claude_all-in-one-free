@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="분석 도구 테스트용 가상의 꽃집 홈페이지입니다.">
+  <title>봄날 꽃집 - 홈</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <img src="/images/logo.svg" alt="봄날 꽃집 로고" width="40" height="40">
+    <nav>
+      <a href="/">홈</a>
+      <a href="/about.html">소개</a>
+      <a href="/contact.html">문의</a>
+      <a href="/private/">관리자</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>계절을 담은 꽃다발</h1>
+      <p>매일 아침 들여온 꽃으로 만듭니다.</p>
+      <button class="cta" type="button">오늘의 꽃 보기</button>
+    </section>
+    <section>
+      <h2>인기 상품</h2>
+      <ul id="products" class="cards"></ul>
+      <!-- 접근성 검사용: alt 가 없는 이미지 -->
+      <img src="/images/flower.svg" width="120" height="120">
+    </section>
+    <section class="reveal">
+      <h2>찾아오시는 길</h2>
+      <h3>영업 시간</h3>
+      <p>평일 09:00 ~ 18:00</p>
+    </section>
+  </main>
+  <footer>
+    <p>© 봄날 꽃집 (테스트용 가상 사이트)</p>
+    <a href="mailto:hello@example.com">메일 보내기</a>
+  </footer>
+  <script src="/app.js"></script>
+</body>
+</html>
