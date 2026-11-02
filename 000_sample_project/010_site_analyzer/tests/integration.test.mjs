@@ -43,6 +43,13 @@ describe("픽스처 사이트 분석", { skip }, () => {
     assert.ok(fixture.requests.every((r) => r.userAgent.includes("SiteAnalyzer")));
   });
 
+  // README: 화면 크기를 바꿔 스크린샷을 찍을 때도 페이지를 다시 불러오지 않는다
+  it("스크린샷 3장을 찍어도 페이지마다 문서 요청은 한 번이다", () => {
+    const docs = {};
+    for (const r of fixture.requests) if (r.path === "/" || r.path.endsWith(".html")) docs[r.path] = (docs[r.path] ?? 0) + 1;
+    assert.deepEqual(docs, { "/": 1, "/about.html": 1, "/contact.html": 1 });
+  });
+
   it("페이지 사이에 요청 간격을 둔다", () => {
     const docTimes = fixture.requests.filter((r) => r.path.endsWith(".html") || r.path === "/").map((r) => r.time);
     for (let i = 1; i < docTimes.length; i++) assert.ok(docTimes[i] - docTimes[i - 1] >= 300, "간격이 300ms 이상이어야 한다");

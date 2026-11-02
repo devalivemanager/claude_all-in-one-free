@@ -27,6 +27,8 @@ describe("명령행 인자", () => {
     assert.throws(() => parseCliArgs([]), /URL 을 하나/);
     assert.throws(() => parseCliArgs(["ex.com"]), /http:\/\//);
     assert.throws(() => parseCliArgs(["https://ex.com", "--max-pages", "0"]), /max-pages/);
+    assert.throws(() => parseCliArgs(["https://ex.com", "--max-pages", "51"]), /max-pages/); // 최대 50페이지
+    assert.equal(parseCliArgs(["https://ex.com", "--max-pages", "50"]).maxPages, 50);
     assert.throws(() => parseCliArgs(["https://ex.com", "--delay", "100"]), /500ms 이상/);
     assert.throws(() => parseCliArgs(["https://ex.com", "--ignore-robots"]), /ignore-robots/);
   });
