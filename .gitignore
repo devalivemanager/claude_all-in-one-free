@@ -1,4 +1,4 @@
-# 유튜브 자막 원문은 저작물이다. 평문은 절대 올리지 않고, age 암호문(*.txt.age)만 올린다(CLAUDE.md 「유튜브 자막」).
+# 유튜브 자막 원문은 저작물이다. 평문(transcripts/plain/ 등)은 절대 올리지 않고, age 암호문(*.txt.age)만 올린다(CLAUDE.md 「유튜브 자막」).
 transcripts/*
 !transcripts/*.txt.age
 !transcripts/README.md

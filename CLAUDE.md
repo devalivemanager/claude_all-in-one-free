@@ -34,10 +34,11 @@
 
 클라우드 서버 IP는 유튜브 봇 확인(「Sign in to confirm」)에 자주 막힌다. 받는 일은 사용자 PC(로컬)가 하고, 클라우드는 분석만 맡는다.
 
-- 자막 원문은 저작물이므로 이 공개 저장소에는 **age 로 암호화한 `transcripts/<영상ID>.txt.age` 만** 둔다. 평문은 `.gitignore` 와 커밋 전 검사(`.githooks/pre-commit`)로 막는다. 사용법은 `transcripts/README.md`.
-- 비밀키는 환경변수 `TRANSCRIPT_AGE_KEY` 로만 받는다. 파일·저장소·채팅에 쓰지 않는다. 평문은 저장소 밖(임시 폴더)에만 풀고 분석 뒤 지운다.
-- 분석할 때는 먼저 `transcripts/<영상ID>.txt.age` 가 있는지 확인하고, 있으면 `tools/transcripts.sh decrypt` 로 풀어 분석한다.
+- 자막 원문은 저작물이므로 공개 저장소에 평문으로 두지 않는다. 우리만의 공용 번역 도구(`tools/transcripts.sh`, age 암호화)로 **커밋할 때 자동 잠금, 받을 때 자동 풀기**를 한다. 사용법은 `transcripts/README.md`.
+- 작업을 시작할 때 `tools/transcripts.sh setup` 으로 훅을 켠다(클론마다 한 번). 평문은 `transcripts/plain/`(git 제외)에만 있다.
+- 비밀키는 환경변수 `TRANSCRIPT_AGE_KEY` 로만 받는다. 파일·저장소·채팅에 쓰지 않는다.
+- 분석할 때는 먼저 `transcripts/plain/<영상ID>.txt`(없으면 `transcripts/<영상ID>.txt.age`)가 있는지 확인하고, 있으면 그 자막으로 분석한다.
 - 없으면 자막 받기를 영상마다 1번만 시도한다.
 - 「Sign in to confirm」이 나오면 재시도하지 않는다. 같은 환경의 재시도는 효과가 없다.
 - 쿠키, 프록시, 봇 확인 우회는 쓰지 않는다.
-- 실패하면 영상 ID 목록을 보고하고, 로컬에서 받아 암호화해 올리거나(`tools/transcripts.sh encrypt`) 대본을 붙여 달라고 요청한다.
+- 실패하면 영상 ID 목록을 보고하고, 로컬에서 받아 `transcripts/plain/<영상ID>.txt` 로 커밋(자동 잠금)하거나 대본을 붙여 달라고 요청한다.
