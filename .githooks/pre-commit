@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# 커밋 전 검사: transcripts/ 에는 age 암호문만 올라가게 한다.
+# 켜는 법(클론마다 한 번): git config core.hooksPath .githooks
+exec "$(git rev-parse --show-toplevel)/tools/transcripts.sh" check

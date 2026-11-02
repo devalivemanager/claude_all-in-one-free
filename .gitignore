@@ -1,2 +1,5 @@
-# 유튜브 자막 원문은 저작물이다. 이 공개 저장소에는 올리지 않고 별도 비공개 저장소에 둔다(CLAUDE.md 「유튜브 자막」).
-transcripts/
+# 유튜브 자막 원문은 저작물이다. 평문은 절대 올리지 않고, age 암호문(*.txt.age)만 올린다(CLAUDE.md 「유튜브 자막」).
+transcripts/*
+!transcripts/*.txt.age
+!transcripts/README.md
+!transcripts/recipients.txt
