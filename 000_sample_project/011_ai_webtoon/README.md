@@ -11,7 +11,7 @@
 
 | 일 | 맡는 쪽 | 이유 |
 |---|---|---|
-| 줄거리·콘티·대사 | 사람 + 클로드 | 글 작업은 클로드가 잘하고, 대본 JSON 으로 남기면 고치기 쉽다 |
+| 줄거리·콘티·대사 | 사람 + 클로드(스킬 `webtoon-planner`) | 글 작업은 클로드가 잘하고, 대본 JSON 으로 남기면 고치기 쉽다. 결과는 콘티 표(`storyboard.md`)로 검토한다 |
 | 캐릭터 일관성 | 설정표(`characters`) | 코드 그림은 같은 설정표면 항상 같은 얼굴. 이미지 AI 에는 외모 설명(`desc`)을 매 컷 **글자 그대로** 넣는다 |
 | 그림 | 코드(SVG) 또는 이미지 AI | 이미지 AI 는 바꿔 끼울 수 있게 어댑터로 분리 |
 | 대사·말풍선 | 코드 | 이미지 AI 는 그림 속 한글을 자주 틀리게 그린다. 프롬프트에 「글자·말풍선 넣지 않기」를 항상 붙인다 |
@@ -19,14 +19,15 @@
 ## 기술 스택
 
 - Node.js 22 (외부 의존성 없음)
-- 테스트: `node:test` 50개 (브라우저 테스트 2개는 Playwright 가 있을 때만)
+- 테스트: `node:test` 62개 (브라우저 테스트 2개는 Playwright 가 있을 때만)
 - PNG 저장(`--png`)과 브라우저 테스트: Playwright (전역 설치본 사용, 없으면 해당 기능만 안내 후 건너뜀)
 
 ## 폴더 구조
 
 ```
 011_ai_webtoon/
-├── episodes/ep01.json   # 예제 회차 대본(컷 6개, 말풍선 8개)
+├── .claude/skills/webtoon-planner/SKILL.md  # 시놉시스 → 대본 JSON 기획 스킬
+├── episodes/ep01.json   # 예제 회차 대본(컷 6개, 말풍선 8개, 영어 프롬프트 필드 포함)
 ├── src/
 │   ├── cli.mjs          # 실행 진입점
 │   ├── script.mjs       # 대본 읽기·검증(오류를 경로와 함께 한 번에 모아 알림)
@@ -48,7 +49,7 @@ npm run build          # output/ep01/index.html, prompts.md
 npm run build:png      # 위 + output/ep01/webtoon.png (Playwright 필요)
 
 # 직접 실행
-node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api]
+node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api] [--prompt-lang ko|en]
 ```
 
 출력 예시:
@@ -61,7 +62,8 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api]
 | 파일 | 내용 |
 |---|---|
 | `index.html` | 세로 스크롤 웹툰. 컷마다 장면 설명이 대체 텍스트(`aria-label`)로 붙는다 |
-| `prompts.md` | 컷별 이미지 AI 프롬프트. 다른 그림 도구에 붙여 넣어 쓸 수도 있다 |
+| `prompts.md` | 컷별 이미지 AI 프롬프트. 다른 그림 도구에 붙여 넣어 쓸 수도 있다. `--prompt-lang en` 이면 영어(미드저니 등에 맞춤) |
+| `storyboard.md` | 콘티 표 : 컷 / 연출(배경·높이·자막·장면) / 등장·표정 / 대사 / 이미지 프롬프트. 사람이 검토하기 좋게 |
 | `webtoon.png` | `--png` 를 주면 페이지 전체 캡처 |
 
 종료 코드: 정상 0, 대본·배치·파일 오류 1, 잘못된 인자 2.
@@ -94,6 +96,19 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api]
 | `panels[].background` | `office`·`night`·`monitor`·`plain` |
 | `panels[].cast[].x` | 0.1~0.9 (가로 위치 비율), `expression` 은 `neutral`·`happy`·`sad`·`surprised`·`tired` |
 | `panels[].lines[]` | 말하는 사람은 그 컷의 `cast` 에 있어야 한다. 대사 하나는 60자까지 |
+| 영어 필드 | `style_en`, `characters.*.desc_en`, `panels[].scene_en` 은 `--prompt-lang en` 일 때 꼭 필요하다(빠지면 경로와 함께 알림). `characters.*.name_en` 은 선택 |
+
+## 클로드와 함께 기획하기 (스킬 `webtoon-planner`)
+
+이 폴더에서 클로드 코드를 열고 「웹툰 1화 기획해 줘. 장르는 …, 결말은 …」처럼 말하면 스킬이 쓰인다.
+
+1. 시놉시스 정리(빠진 것은 만들기 전에 최대 3개까지 되묻기)
+2. 캐릭터 시트(외모 설명 `desc`·`desc_en` 은 이후 모든 컷에 그대로 들어가므로 짧고 구체적으로)
+3. 컷 나누기 → `episodes/epNN.json`
+4. 검증: `node src/cli.mjs episodes/epNN.json -o output/epNN --prompt-lang en` 이 「경고 0건」으로 끝날 때까지
+5. `storyboard.md` 를 보고 사람이 고칠 점을 준다
+
+이미지 AI(미드저니 등)를 쓸 때는 `prompts.md` 의 영어 프롬프트를 컷마다 붙여 넣고, 받은 그림은 `--painter api` 어댑터로 연결하거나 손으로 컷에 넣는다. 말풍선은 이 도구가 코드로 얹는다.
 
 ## 말풍선 규칙
 
@@ -125,7 +140,7 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 --painter api
 ## 테스트
 
 ```bash
-npm test     # 50개
+npm test     # 62개
 ```
 
 - `script`: 대본 검증(없는 인물, 컷에 없는 화자, 중복 id, 색·표정, 대사 길이 경계 60/61자, 화풍 흉내 거부)
@@ -133,6 +148,7 @@ npm test     # 50개
 - `characters`·`prompt`: 같은 입력이면 같은 그림, 앞머리를 얼굴보다 나중에 그리기, 외모 설명을 매 컷 그대로, 글자 금지 규칙
 - `render`: 대사·제목의 HTML 이스케이프(XSS), 컷 순서, 대체 텍스트, 이미지 API 성공·실패·잘못된 응답
 - `cli`: 인자, 종료 코드, 예제 회차 생성
+- `planning`: 영어 프롬프트(외모 설명 그대로, 글자 금지 규칙 영어, 영어 이름이 있으면 한글 없음, 영어 필드 누락 알림, 영어 화풍 흉내 거부), 콘티 표(컷당 한 줄, `|`·줄바꿈이 표를 깨지 않음), `--prompt-lang` 옵션, 기획 스킬 형식
 - `browser`(Playwright): 실제 글꼴로 그린 대사가 모두 말풍선 안에 있는지
 
 ## 주의

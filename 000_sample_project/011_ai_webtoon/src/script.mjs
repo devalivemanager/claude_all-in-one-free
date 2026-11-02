@@ -91,6 +91,26 @@ export function validateEpisode(ep) {
   return errors;
 }
 
+/**
+ * 영어 프롬프트(--prompt-lang en)를 쓸 때 필요한 영어 필드가 다 있는지 본다.
+ * style_en, characters.*.desc_en, panels[].scene_en. 한국어(ko)면 검사하지 않는다.
+ */
+export function validatePromptLang(ep, lang) {
+  if (lang !== "en") return [];
+  const errors = [];
+  if (!isText(ep.style_en)) errors.push("style_en - 영어 프롬프트에는 영어 그림 분위기 설명이 필요합니다.");
+  else if (IMITATION_PATTERNS.some((p) => p.test(ep.style_en))) {
+    errors.push("style_en - 특정 작가·작품의 화풍을 흉내 내라는 지시는 쓸 수 없습니다.");
+  }
+  for (const [id, c] of Object.entries(ep.characters ?? {})) {
+    if (!isText(c?.desc_en)) errors.push(`characters.${id}.desc_en - 영어 외모 설명이 필요합니다(컷마다 같은 문장으로 쓰임).`);
+  }
+  (ep.panels ?? []).forEach((p, i) => {
+    if (!isText(p?.scene_en)) errors.push(`panels[${i}].scene_en - 영어 장면 설명이 필요합니다.`);
+  });
+  return errors;
+}
+
 /** 파일을 읽어 검증까지 마친 대본을 돌려준다. 문제가 있으면 EpisodeError. */
 export async function loadEpisode(path) {
   let ep;

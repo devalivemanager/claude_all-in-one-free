@@ -51,12 +51,12 @@ export function renderPanelSvg(episode, panel, imageHref = null) {
  * 회차 전체를 만든다.
  * 그림 도구가 실패하면 그 컷만 코드 그림으로 대신하고 warnings 에 남긴다(조용히 넘어가지 않는다).
  */
-export async function buildEpisode(episode, painter) {
+export async function buildEpisode(episode, painter, { promptLang = "ko" } = {}) {
   const warnings = [];
   const prompts = [];
   const panels = [];
   for (const panel of episode.panels) {
-    const prompt = buildPanelPrompt(episode, panel);
+    const prompt = buildPanelPrompt(episode, panel, promptLang);
     prompts.push({ id: panel.id, prompt });
     let image = null;
     try {
@@ -98,4 +98,31 @@ ${panels.map((p) => `<figure id="${escapeXml(p.id)}">${p.svg}</figure>`).join("\
 /** 컷별 프롬프트를 사람이 읽기 좋은 마크다운으로 */
 export function promptsToMarkdown(episode, prompts) {
   return [`# ${episode.title} ${episode.episode}화 — 컷별 이미지 프롬프트`, "", ...prompts.flatMap((p) => [`## ${p.id}`, "", "```", p.prompt, "```", ""])].join("\n");
+}
+
+/** 마크다운 표 칸 안에서 표를 깨는 문자(| 와 줄바꿈)를 바꾼다 */
+function cell(text) {
+  return String(text ?? "").replace(/\|/g, "\\|").replace(/\r?\n/g, "<br>");
+}
+
+/**
+ * 사람이 검토하기 좋은 콘티 표.
+ * 컷 번호 / 연출(배경·자막·높이) / 등장·표정 / 대사 / 이미지 프롬프트
+ */
+export function buildStoryboard(episode, prompts) {
+  const promptOf = Object.fromEntries(prompts.map((p) => [p.id, p.prompt]));
+  const rows = episode.panels.map((panel, i) => {
+    const direction = [`배경 ${panel.background}`, `높이 ${panel.height}px`, panel.caption ? `자막 「${panel.caption}」` : null].filter(Boolean).join(", ");
+    const cast = (panel.cast ?? []).map((c) => `${episode.characters[c.who].name}(${c.expression})`).join(", ") || "-";
+    const lines = (panel.lines ?? []).map((l) => `${episode.characters[l.who].name}: ${l.text}`).join("\n") || "-";
+    return `| ${i + 1} (${cell(panel.id)}) | ${cell(direction)}<br>${cell(panel.scene)} | ${cell(cast)} | ${cell(lines)} | ${cell(promptOf[panel.id])} |`;
+  });
+  return [
+    `# ${episode.title} ${episode.episode}화 — 콘티`,
+    "",
+    "| 컷 | 연출 | 등장·표정 | 대사 | 이미지 프롬프트 |",
+    "|---|---|---|---|---|",
+    ...rows,
+    "",
+  ].join("\n");
 }
