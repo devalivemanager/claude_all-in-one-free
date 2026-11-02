@@ -1,0 +1,15 @@
+{
+  "name": "ai-webtoon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "대본 JSON 으로 세로 스크롤 웹툰을 만드는 교육용 CLI (코드 그림 기본, 이미지 AI 연결 가능)",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node src/cli.mjs episodes/ep01.json -o output/ep01",
+    "build:png": "node src/cli.mjs episodes/ep01.json -o output/ep01 --png",
+    "test": "node --test \"tests/*.test.mjs\""
+  }
+}

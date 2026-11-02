@@ -94,4 +94,4 @@ Copyright (c) 2026 devalive (데브얼라이브, https://devalive.tistory.com)
 | 대상 | 조건 | 할 수 있는 것 |
 |---|---|---|
 | 묶음 전체 (아래 예외 말고 전부) | [`LICENSE.txt`](LICENSE.txt) — 데브얼라이브 이용 조건 | 개인·업무에 자유롭게 쓰고 고치기, 출처를 밝히고 나눠 주기. **묶음이나 고친 판을 파는 것은 안 됨** |
-| 실습 샘플 코드 `000_sample_project/001_*`~`010_*` | [`000_sample_project/LICENSE-MIT`](000_sample_project/LICENSE-MIT) — MIT | 판매하는 결과물을 포함해 어디에든 자유롭게 사용. 저작권 표시와 MIT 문구만 남기면 됨 |
+| 실습 샘플 코드 `000_sample_project/001_*`~`011_*` | [`000_sample_project/LICENSE-MIT`](000_sample_project/LICENSE-MIT) — MIT | 판매하는 결과물을 포함해 어디에든 자유롭게 사용. 저작권 표시와 MIT 문구만 남기면 됨 |

@@ -2,17 +2,17 @@
 
 > 샘플 프로젝트 및 템플릿 공간이다. 두 가지가 들어 있다.
 > - **시작용 틀** : 새 프로젝트를 시작할 때 **폴더째 복사해서** 쓰는 틀(`CLAUDE.md`, `.claude/`, `docs/`)
-> - **실습 샘플 10개** : 클로드 코드로 실제로 만들고 테스트까지 통과시킨 예제(`001_*`~`010_*`)
+> - **실습 샘플 11개** : 클로드 코드로 실제로 만들고 테스트까지 통과시킨 예제(`001_*`~`011_*`)
 >
 > 시작용 틀은 클로드 코드를 처음 쓰는 사람(초급)부터 몇 주 써 본 사람(중급), 팀·자동화로 넓혀 쓰려는 사람(고급)까지를 대상으로 했다.
-> 무료 공개판(`claude_all-in-one-free`)의 일부이며, 이용 조건은 묶음 맨 위 `LICENSE.txt`를 따른다. 실습 샘플 코드(`001_*`~`010_*`)만 MIT(`LICENSE-MIT`)다.
+> 무료 공개판(`claude_all-in-one-free`)의 일부이며, 이용 조건은 묶음 맨 위 `LICENSE.txt`를 따른다. 실습 샘플 코드(`001_*`~`011_*`)만 MIT(`LICENSE-MIT`)다.
 
 ## 들어 있는 것
 
 ```
 000_sample_project/
 ├─ README.md                 ← 지금 읽는 파일
-├─ LICENSE-MIT               ← 실습 샘플 코드(001~010)의 라이선스
+├─ LICENSE-MIT               ← 실습 샘플 코드(001~011)의 라이선스
 ├─ CLAUDE.md                 ← 클로드가 세션마다 읽는 프로젝트 규칙(예시, 고쳐 쓴다)
 ├─ .claude/
 │  ├─ settings.example.json  ← 권한 설정 예시(비밀 파일 읽기 차단 등)
@@ -32,12 +32,12 @@
 │  ├─ 10_고급_에이전트팀과병렬작업.md
 │  ├─ 11_고급_대형작업설계와운영.md
 │  └─ structure.svg              ← 묶음 전체 구조도
-└─ 001_hr_payroll/ … 010_site_analyzer/   ← 실습 샘플 10개(아래 「실습 샘플」)
+└─ 001_hr_payroll/ … 011_ai_webtoon/   ← 실습 샘플 11개(아래 「실습 샘플」)
 ```
 
 ## 쓰는 순서
 
-1. 이 폴더를 복사해 이름을 내 프로젝트 이름으로 바꾼다. 실습 샘플 폴더(`001_*`~`010_*`)는 필요한 것만 남기고 지운다.
+1. 이 폴더를 복사해 이름을 내 프로젝트 이름으로 바꾼다. 실습 샘플 폴더(`001_*`~`011_*`)는 필요한 것만 남기고 지운다.
 2. `CLAUDE.md`의 `[채운다]` 칸을 내 프로젝트 값으로 채운다. 쓸 일이 없는 줄은 지운다.
 3. `.claude/settings.example.json`을 읽어 보고, 마음에 들면 `.claude/settings.json`으로 이름을 바꾼다.
 4. 그 폴더에서 `claude`를 실행한다. 첫 세션에서 할 일은 `docs/01_초급_첫세션.md`에 있다.
@@ -74,6 +74,7 @@
 | [008_youtube_analyzer](008_youtube_analyzer/) | 유튜브 영상을 대본·장면 캡처·보고서로 변환해 Claude가 통째로 분석 | Python · yt-dlp · ffmpeg · pytest | 65개 |
 | [009_scroll_video_hero](009_scroll_video_hero/) | 영상을 프레임으로 쪼개 스크롤에 맞춰 재생·역재생하는 랜딩 페이지 히어로 | JavaScript · ffmpeg · Canvas · node:test · Playwright | 31개 |
 | [010_site_analyzer](010_site_analyzer/) | 웹사이트 구조·기술·디자인 특징을 분석 보고서로 정리(복제 없음, robots.txt 준수) | JavaScript · Playwright · node:test | 61개 |
+| [011_ai_webtoon](011_ai_webtoon/) | 대본 JSON 으로 세로 스크롤 웹툰 만들기(코드 그림 기본, 이미지 AI 연결 가능, 말풍선은 코드로) | JavaScript · SVG · node:test · Playwright | 50개 |
 
 ### 테스트 실행
 
@@ -88,13 +89,14 @@ cd 000_sample_project/007_attendance_cli && cargo test
 cd 000_sample_project/008_youtube_analyzer && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/pytest -q
 cd 000_sample_project/009_scroll_video_hero && npm test
 cd 000_sample_project/010_site_analyzer   && npm test
+cd 000_sample_project/011_ai_webtoon      && npm test
 ```
 
 ### 참고
 
 - 급여·세금·근태 계산 규칙은 교육용으로 단순화한 것이며 실제 법정 기준과 다릅니다.
 - `006_ai_agent`를 실제로 실행하려면 `ANTHROPIC_API_KEY` 환경변수가 필요합니다. 키는 커밋하지 마세요.
-- `009`, `010`의 브라우저 테스트는 Playwright가 필요합니다. 없으면 해당 테스트만 건너뜁니다. 설치 방법은 각 README에 있습니다.
+- `009`, `010`, `011`의 브라우저 테스트는 Playwright가 필요합니다. 없으면 해당 테스트만 건너뜁니다. 설치 방법은 각 README에 있습니다.
 - `010_site_analyzer`는 내 사이트나 허락받은 사이트를 공부하는 용도입니다. 콘텐츠·이미지·로고를 복제하지 않습니다.
 - 전체 구조도 : [docs/structure.svg](docs/structure.svg)
 
@@ -103,5 +105,5 @@ cd 000_sample_project/010_site_analyzer   && npm test
 Copyright (c) 2026 devalive (데브얼라이브, https://devalive.tistory.com)
 
 - 시작용 틀(`CLAUDE.md`, `.claude/`, `docs/`) : 묶음의 [`LICENSE.txt`](../LICENSE.txt)
-- 실습 샘플 코드(`001_*`~`010_*`) : [`LICENSE-MIT`](LICENSE-MIT) — 판매하는 결과물을 포함해 자유롭게 사용 가능, 저작권 표시와 MIT 문구만 남긴다
+- 실습 샘플 코드(`001_*`~`011_*`) : [`LICENSE-MIT`](LICENSE-MIT) — 판매하는 결과물을 포함해 자유롭게 사용 가능, 저작권 표시와 MIT 문구만 남긴다
 - 급여·세금·근태 계산 등은 교육용으로 단순화한 것이라 실무에 그대로 쓰면 안 된다(보증 없음)

@@ -1,0 +1,3 @@
+# 만든 결과물(HTML·PNG)은 언제든 다시 만들 수 있으므로 커밋하지 않는다
+output/
+node_modules/
