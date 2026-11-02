@@ -5,7 +5,9 @@ import { readFile } from "node:fs/promises";
 export const EXPRESSIONS = ["neutral", "happy", "sad", "surprised", "tired"];
 export const HAIR_STYLES = ["short", "long", "bun"];
 export const BACKGROUNDS = ["office", "night", "monitor", "plain"];
-export const LIMITS = { minWidth: 360, maxWidth: 1080, minPanelHeight: 240, maxPanelHeight: 1600, maxPanels: 60, maxLineLength: 60 };
+export const LIMITS = { minWidth: 360, maxWidth: 1080, minPanelHeight: 240, maxPanelHeight: 1600, maxPanels: 60, maxLineLength: 60, maxGap: 600 };
+// 컷 다음 여백(px). 대본에 gap_after 가 없으면 이 값을 쓴다.
+export const DEFAULT_GAP = 32;
 
 // 특정 작가·작품의 그림체를 흉내 내라는 지시는 받지 않는다. 화풍은 선·색감 같은 특징으로 적는다.
 const IMITATION_PATTERNS = [/화풍/, /그림체/, /style of/i, /in the style/i];
@@ -68,6 +70,9 @@ export function validateEpisode(ep) {
       errors.push(`${at}.height - 컷 높이는 ${LIMITS.minPanelHeight}~${LIMITS.maxPanelHeight} 사이 정수여야 합니다.`);
     }
     if (!BACKGROUNDS.includes(p?.background)) errors.push(`${at}.background - ${BACKGROUNDS.join(", ")} 중 하나여야 합니다.`);
+    if (p?.gap_after !== undefined && (!Number.isInteger(p.gap_after) || p.gap_after < 0 || p.gap_after > LIMITS.maxGap)) {
+      errors.push(`${at}.gap_after - 컷 다음 여백은 0~${LIMITS.maxGap} 사이 정수(px)여야 합니다.`);
+    }
     if (!isText(p?.scene)) errors.push(`${at}.scene - 장면 설명이 필요합니다(이미지 AI 프롬프트·대체 텍스트에 쓰임).`);
 
     const cast = Array.isArray(p?.cast) ? p.cast : [];

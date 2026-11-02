@@ -3,6 +3,15 @@
 import { castPosition, drawBackground, drawCharacter } from "./characters.mjs";
 import { BUBBLE, CAPTION_HEIGHT, layoutBubbles } from "./layout.mjs";
 import { buildPanelPrompt } from "./prompt.mjs";
+import { DEFAULT_GAP } from "./script.mjs";
+
+/** 컷 다음 여백(px). 연출용 「여백 띠」: 긴장·시간 경과는 넓게, 빠른 대화는 좁게 */
+export const gapAfter = (panel) => panel.gap_after ?? DEFAULT_GAP;
+
+/** 페이지의 전체 세로 길이(컷 높이 + 컷 사이 여백). 마지막 컷 뒤 여백은 세지 않는다 */
+export function scrollLength(episode) {
+  return episode.panels.reduce((sum, p, i) => sum + p.height + (i < episode.panels.length - 1 ? gapAfter(p) : 0), 0);
+}
 
 export const FONT_FAMILY = "'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', 'WenQuanYi Zen Hei', sans-serif";
 
@@ -64,7 +73,7 @@ export async function buildEpisode(episode, painter, { promptLang = "ko" } = {})
     } catch (error) {
       warnings.push(`컷 ${panel.id}: 그림을 받지 못해 코드 그림으로 대신했습니다 - ${error.message}`);
     }
-    panels.push({ id: panel.id, svg: renderPanelSvg(episode, panel, image), bubbles: (panel.lines ?? []).length });
+    panels.push({ id: panel.id, svg: renderPanelSvg(episode, panel, image), bubbles: (panel.lines ?? []).length, gap: gapAfter(panel) });
   }
   const title = `${episode.title} ${episode.episode}화`;
   const html = `<!doctype html>
@@ -78,7 +87,7 @@ export async function buildEpisode(episode, painter, { promptLang = "ko" } = {})
   header, main, footer { max-width: ${episode.width}px; margin: 0 auto; }
   header { padding: 24px 16px 8px; }
   h1 { margin: 0; font-size: 22px; }
-  figure { margin: 0 0 32px; background: #fff; }
+  figure { margin: 0; background: #fff; }
   figure svg { display: block; width: 100%; height: auto; }
   footer { padding: 16px; color: #777; font-size: 13px; }
 </style>
@@ -86,7 +95,7 @@ export async function buildEpisode(episode, painter, { promptLang = "ko" } = {})
 <body>
 <header><h1>${escapeXml(title)}</h1></header>
 <main>
-${panels.map((p) => `<figure id="${escapeXml(p.id)}">${p.svg}</figure>`).join("\n")}
+${panels.map((p, i) => `<figure id="${escapeXml(p.id)}"${i < panels.length - 1 ? ` style="margin-bottom:${p.gap}px"` : ""}>${p.svg}</figure>`).join("\n")}
 </main>
 <footer>컷 ${panels.length}개 · 그림: ${painter.name === "svg" ? "코드 그림" : "이미지 AI"}</footer>
 </body>
@@ -112,13 +121,16 @@ function cell(text) {
 export function buildStoryboard(episode, prompts) {
   const promptOf = Object.fromEntries(prompts.map((p) => [p.id, p.prompt]));
   const rows = episode.panels.map((panel, i) => {
-    const direction = [`배경 ${panel.background}`, `높이 ${panel.height}px`, panel.caption ? `자막 「${panel.caption}」` : null].filter(Boolean).join(", ");
+    const last = i === episode.panels.length - 1;
+    const direction = [`배경 ${panel.background}`, `높이 ${panel.height}px`, last ? "마지막 컷" : `다음 여백 ${gapAfter(panel)}px`, panel.caption ? `자막 「${panel.caption}」` : null].filter(Boolean).join(", ");
     const cast = (panel.cast ?? []).map((c) => `${episode.characters[c.who].name}(${c.expression})`).join(", ") || "-";
     const lines = (panel.lines ?? []).map((l) => `${episode.characters[l.who].name}: ${l.text}`).join("\n") || "-";
     return `| ${i + 1} (${cell(panel.id)}) | ${cell(direction)}<br>${cell(panel.scene)} | ${cell(cast)} | ${cell(lines)} | ${cell(promptOf[panel.id])} |`;
   });
   return [
     `# ${episode.title} ${episode.episode}화 — 콘티`,
+    "",
+    `컷 ${episode.panels.length}개, 전체 세로 길이 ${scrollLength(episode)}px(컷 높이 + 컷 사이 여백)`,
     "",
     "| 컷 | 연출 | 등장·표정 | 대사 | 이미지 프롬프트 |",
     "|---|---|---|---|---|",

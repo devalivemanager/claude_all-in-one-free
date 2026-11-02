@@ -6,7 +6,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { main, parseArgs } from "../src/cli.mjs";
 import { buildPanelPrompt, NO_TEXT_RULE_EN } from "../src/prompt.mjs";
-import { buildStoryboard } from "../src/render.mjs";
+import { buildEpisode, buildStoryboard, scrollLength } from "../src/render.mjs";
+import { createSvgPainter } from "../src/painters.mjs";
+import { validateEpisode } from "../src/script.mjs";
 import { validatePromptLang } from "../src/script.mjs";
 import { sampleEpisode } from "./helpers.mjs";
 
@@ -77,7 +79,7 @@ describe("콘티 표", () => {
     const md = buildStoryboard(ep, [{ id: "p1", prompt: "프롬프트 내용" }]);
     const rows = md.split("\n").filter((l) => l.startsWith("| 1 "));
     assert.equal(rows.length, 1);
-    assert.match(rows[0], /배경 office, 높이 520px, 자막 「오후 7시」/);
+    assert.match(rows[0], /배경 office, 높이 520px, 마지막 컷, 자막 「오후 7시」/);
     assert.match(rows[0], /가\(happy\), 나\(neutral\)/);
     assert.match(rows[0], /가: 안녕하세요/);
     assert.match(rows[0], /프롬프트 내용/);
@@ -128,5 +130,47 @@ describe("기획 스킬", () => {
     assert.ok(text.startsWith("---\nname: webtoon-planner\ndescription: "));
     assert.ok(text.includes("node src/cli.mjs episodes/epNN.json -o output/epNN --prompt-lang en"));
     assert.ok(text.includes("끝내기 전 점검"));
+  });
+});
+
+describe("연출 여백(gap_after)", () => {
+  function threePanels(gaps) {
+    const ep = sampleEpisode();
+    const base = ep.panels[0];
+    ep.panels = ["p1", "p2", "p3"].map((id, i) => ({ ...base, id, ...(gaps[i] === undefined ? {} : { gap_after: gaps[i] }) }));
+    return ep;
+  }
+
+  it("없으면 32px, 있으면 그 값이 컷 사이 여백이 되고 마지막 컷 뒤에는 여백이 없다", async () => {
+    const { html } = await buildEpisode(threePanels([undefined, 200, 500]), createSvgPainter());
+    assert.match(html, /<figure id="p1" style="margin-bottom:32px">/);
+    assert.match(html, /<figure id="p2" style="margin-bottom:200px">/);
+    assert.match(html, /<figure id="p3"><svg/);
+  });
+
+  it("0 도 쓸 수 있다(컷을 붙여 빠른 호흡)", async () => {
+    const { html } = await buildEpisode(threePanels([0]), createSvgPainter());
+    assert.match(html, /<figure id="p1" style="margin-bottom:0px">/);
+  });
+
+  it("전체 세로 길이 = 컷 높이 합 + 마지막을 뺀 여백 합", () => {
+    assert.equal(scrollLength(threePanels([undefined, 200, 500])), 520 * 3 + 32 + 200);
+  });
+
+  it("콘티 표에 컷별 다음 여백과 전체 세로 길이가 나온다", () => {
+    const ep = threePanels([undefined, 200]);
+    const md = buildStoryboard(ep, ep.panels.map((p) => ({ id: p.id, prompt: "x" })));
+    assert.match(md, /전체 세로 길이 1792px/);
+    assert.match(md, /\| 2 \(p2\) \| 배경 office, 높이 520px, 다음 여백 200px/);
+    assert.match(md, /\| 3 \(p3\) \| 배경 office, 높이 520px, 마지막 컷/);
+  });
+
+  it("음수·600 초과·소수는 거부, 0 과 600 은 통과(경계)", () => {
+    for (const bad of [-1, 601, 10.5, "40"]) {
+      assert.ok(validateEpisode(threePanels([bad])).some((e) => e.startsWith("panels[0].gap_after")), String(bad));
+    }
+    for (const ok of [0, 600]) {
+      assert.deepEqual(validateEpisode(threePanels([ok])).filter((e) => e.includes("gap_after")), [], String(ok));
+    }
   });
 });

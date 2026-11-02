@@ -48,6 +48,7 @@
       "id": "p1",
       "height": 480,
       "background": "office",
+      "gap_after": 24,
       "caption": "금요일 오후 5시 50분",
       "scene": "사무실, 한나가 자리에서 두 팔을 들고 기뻐한다",
       "scene_en": "office, Hana raises both arms in joy at her desk",
@@ -69,6 +70,7 @@
       "id": "p2",
       "height": 520,
       "background": "office",
+      "gap_after": 160,
       "scene": "인사팀 미소가 놀란 얼굴로 한나에게 다가온다",
       "scene_en": "Miso from HR walks up to Hana with a surprised face",
       "cast": [
@@ -94,6 +96,7 @@
       "id": "p3",
       "height": 400,
       "background": "monitor",
+      "gap_after": 48,
       "caption": "과세 대상액 1,000,050원",
       "scene": "모니터 화면에 계산 결과가 떠 있고 한 줄만 빨갛게 표시되어 있다",
       "scene_en": "close-up of a monitor showing calculation results, only one line highlighted in red"
@@ -102,6 +105,7 @@
       "id": "p4",
       "height": 480,
       "background": "office",
+      "gap_after": 16,
       "scene": "한나가 모니터 앞에서 시무룩하게 고개를 갸웃한다",
       "scene_en": "Hana tilts her head sadly in front of the monitor",
       "cast": [
@@ -122,6 +126,7 @@
       "id": "p5",
       "height": 600,
       "background": "office",
+      "gap_after": 200,
       "scene": "팀장 도윤이 한나의 자리 옆에 서서 차분하게 설명한다",
       "scene_en": "team lead Doyun stands next to Hana's desk and calmly explains",
       "cast": [
