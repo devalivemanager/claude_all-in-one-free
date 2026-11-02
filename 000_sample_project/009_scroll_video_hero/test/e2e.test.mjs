@@ -130,6 +130,75 @@ describe('스크롤 스크러빙 E2E', { skip: skipReason }, () => {
     await context.close();
   });
 
+  // README 4번: 이벤트에서는 예약만, 그리기는 화면 갱신당 한 번. 프레임 번호가 같으면 다시 그리지 않는다.
+  test('스크롤 이벤트가 몰려도 한 번만 그리고, 프레임 번호가 같으면 다시 그리지 않는다', async () => {
+    const context = await browser.newContext({ viewport: VIEWPORT });
+    const page = await context.newPage();
+    await page.addInitScript(() => {
+      const original = CanvasRenderingContext2D.prototype.drawImage;
+      window.__draws = 0;
+      CanvasRenderingContext2D.prototype.drawImage = function (...args) {
+        window.__draws += 1;
+        return original.apply(this, args);
+      };
+    });
+    await page.goto(baseUrl);
+    await page.waitForSelector('body[data-hero-ready="true"]');
+    await page.waitForTimeout(100);
+
+    const before = await page.evaluate(() => window.__draws);
+    await page.evaluate(() => window.scrollTo(0, 1)); // 1px 는 같은 프레임
+    await page.waitForTimeout(100);
+    assert.equal(await page.evaluate(() => window.__draws), before, '같은 프레임인데 다시 그림');
+
+    const burst = await page.evaluate(async () => {
+      const start = window.__draws;
+      for (let y = 0; y < 100; y += 1) {
+        window.scrollTo(0, 400 + y * 3);
+        window.dispatchEvent(new Event('scroll'));
+      }
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      return window.__draws - start;
+    });
+    assert.equal(burst, 1, `스크롤 100번에 ${burst}번 그림`);
+    await context.close();
+  });
+
+  // README 6번(진행률 표시)과 hero.js 주석(실패해도 전체 로딩이 멈추지 않음)
+  test('프레임 하나를 받지 못해도 로딩이 끝까지 진행되고 진행률을 보여 준다', async () => {
+    const context = await browser.newContext({ viewport: VIEWPORT });
+    const page = await context.newPage();
+    await page.route('**/frames/f_0002.jpg', (route) => route.abort());
+    const texts = new Set();
+    await page.exposeFunction('__loaderText', (text) => texts.add(text));
+    await page.addInitScript(() => {
+      new MutationObserver(() => {
+        const el = document.getElementById('hero-loader-text');
+        if (el) window.__loaderText(el.textContent);
+      }).observe(document, { subtree: true, childList: true, characterData: true });
+    });
+    await page.goto(baseUrl);
+    await page.waitForSelector('body[data-hero-ready="true"]', { timeout: 5000 });
+    await page.waitForTimeout(100);
+    assert.ok(texts.has(`프레임 불러오는 중… ${frameCount} / ${frameCount}`), `마지막 진행률 문구 없음: ${[...texts].join(', ')}`);
+    await context.close();
+  });
+
+  // README 7번: 움직임 줄이기면 첫 프레임만 받고, 긴 스크롤 구간도 없앤다.
+  test('움직임 줄이기면 첫 프레임 한 장만 받고, 히어로가 화면 한 개 높이다', async () => {
+    const context = await browser.newContext({ viewport: VIEWPORT, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    const requested = [];
+    page.on('request', (req) => /f_\d{4}\.jpg/.test(req.url()) && requested.push(req.url()));
+    await page.goto(baseUrl);
+    await page.waitForSelector('body[data-hero-ready="true"]');
+    const heroHeight = await page.evaluate(() => document.getElementById('hero').getBoundingClientRect().height);
+    assert.equal(requested.length, 1);
+    assert.ok(requested[0].endsWith('f_0001.jpg'));
+    assert.equal(heroHeight, VIEWPORT.height);
+    await context.close();
+  });
+
   test('모바일 화면에서도 스크롤하면 마지막 프레임까지 재생된다', async () => {
     const { context, page, errors } = await openPage({
       viewport: { width: 390, height: 844 },
