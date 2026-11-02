@@ -1,4 +1,4 @@
-# 유튜브 자막 원문은 저작물이다. 평문(transcripts/plain/ 등)은 올리지 않고 변환본(*.txt.eo)만 올린다(CLAUDE.md 「유튜브 자막」).
+# 유튜브 자막 원문은 저작물이다. 평문(transcripts/plain/ 등)은 올리지 않고 데발링보 변환본(*.txt.dvl)만 올린다(CLAUDE.md 「유튜브 자막」).
 transcripts/*
-!transcripts/*.txt.eo
+!transcripts/*.txt.dvl
 !transcripts/README.md
