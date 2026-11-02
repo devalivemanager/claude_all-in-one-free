@@ -34,11 +34,11 @@
 
 클라우드 서버 IP는 유튜브 봇 확인(「Sign in to confirm」)에 자주 막힌다. 받는 일은 사용자 PC(로컬)가 하고, 클라우드는 분석만 맡는다.
 
-- 자막 원문은 저작물이므로 공개 저장소에 평문으로 두지 않는다. 우리만의 공용 번역 도구(`tools/transcripts.sh`, age 암호화)로 **커밋할 때 자동 잠금, 받을 때 자동 풀기**를 한다. 사용법은 `transcripts/README.md`.
+- 자막 원문이 공개 저장소에서 평문으로 보이지 않게, 우리만의 공용 번역기(`tools/transcripts.sh`, 고정 변환 gzip + base64)로 **커밋할 때 자동 변환, 받을 때 자동 풀기**를 한다. 저장소에는 `transcripts/<영상ID>.txt.eo` 만 올라간다. 사용법은 `transcripts/README.md`.
+- 가림막이지 보안 장치가 아니다(저장소를 받은 누구나 풀 수 있다). 분석에 필요한 자막만 두고, 다 쓴 자막은 지운다.
 - 작업을 시작할 때 `tools/transcripts.sh setup` 으로 훅을 켠다(클론마다 한 번). 평문은 `transcripts/plain/`(git 제외)에만 있다.
-- 비밀키는 환경변수 `TRANSCRIPT_AGE_KEY` 로만 받는다. 파일·저장소·채팅에 쓰지 않는다.
-- 분석할 때는 먼저 `transcripts/plain/<영상ID>.txt`(없으면 `transcripts/<영상ID>.txt.age`)가 있는지 확인하고, 있으면 그 자막으로 분석한다.
+- 분석할 때는 먼저 `transcripts/plain/<영상ID>.txt` 가 있는지 확인하고, 있으면 그 자막으로 분석한다.
 - 없으면 자막 받기를 영상마다 1번만 시도한다.
 - 「Sign in to confirm」이 나오면 재시도하지 않는다. 같은 환경의 재시도는 효과가 없다.
 - 쿠키, 프록시, 봇 확인 우회는 쓰지 않는다.
-- 실패하면 영상 ID 목록을 보고하고, 로컬에서 받아 `transcripts/plain/<영상ID>.txt` 로 커밋(자동 잠금)하거나 대본을 붙여 달라고 요청한다.
+- 실패하면 영상 ID 목록을 보고하고, 로컬에서 받아 `transcripts/plain/<영상ID>.txt` 로 커밋(자동 변환)하거나 대본을 붙여 달라고 요청한다.

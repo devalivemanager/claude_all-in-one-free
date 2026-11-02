@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 커밋 전: plain/ 의 자막을 자동으로 잠그고, transcripts/ 에 암호문만 올라가는지 검사한다.
+# 커밋 전: plain/ 의 자막을 자동으로 변환하고, transcripts/ 에 변환본만 올라가는지 검사한다.
 set -e
 T="$(git rev-parse --show-toplevel)/tools/transcripts.sh"
 "$T" sync-enc
