@@ -19,7 +19,7 @@
 ## 기술 스택
 
 - Node.js 22 (외부 의존성 없음)
-- 테스트: `node:test` 67개 (브라우저 테스트 2개는 Playwright 가 있을 때만)
+- 테스트: `node:test` 76개 (브라우저 테스트 2개는 Playwright 가 있을 때만)
 - PNG 저장(`--png`)과 브라우저 테스트: Playwright (전역 설치본 사용, 없으면 해당 기능만 안내 후 건너뜀)
 
 ## 폴더 구조
@@ -35,7 +35,7 @@
 │   ├── layout.mjs       # 말풍선 배치(화자 위, 읽는 순서, 겹침 없음)
 │   ├── characters.mjs   # 설정표로 캐릭터·배경 그리기
 │   ├── prompt.mjs       # 컷별 이미지 AI 프롬프트
-│   ├── painters.mjs     # 그림 도구: svg(기본) / api(이미지 AI)
+│   ├── painters.mjs     # 그림 도구: svg(기본) / api(이미지 AI) / files(그림 파일 폴더)
 │   ├── render.mjs       # 컷 SVG·회차 HTML 만들기
 │   └── browser.mjs      # Playwright 불러오기
 └── tests/               # 단위·CLI·브라우저 테스트
@@ -49,7 +49,7 @@ npm run build          # output/ep01/index.html, prompts.md
 npm run build:png      # 위 + output/ep01/webtoon.png (Playwright 필요)
 
 # 직접 실행
-node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api] [--prompt-lang ko|en]
+node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api] [--images 그림폴더] [--prompt-lang ko|en]
 ```
 
 출력 예시:
@@ -62,7 +62,7 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api] [
 | 파일 | 내용 |
 |---|---|
 | `index.html` | 세로 스크롤 웹툰. 컷마다 장면 설명이 대체 텍스트(`aria-label`)로 붙는다 |
-| `prompts.md` | 컷별 이미지 AI 프롬프트. 다른 그림 도구에 붙여 넣어 쓸 수도 있다. `--prompt-lang en` 이면 영어(미드저니 등에 맞춤) |
+| `prompts.md` | 컷별 이미지 AI 프롬프트와 그림 크기·파일 이름. 다른 그림 도구에 붙여 넣어 쓸 수도 있다. `--prompt-lang en` 이면 영어(미드저니 등에 맞춤) |
 | `storyboard.md` | 콘티 표 : 컷 / 연출(배경·높이·다음 여백·자막·장면) / 등장·표정 / 대사 / 이미지 프롬프트, 맨 위에 전체 세로 길이. 사람이 검토하기 좋게 |
 | `webtoon.png` | `--png` 를 주면 페이지 전체 캡처 |
 
@@ -109,7 +109,7 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api] [
 4. 검증: `node src/cli.mjs episodes/epNN.json -o output/epNN --prompt-lang en` 이 「경고 0건」으로 끝날 때까지
 5. `storyboard.md` 를 보고 사람이 고칠 점을 준다
 
-이미지 AI(미드저니 등)를 쓸 때는 `prompts.md` 의 영어 프롬프트를 컷마다 붙여 넣고, 받은 그림은 `--painter api` 어댑터로 연결하거나 손으로 컷에 넣는다. 말풍선은 이 도구가 코드로 얹는다.
+이미지 AI(미드저니 등)를 쓸 때는 `prompts.md` 의 영어 프롬프트를 컷마다 붙여 넣고, 받은 그림은 `--images` 로 넣거나(아래) `--painter api` 어댑터로 연결한다. 말풍선은 이 도구가 코드로 얹는다.
 
 ## 연출 규칙 (여백 띠와 세로 호흡)
 
@@ -131,6 +131,26 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 [--png] [--painter svg|api] [
 - 모든 말풍선은 그 컷 인물의 머리보다 위에 있어야 한다. 자리가 모자라면 어느 컷인지, 몇 px 가 필요한지 알려 주고 멈춘다.
 - 같은 사람이 연달아 말하면 마지막 말풍선에만 꼬리를 단다.
 - 글자 폭은 추정값(한글 1, 영숫자 0.55, 공백 0.3 배)이다. 실제 글꼴로 그렸을 때 넘치지 않는지는 브라우저 테스트가 확인한다.
+
+## 직접 만든 그림 넣기 (`--images`)
+
+시나리오·연출은 코드 그림 콘티로 먼저 확정하고, 그래픽은 나중에 바꿔 끼우는 흐름입니다.
+
+1. `prompts.md` 를 연다. 컷마다 프롬프트, 그림 크기(예: `크기 720×480px`), 파일 이름(예: `p1.png`)이 적혀 있다.
+2. 쓰는 이미지 AI 에 컷별 프롬프트를 넣어 그림을 받는다.
+3. 받은 그림을 컷 id 이름으로 한 폴더에 모은다: `art/p1.png`, `art/p2.jpg` …
+4. 실행한다.
+
+```bash
+node src/cli.mjs episodes/ep01.json -o output/ep01 --images art --png
+```
+
+- 찾는 순서: `<컷 id>.png` → `.jpg` → `.jpeg` → `.webp`. 형식은 확장자가 아니라 **파일 앞부분**으로 확인한다(PNG·JPEG·WebP 만, 파일 하나 최대 10MB).
+- 그림이 없는 컷, 같은 컷 파일이 여러 개인 경우, 이미지가 아닌 파일은 그 컷만 코드 그림으로 대신하고 `경고:` 로 알린다. 일부 컷만 먼저 넣어 볼 수 있다.
+- 크기가 다르면 가운데를 기준으로 잘라 컷에 맞춘다. 컷 크기대로 받는 것이 가장 좋다.
+- 말풍선 꼬리는 대본의 인물 위치(`cast[].x`)를 가리킨다. 프롬프트의 「위치: 왼쪽/오른쪽」대로 인물이 그려졌는지 확인하고, 다르면 그림을 다시 받거나 대본의 `x` 를 그림에 맞춘다.
+- 컷 id 는 파일 이름으로 쓰이므로 영문·숫자·`_`·`-` 만 쓴다(폴더 밖 파일을 읽지 않기 위해).
+- `--painter api` 와 함께 쓸 수 없다. 받은 그림 폴더는 저작권·라이선스를 확인하기 전에는 커밋하지 않는다.
 
 ## 이미지 AI 연결 (`--painter api`)
 
@@ -155,7 +175,7 @@ node src/cli.mjs episodes/ep01.json -o output/ep01 --painter api
 ## 테스트
 
 ```bash
-npm test     # 67개
+npm test     # 76개
 ```
 
 - `script`: 대본 검증(없는 인물, 컷에 없는 화자, 중복 id, 색·표정, 대사 길이 경계 60/61자, 화풍 흉내 거부)
@@ -163,6 +183,7 @@ npm test     # 67개
 - `characters`·`prompt`: 같은 입력이면 같은 그림, 앞머리를 얼굴보다 나중에 그리기, 외모 설명을 매 컷 그대로, 글자 금지 규칙
 - `render`: 대사·제목의 HTML 이스케이프(XSS), 컷 순서, 대체 텍스트, 이미지 API 성공·실패·잘못된 응답
 - `cli`: 인자, 종료 코드, 예제 회차 생성
+- `images`: 그림 파일 넣기(형식은 내용으로 판별, 확장자와 내용이 달라도 내용 기준, 없음·중복·이미지 아님·10MB 초과는 경고 후 코드 그림, 정확히 10MB 통과, 위험한 컷 id 는 폴더 밖을 읽지 않음, `prompts.md` 의 크기·파일 이름, CLI 인자·6컷 중 5컷만 있을 때 경고 1건·폴더 없음 종료 코드 1)
 - `planning`: 영어 프롬프트(외모 설명 그대로, 글자 금지 규칙 영어, 영어 이름이 있으면 한글 없음, 영어 필드 누락 알림, 영어 화풍 흉내 거부), 콘티 표(컷당 한 줄, `|`·줄바꿈이 표를 깨지 않음), `--prompt-lang` 옵션, 기획 스킬 형식, 연출 여백(기본 32·지정값·0 허용·마지막 컷 뒤 없음·전체 세로 길이·경계 0/600 통과, -1/601/소수/문자 거부)
 - `browser`(Playwright): 실제 글꼴로 그린 대사가 모두 말풍선 안에 있는지
 

@@ -15,7 +15,7 @@ const EP01 = new URL("../episodes/ep01.json", import.meta.url).pathname;
 
 describe("CLI", () => {
   it("인자 해석", () => {
-    assert.deepEqual(parseArgs(["a.json", "-o", "out", "--png"]), { input: "a.json", out: "out", png: true, painter: "svg", promptLang: "ko" });
+    assert.deepEqual(parseArgs(["a.json", "-o", "out", "--png"]), { input: "a.json", out: "out", png: true, painter: "svg", promptLang: "ko", images: null });
     assert.throws(() => parseArgs(["a.json"]), /-o/);
     assert.throws(() => parseArgs(["a.json", "-o", "x", "--painter", "dall"]), /svg 또는 api/);
   });

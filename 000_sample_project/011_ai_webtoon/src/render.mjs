@@ -97,16 +97,25 @@ export async function buildEpisode(episode, painter, { promptLang = "ko" } = {})
 <main>
 ${panels.map((p, i) => `<figure id="${escapeXml(p.id)}"${i < panels.length - 1 ? ` style="margin-bottom:${p.gap}px"` : ""}>${p.svg}</figure>`).join("\n")}
 </main>
-<footer>컷 ${panels.length}개 · 그림: ${painter.name === "svg" ? "코드 그림" : "이미지 AI"}</footer>
+<footer>컷 ${panels.length}개 · 그림: ${PAINTER_LABELS[painter.name] ?? painter.name}</footer>
 </body>
 </html>
 `;
   return { html, warnings, prompts, panelCount: panels.length, bubbleCount: panels.reduce((s, p) => s + p.bubbles, 0) };
 }
 
-/** 컷별 프롬프트를 사람이 읽기 좋은 마크다운으로 */
+const PAINTER_LABELS = { svg: "코드 그림", api: "이미지 AI", files: "그림 파일" };
+
+/** 컷별 프롬프트를 사람이 읽기 좋은 마크다운으로. 컷마다 그림 크기와 --images 용 파일 이름을 함께 적는다 */
 export function promptsToMarkdown(episode, prompts) {
-  return [`# ${episode.title} ${episode.episode}화 — 컷별 이미지 프롬프트`, "", ...prompts.flatMap((p) => [`## ${p.id}`, "", "```", p.prompt, "```", ""])].join("\n");
+  const heights = Object.fromEntries(episode.panels.map((p) => [p.id, p.height]));
+  return [
+    `# ${episode.title} ${episode.episode}화 — 컷별 이미지 프롬프트`,
+    "",
+    "받은 그림은 컷 id 이름(예: p1.png)으로 한 폴더에 모아 `--images <폴더>` 로 넣는다. 크기가 다르면 가운데를 기준으로 잘라 맞춘다.",
+    "",
+    ...prompts.flatMap((p) => [`## ${p.id}`, "", `크기 ${episode.width}×${heights[p.id]}px · 파일 이름 \`${p.id}.png\``, "", "```", p.prompt, "```", ""]),
+  ].join("\n");
 }
 
 /** 마크다운 표 칸 안에서 표를 깨는 문자(| 와 줄바꿈)를 바꾼다 */
