@@ -92,7 +92,7 @@ describe("그림 파일 넣기(--images)", () => {
 
   it("prompts.md 에 컷별 크기와 파일 이름을 적는다", () => {
     const md = promptsToMarkdown(sampleEpisode(), [{ id: "p1", prompt: "장면" }]);
-    assert.match(md, /^크기 720×520px · 파일 이름 `p1\.png`$/m);
+    assert.match(md, /^비율 4:3 · 크기 720×520px · 파일 이름 `p1\.png`$/m);
     assert.match(md, /--images <폴더>/);
   });
 

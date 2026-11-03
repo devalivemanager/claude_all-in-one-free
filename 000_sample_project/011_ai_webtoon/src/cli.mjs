@@ -77,7 +77,7 @@ export async function main(argv, env = process.env, log = console) {
     await mkdir(outDir, { recursive: true });
     const htmlPath = join(outDir, "index.html");
     await writeFile(htmlPath, result.html, "utf8");
-    await writeFile(join(outDir, "prompts.md"), promptsToMarkdown(episode, result.prompts), "utf8");
+    await writeFile(join(outDir, "prompts.md"), promptsToMarkdown(episode, result.prompts, opts.promptLang), "utf8");
     await writeFile(join(outDir, "storyboard.md"), buildStoryboard(episode, result.prompts), "utf8");
     if (opts.png) await screenshot(htmlPath, join(outDir, "webtoon.png"), episode.width);
     for (const w of result.warnings) log.error(`경고: ${w}`);

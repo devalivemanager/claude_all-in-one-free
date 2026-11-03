@@ -2,7 +2,7 @@
 // 대사·제목 등 사람이 쓴 글자는 모두 이스케이프한다(대본에 <script> 가 들어 있어도 글자로만 보이게).
 import { castPosition, drawBackground, drawCharacter } from "./characters.mjs";
 import { BUBBLE, CAPTION_HEIGHT, layoutBubbles } from "./layout.mjs";
-import { buildPanelPrompt } from "./prompt.mjs";
+import { buildCharacterSheetPrompt, buildPanelPrompt, nearestRatio } from "./prompt.mjs";
 import { DEFAULT_GAP } from "./script.mjs";
 
 /** 컷 다음 여백(px). 연출용 「여백 띠」: 긴장·시간 경과는 넓게, 빠른 대화는 좁게 */
@@ -106,15 +106,24 @@ ${panels.map((p, i) => `<figure id="${escapeXml(p.id)}"${i < panels.length - 1 ?
 
 const PAINTER_LABELS = { svg: "코드 그림", api: "이미지 AI", files: "그림 파일" };
 
-/** 컷별 프롬프트를 사람이 읽기 좋은 마크다운으로. 컷마다 그림 크기와 --images 용 파일 이름을 함께 적는다 */
-export function promptsToMarkdown(episode, prompts) {
+/**
+ * 이미지 AI 작업용 마크다운: 1) 캐릭터 기준 그림 프롬프트 2) 컷별 프롬프트(비율·크기·파일 이름).
+ * 따라 하는 순서는 docs/실제그림_따라하기.md
+ */
+export function promptsToMarkdown(episode, prompts, lang = "ko") {
   const heights = Object.fromEntries(episode.panels.map((p) => [p.id, p.height]));
   return [
-    `# ${episode.title} ${episode.episode}화 — 컷별 이미지 프롬프트`,
+    `# ${episode.title} ${episode.episode}화 — 이미지 프롬프트`,
     "",
-    "받은 그림은 컷 id 이름(예: p1.png)으로 한 폴더에 모아 `--images <폴더>` 로 넣는다. 크기가 다르면 가운데를 기준으로 잘라 맞춘다.",
+    "1) 캐릭터 기준 그림을 먼저 만들고, 2) 컷 그림을 받을 때 그 그림을 참조 이미지로 함께 넣는다.",
+    "받은 컷 그림은 컷 id 이름(예: p1.png)으로 한 폴더에 모아 `--images <폴더>` 로 넣는다. 비율이 조금 달라도 가운데를 기준으로 잘라 맞춘다.",
     "",
-    ...prompts.flatMap((p) => [`## ${p.id}`, "", `크기 ${episode.width}×${heights[p.id]}px · 파일 이름 \`${p.id}.png\``, "", "```", p.prompt, "```", ""]),
+    "## 1) 캐릭터 기준 그림",
+    "",
+    ...Object.keys(episode.characters).flatMap((who) => [`### ${who}`, "", `비율 2:3 · 파일 이름 \`ref_${who}.png\`(참조용, --images 폴더에 넣지 않는다)`, "", "```", buildCharacterSheetPrompt(episode, who, lang), "```", ""]),
+    "## 2) 컷 그림",
+    "",
+    ...prompts.flatMap((p) => [`### ${p.id}`, "", `비율 ${nearestRatio(episode.width, heights[p.id])} · 크기 ${episode.width}×${heights[p.id]}px · 파일 이름 \`${p.id}.png\``, "", "```", p.prompt, "```", ""]),
   ].join("\n");
 }
 

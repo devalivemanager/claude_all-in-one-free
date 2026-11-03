@@ -33,7 +33,7 @@ describe("CLI", () => {
     const html = await readFile(join(out, "index.html"), "utf8");
     const prompts = await readFile(join(out, "prompts.md"), "utf8");
     assert.equal((html.match(/<figure /g) ?? []).length, 6);
-    assert.equal((prompts.match(/^## p\d/gm) ?? []).length, 6);
+    assert.equal((prompts.match(/^### p\d/gm) ?? []).length, 6); // 컷 그림은 「2) 컷 그림」 아래 ### 제목
     assert.match(io.out.at(-1), /컷 6개, 말풍선 8개, 경고 0건/);
   });
 
