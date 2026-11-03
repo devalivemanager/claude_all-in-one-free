@@ -1,5 +1,5 @@
 {
-  "_설명": "docs/08_고급_훅과권한설계.md 의 훅 예시. 읽어 보고 필요한 것만 .claude/settings.json 의 hooks 에 옮긴다. 명령은 내 권한으로 실행되니 한 줄씩 확인하고 쓴다.",
+  "_설명": "docs/08_고급_훅과권한설계.md 의 훅 예시. 읽어 보고 필요한 것만 .claude/settings.json 의 hooks 에 옮긴다. 훅은 내 권한으로 실행되니 스크립트를 한 줄씩 읽고 쓴다. 바꾼 뒤에는 bash .claude/hooks/test-hooks.sh 로 시험한다.",
   "hooks": {
     "PreToolUse": [
       {
@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command // empty' | grep -qE '(^|[^.[:alnum:]_])\\.env($|[^[:alnum:]_])' && { echo '.env 파일은 다루지 않는다(CLAUDE.md 2절). 비밀값이 필요하면 사람에게 물어라.' >&2; exit 2; } || exit 0"
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-env.sh\""
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo '커밋 안 된 변경이 있다. git status 로 확인하고, 끝난 작업이면 커밋하거나 남겨 둔 이유를 보고하라.' >&2; exit 2; fi"
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/stop-uncommitted.sh\""
           }
         ]
       }

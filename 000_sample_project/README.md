@@ -17,6 +17,7 @@
 ├─ .claude/
 │  ├─ settings.example.json  ← 권한 설정 예시(비밀 파일 읽기 차단 등)
 │  ├─ settings.hooks.example.json ← 훅 예시(고급, docs/08)
+│  ├─ hooks/                 ← 훅 스크립트와 자체 시험(bash .claude/hooks/test-hooks.sh)
 │  ├─ agents/reviewer.md     ← 서브에이전트 예시 : 읽기 전용 검토자
 │  └─ skills/done-check/     ← 스킬 예시 : 「다 했다」고 말하기 전 점검표
 ├─ docs/
