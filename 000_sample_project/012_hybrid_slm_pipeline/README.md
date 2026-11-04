@@ -23,9 +23,9 @@ output/blog · output/scenario · output/reports   ← 게시는 사람이 확�
 ## 기술 스택
 
 - Python 3.11 이상, **표준 라이브러리만** 사용(설치할 패키지 없음)
-- PC: [Ollama](https://ollama.com) + 작은 모델(예: 자료에 나온 `[삭제]`)
+- PC: [Ollama](https://ollama.com) + 무료 + 상업 이용이 확인된 작은 모델(기본값 없음, 아래 「로컬 모델 고르기」)
 - 2단계: Claude Code CLI(`claude`)
-- 테스트: `unittest` 28개 — **가짜 Ollama 서버**로 돌아서 Ollama 없이도 된다
+- 테스트: `unittest` 29개 — **가짜 Ollama 서버**로 돌아서 Ollama 없이도 된다
 
 ## 폴더 구조
 
@@ -49,8 +49,8 @@ output/blog · output/scenario · output/reports   ← 게시는 사람이 확�
 ```bash
 # 0) Ollama 준비: 모델 이름은 ollama list 로 확인한다
 ollama serve                                   # 다른 창에서 켜 둔다
-ollama pull [삭제]          # 또는 쓰고 싶은 작은 모델
-export SLM_MODEL=[삭제]      # Windows PowerShell: $env:SLM_MODEL="..."
+ollama pull <모델 이름>                         # 「로컬 모델 고르기」를 통과한 모델
+export SLM_MODEL=<모델 이름>                    # Windows PowerShell: $env:SLM_MODEL="..."  (정하지 않으면 안내하고 멈춘다)
 
 # 1) 실행
 cd 000_sample_project/012_hybrid_slm_pipeline
@@ -62,7 +62,7 @@ python -m pipeline.run_hybrid_pipeline --input data/samples/comments_sample.json
 ```
 | 단계 | 수행 | 실측 | 결과물 |
 |---|---|---|---|
-| 1 전처리 | 로컬 [삭제] | 호출 2회, 생성 40 토큰, 200.0 토큰/초(실측), 분류 실패 0건 | data/processed/clean_data.json |
+| 1 전처리 | 로컬 example-small-model | 호출 2회, 생성 40 토큰, 200.0 토큰/초(실측), 분류 실패 0건 | data/processed/clean_data.json |
 | 2 작성 | 사람이 클로드 코드에 전달 | - | output/prompts/2026-11-02_blog-writer_instruction.md |
 ```
 
@@ -83,7 +83,7 @@ python -m pipeline.run_hybrid_pipeline --input data/samples/comments_sample.json
   "schema_version": 1,
   "created_at": "2026-11-02T13:00:00+00:00",
   "source": {"file": "comments_sample.json", "items": 6},
-  "model": "[삭제]",
+  "model": "example-small-model",
   "classification": {
     "counts": {"칭찬": 2, "기능문의": 2, "오류제보": 1, "기타": 1},
     "items": [{"index": 0, "text": "…", "category": "칭찬"}],
@@ -101,10 +101,10 @@ python -m pipeline.run_hybrid_pipeline --input data/samples/comments_sample.json
 ## 테스트
 
 ```bash
-python -m unittest discover -s tests -t .     # 28개, Ollama 없이 가짜 서버로
+python -m unittest discover -s tests -t .     # 29개, Ollama 없이 가짜 서버로
 ```
 
-- 연결: 모델 설치 확인(`:latest` 태그 포함), 모델 없음 → `ollama pull` 안내, 서버 없음 → `ollama serve` 안내, JSON 형식·한국어 규칙·temperature 0 을 보내는지, JSON 이 아닌 답은 실패, 실측값 계산
+- 연결: 모델을 정하지 않으면 서버에 묻기 전에 안내하고 멈춤, 모델 설치 확인(`:latest` 태그 포함), 모델 없음 → `ollama pull` 안내, 서버 없음 → `ollama serve` 안내, JSON 형식·한국어 규칙·temperature 0 을 보내는지, JSON 이 아닌 답은 실패, 실측값 계산
 - 개인정보: 링크·메일·전화·아이디 가리기, 작성자 필드 버리기
 - 집계: 모든 출현을 정확히, 겹치는 경우 두 번 세지 않기
 - 분류: 정상, 모르는 분류·빠진 항목·망가진 응답은 실패, 10개씩 나눠 보내도 번호가 맞는지
@@ -122,14 +122,13 @@ python -m unittest discover -s tests -t .     # 28개, Ollama 없이 가짜 서�
 | 2. 크기 대 내 메모리 | 모델 파일이 내 PC 메모리(그래픽 메모리 또는 RAM)에 여유 있게 들어감 | 「공개됐다」만 보고 고르지 않는다. 한 번에 일부만 쓰는 모델도 전체를 메모리에 올려야 한다 |
 | 3. 내 과제로 시험 | `--keywords` 를 넣고 돌려 **분류 실패 건수**와 **실측 토큰/초**를 본다(이 파이프라인이 기록한다) | 남의 비교표 1등이라도 내 댓글 분류에서 실패가 많으면 쓰지 않는다 |
 
-- 판정을 모아 둔 표 : [`999_document/04_무료·상업이용_도구/무료·상업이용_도구목록.md`](../../999_document/04_무료·상업이용_도구/무료·상업이용_도구목록.md)(예: [삭제]·7B 는 Apache 2.0 ✅. 같은 계열이라도 크기마다 라이선스가 다를 수 있어 모델마다 확인한다). 이 표는 중국 회사·기관이 만든 모델에 〔중국 계열〕을 붙이고, 같은 용도의 다른 후보를 먼저 쓰게 한다. 1단계는 데이터가 밖으로 나가지 않는 로컬 실행이지만, 고유정보·개인정보를 거르는 판정이면 중국 계열 모델 하나에만 맡기지 않는다
-- 예시 모델 `[삭제]` 는 아직 1번을 확인하지 못했고, **만든 곳도 확인하지 못했다**(이름이 중국 [삭제]의 「[삭제](Spark)」와 같다). 확인 전에는 수익용 결과물에 쓰지 않고, 도구표의 대체 후보를 먼저 시험한다.
+- 판정을 모아 둔 표 : [`999_document/04_무료·상업이용_도구/무료·상업이용_도구목록.md`](../../999_document/04_무료·상업이용_도구/무료·상업이용_도구목록.md). 같은 계열이라도 크기마다 라이선스가 다를 수 있어 모델마다 확인한다. **중국 회사·기관이 만든 모델은 쓰지 않는다**(도구표 기준)
+- 그래서 기본 모델을 두지 않았다. `SLM_MODEL` 을 정하지 않으면 실행기가 이 표를 보라고 안내하고 종료 코드 1로 멈춘다(파일은 만들지 않는다).
 - 이 파이프라인의 결과를 남에게 「모델 API」로 빌려주는 것은 아니지만, 라이선스에 따라 「결과물을 파는 것」과 「모델을 서비스로 제공하는 것」의 조건이 다를 수 있다. 원문에서 둘을 나눠 읽는다.
 
 ## 확인하지 못한 것 (PC 에서 직접 재서 채운다)
 
 - 이 클라우드 환경에는 Ollama 가 없어서 **실제 작은 모델의 속도·분류 품질은 재지 않았다.** README 의 숫자는 가짜 서버 값이다.
-- `[삭제]` 가 Ollama 에 그 이름으로 있는지, **상업적으로 써도 되는 라이선스인지** 확인하지 못했다. 쓰기 전에 모델 페이지에서 확인한다.
 - `claude -p` 가 표준 입력으로 지시를 받는 것은 이 환경에서 짧은 지시로 확인했다(답 `5`, 종료 코드 0). 실제 블로그 글 품질은 확인하지 않았다.
 
 ## 주의

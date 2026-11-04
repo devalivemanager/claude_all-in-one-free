@@ -12,7 +12,7 @@ from tests.fake_ollama import FakeOllama
 
 ROOT = Path(__file__).resolve().parent.parent
 SAMPLE = ROOT / "data" / "samples" / "comments_sample.json"
-MODEL = "[삭제]"
+MODEL = "example-small-model"  # 시험용 가짜 이름(실제 모델이 아니다)
 
 
 class FakeServerTest(unittest.TestCase):
@@ -26,7 +26,14 @@ class FakeServerTest(unittest.TestCase):
 
 class ClientTests(FakeServerTest):
     def test_status_ok_when_model_installed_with_tag(self):
-        self.assertIn("[삭제]:latest", self.client.check_status())
+        self.assertIn("example-small-model:latest", self.client.check_status())
+
+    def test_no_model_configured_asks_to_choose_one(self):
+        # 기본 모델이 없으므로, SLM_MODEL 을 정하지 않으면 서버에 묻기 전에 안내하고 멈춘다
+        client = OllamaClient(base_url=self.fake.url, model=None)
+        with self.assertRaises(OllamaUnavailable) as ctx:
+            client.check_status()
+        self.assertIn("SLM_MODEL", str(ctx.exception))
 
     def test_missing_model_tells_how_to_install(self):
         client = OllamaClient(base_url=self.fake.url, model="other-model")

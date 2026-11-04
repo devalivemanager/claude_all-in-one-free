@@ -13,8 +13,9 @@ import urllib.request
 from dataclasses import dataclass, field
 
 DEFAULT_URL = "http://localhost:11434"
-# 가이드에 적힌 이름. 실제 이름은 PC 에서 `ollama list` 로 확인하고 SLM_MODEL 로 바꾼다.
-DEFAULT_MODEL = "[삭제]"
+# 기본 모델은 두지 않는다. 무료 + 상업 이용이 확인된(중국 계열 제외) 모델을 골라 SLM_MODEL 로 정한다.
+# 고르는 기준 : README 「로컬 모델 고르기」, 999_document/04_무료·상업이용_도구
+DEFAULT_MODEL = None
 
 KOREAN_ONLY = "반드시 한국어로만 간결하게 답한다. 추측하지 말고 주어진 본문에 있는 내용만 쓴다. 출력은 JSON 하나뿐이다."
 
@@ -57,7 +58,7 @@ class Metrics:
 @dataclass
 class OllamaClient:
     base_url: str = field(default_factory=lambda: os.environ.get("OLLAMA_URL", DEFAULT_URL))
-    model: str = field(default_factory=lambda: os.environ.get("SLM_MODEL", DEFAULT_MODEL))
+    model: str | None = field(default_factory=lambda: os.environ.get("SLM_MODEL") or DEFAULT_MODEL)
     timeout: float = 120.0
     metrics: Metrics = field(default_factory=Metrics)
 
@@ -77,6 +78,11 @@ class OllamaClient:
 
     def check_status(self) -> list[str]:
         """서버가 살아 있고 모델이 설치돼 있는지 확인한다. 설치된 모델 이름 목록을 돌려준다."""
+        if not self.model:
+            raise OllamaUnavailable(
+                "쓸 모델이 정해지지 않았습니다. 무료 + 상업 이용이 확인된 모델을 골라 환경변수 SLM_MODEL 에 넣으세요"
+                "(README 「로컬 모델 고르기」). 이름은 `ollama list` 로 확인합니다."
+            )
         tags = self._request("/api/tags", timeout=3)
         names = [m.get("name", "") for m in tags.get("models", [])]
         if not any(n == self.model or n.split(":")[0] == self.model for n in names):

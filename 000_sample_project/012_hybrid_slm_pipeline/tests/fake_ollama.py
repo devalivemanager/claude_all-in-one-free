@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
 class FakeOllama:
-    def __init__(self, models=("[삭제]:latest",)):
+    def __init__(self, models=("example-small-model:latest",)):
         self.models = list(models)
         self.requests: list[dict] = []
         # 프롬프트를 받아 모델이 낼 "response" 문자열을 돌려주는 함수. 테스트마다 바꾼다.
