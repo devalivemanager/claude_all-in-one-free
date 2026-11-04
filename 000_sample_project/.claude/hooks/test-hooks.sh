@@ -24,11 +24,27 @@ for c in "npm test" "cat .envrc" "git add .env.example" "cat .env.sample" "ls do
   check "통과: $c" 0 "$(pre "$c")"
 done
 # jq 가 없으면 통과시키지 않고 막는다
-nojq=$(mktemp -d)
-for b in bash cat tr printf; do p=$(command -v "$b") && ln -s "$p" "$nojq/$b"; done
-code=$(printf '{"tool_input":{"command":"npm test"}}' | PATH="$nojq" bash "$here/block-env.sh" 2>/dev/null; echo $?)
+nojq_dir=$(mktemp -d)
+for b in bash cat tr printf; do p=$(command -v "$b") && ln -s "$p" "$nojq_dir/$b"; done
+code=$(printf '{"tool_input":{"command":"npm test"}}' | PATH="$nojq_dir" bash "$here/block-env.sh" 2>/dev/null; echo $?)
 check "jq 없음 → 막기" 2 "$code"
-rm -rf "$nojq"
+
+# 읽기 전용 에이전트(reviewer)의 Bash
+ro() { # 에이전트 이름, 명령 → readonly-agent-bash.sh 종료 코드
+  jq -nc --arg a "$1" --arg c "$2" '{tool_name:"Bash",tool_input:{command:$c}} + (if $a == "" then {} else {agent_type:$a} end)' \
+    | bash "$here/readonly-agent-bash.sh" 2>/dev/null
+  echo $?
+}
+for c in "git diff" "git diff --staged" "git log --oneline -5" "grep -n TODO src/a.js" "cat README.md"; do
+  check "검토자 통과: $c" 0 "$(ro reviewer "$c")"
+done
+for c in "touch x" "rm -rf build" "git commit -m x" "sed -i s/a/b/ f.txt" "git diff > out.txt" "cat a; rm a" "echo \$(rm a)" "python3 -c 'open(1)'"; do
+  check "검토자 막기: $c" 2 "$(ro reviewer "$c")"
+done
+check "메인 세션은 손대지 않음" 0 "$(ro "" "touch x")"
+check "다른 에이전트는 손대지 않음" 0 "$(ro builder "touch x")"
+code=$(printf '{"agent_type":"reviewer","tool_input":{"command":"git diff"}}' | PATH="$nojq_dir" bash "$here/readonly-agent-bash.sh" 2>/dev/null; echo $?)
+check "jq 없음 → 막기(검토자)" 2 "$code"
 
 # Stop 훅
 repo=$(mktemp -d)
@@ -46,7 +62,7 @@ read -r pass fail < "$repo/.counts"
 plain=$(mktemp -d)
 code=$(cd "$plain" && printf '{}' | bash "$here/stop-uncommitted.sh" 2>/dev/null; echo $?)
 check "Stop: git 저장소 아니면 통과" 0 "$code"
-rm -rf "$repo" "$plain"
+rm -rf "$repo" "$plain" "$nojq_dir"
 
 echo "훅 시험: 통과 $pass, 실패 $fail"
 [[ $fail -eq 0 ]]

@@ -1,5 +1,5 @@
 {
-  "_설명": "docs/08_고급_훅과권한설계.md 의 훅 예시. 읽어 보고 필요한 것만 .claude/settings.json 의 hooks 에 옮긴다. 훅은 내 권한으로 실행되니 스크립트를 한 줄씩 읽고 쓴다. 바꾼 뒤에는 bash .claude/hooks/test-hooks.sh 로 시험한다.",
+  "_설명": "docs/08_고급_훅과권한설계.md 의 훅 예시. 읽어 보고 필요한 것만 .claude/settings.json 의 hooks 에 옮긴다. 훅은 내 권한으로 실행되니 스크립트를 한 줄씩 읽고 쓴다. readonly-agent-bash.sh 는 읽기 전용 에이전트(기본 reviewer)의 Bash 만 읽기 명령으로 묶는다. 바꾼 뒤에는 bash .claude/hooks/test-hooks.sh 로 시험한다.",
   "hooks": {
     "PreToolUse": [
       {
@@ -8,6 +8,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-env.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/readonly-agent-bash.sh\""
           }
         ]
       }

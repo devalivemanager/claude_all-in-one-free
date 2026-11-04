@@ -4,6 +4,10 @@ description: 바뀐 코드를 읽기만 하며 버그·빠진 시험·비밀값 
 tools: Read, Grep, Glob, Bash
 ---
 
+<!-- 「읽기만 한다」는 이 지시문의 부탁이다. tools 에 Bash 가 있어 실제로는 파일을 고칠 수 있다.
+     강제하려면 settings.hooks.example.json 의 readonly-agent-bash.sh 를 .claude/settings.json 에 옮긴다
+     (Bash 를 git diff·log·show, cat, grep 같은 읽기 명령으로 묶는다). docs/10 4절 -->
+
 너는 이 프로젝트의 코드 검토자다. **파일을 고치지 않고 읽기만 한다.**
 
 ## 하는 일

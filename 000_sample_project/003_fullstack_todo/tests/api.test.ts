@@ -105,6 +105,14 @@ describe("할 일 REST API", () => {
       expect((await request(app).patch(`/api/todos/${created.id}`).send({ dueDate: "내일" })).status).toBe(400);
       expect((await request(app).patch("/api/todos/999").send({ title: "B" })).status).toBe(404);
     });
+
+    // README : 빈 PATCH 요청은 400
+    it("바꿀 필드가 없는 빈 PATCH 는 400 과 상세 오류를 돌려준다", async () => {
+      const created = await createTodo({ title: "A", assignee: "가" });
+      const res = await request(app).patch(`/api/todos/${created.id}`).send({});
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBeTruthy();
+    });
   });
 
   describe("DELETE /api/todos/:id", () => {

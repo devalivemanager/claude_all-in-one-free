@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   COFFEE_BOOST_DURATION,
+  COFFEE_BOOST_MULTIPLIER,
+  COFFEE_SCORE,
   DOCUMENT_SCORE,
   ITEM_SIZE,
   PLAYER_BASE_SPEED,
@@ -169,6 +171,16 @@ describe('한 프레임 진행 update', () => {
     const later = update(after, COFFEE_BOOST_DURATION, NO_INPUT, fixedRandom(0.5));
     expect(later.boostTime).toBe(0);
     expect(getPlayerSpeed(later)).toBe(PLAYER_BASE_SPEED);
+  });
+
+  // README : 커피 +5점, 이동 속도 1.6배
+  it('커피를 받으면 5점이 오르고 속도는 정확히 1.6배가 된다', () => {
+    const state = playingState();
+    const after = update({ ...state, items: [itemOnPlayer(state, 'coffee')] }, 0.016, NO_INPUT, fixedRandom(0.5));
+    expect(COFFEE_SCORE).toBe(5);
+    expect(after.score).toBe(state.score + 5);
+    expect(COFFEE_BOOST_MULTIPLIER).toBe(1.6);
+    expect(getPlayerSpeed(after)).toBeCloseTo(PLAYER_BASE_SPEED * 1.6);
   });
 
   it('야근 폭탄에 맞으면 생명이 하나 줄어든다', () => {
