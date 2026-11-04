@@ -20,6 +20,8 @@
 │  ├─ hooks/                 ← 훅 스크립트와 자체 시험(bash .claude/hooks/test-hooks.sh)
 │  ├─ agents/reviewer.md     ← 서브에이전트 예시 : 읽기 전용 검토자
 │  └─ skills/done-check/     ← 스킬 예시 : 「다 했다」고 말하기 전 점검표
+├─ scripts/
+│  └─ headless-run.sh         ← 사람 없이 돌리는 실행 틀(고급, docs/09). 시험: bash scripts/test-headless-run.sh
 ├─ docs/
 │  ├─ 01_초급_첫세션.md           ← 설치 뒤 첫 세션, 꼭 알아야 할 명령
 │  ├─ 02_초급_지시잘하기.md        ← 결과가 달라지는 지시 습관
