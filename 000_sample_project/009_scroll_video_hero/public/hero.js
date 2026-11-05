@@ -56,7 +56,7 @@ function requestRender() {
 
 function updateLoader(loaded, total) {
   loaderText.textContent = `프레임 불러오는 중… ${loaded} / ${total}`;
-  loaderFill.style.width = `${Math.round((loaded / total) * 100)}%`;
+  loaderFill.style.transform = `scaleX(${loaded / total})`;
 }
 
 /** 이미지 하나를 불러옵니다. 실패해도 전체 로딩이 멈추지 않도록 항상 resolve 합니다. */

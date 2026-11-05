@@ -134,4 +134,21 @@ describe("할 일 REST API", () => {
     expect(res.status).toBe(200);
     expect(res.text).toContain("업무 할 일 관리");
   });
+
+  describe("화면 파일 (홀마크 정적 검사에서 나온 기본기)", () => {
+    it("첫 화면에 링크 미리보기용 설명(meta description)이 있다", async () => {
+      const res = await request(app).get("/");
+      expect(res.status).toBe(200);
+      expect(res.text).toMatch(/<meta name="description" content="[^"]{10,}"/);
+    });
+
+    it("키보드로 옮겨 간 버튼·입력 칸에 포커스 표시(:focus-visible)가 있다", async () => {
+      const res = await request(app).get("/styles.css");
+      expect(res.status).toBe(200);
+      const rule = /([^{}]*:focus-visible[^{}]*)\{([^}]*)\}/.exec(res.text);
+      expect(rule, ":focus-visible 규칙 없음").not.toBeNull();
+      for (const target of ["button", "input", "select"]) expect(rule![1]).toContain(target);
+      expect(rule![2]).toMatch(/outline:\s*2px solid/);
+    });
+  });
 });

@@ -184,6 +184,32 @@ describe('스크롤 스크러빙 E2E', { skip: skipReason }, () => {
     await context.close();
   });
 
+  // 홀마크 정적 검사에서 나온 기본기 : 링크 미리보기 설명, 키보드 포커스 표시, 로딩 막대는 transform 으로
+  test('설명 메타·키보드 포커스 표시가 있고, 로딩 막대는 width 대신 transform 으로 움직인다', async () => {
+    const context = await browser.newContext({ viewport: VIEWPORT });
+    const page = await context.newPage();
+    await page.goto(baseUrl);
+    await page.waitForSelector('body[data-hero-ready="true"]', { timeout: 5000 });
+    const desc = await page.evaluate(() => document.querySelector('meta[name="description"]')?.content ?? null);
+    await page.keyboard.press('Tab');
+    const focus = await page.evaluate(() => {
+      const el = document.activeElement;
+      const cs = getComputedStyle(el);
+      return { tag: el.tagName, style: cs.outlineStyle, width: parseFloat(cs.outlineWidth) };
+    });
+    const problems = [];
+    if (!(desc && desc.length >= 10)) problems.push(`meta description: ${desc}`);
+    if (focus.tag !== 'A' || focus.style === 'none' || !(focus.width >= 2)) problems.push(`포커스 ${JSON.stringify(focus)}`);
+    const fill = await page.evaluate(() => {
+      const el = document.getElementById('hero-loader-fill');
+      const cs = getComputedStyle(el);
+      return { inlineWidth: el.style.width, transform: el.style.transform, transition: cs.transitionProperty };
+    });
+    if (fill.inlineWidth !== '' || fill.transform !== 'scaleX(1)' || /width/.test(fill.transition)) problems.push(`로딩 막대 ${JSON.stringify(fill)}`);
+    assert.deepEqual(problems, []);
+    await context.close();
+  });
+
   // README 7번: 움직임 줄이기면 첫 프레임만 받고, 긴 스크롤 구간도 없앤다.
   test('움직임 줄이기면 첫 프레임 한 장만 받고, 히어로가 화면 한 개 높이다', async () => {
     const context = await browser.newContext({ viewport: VIEWPORT, reducedMotion: 'reduce' });
