@@ -98,6 +98,15 @@ cd 000_sample_project/011_ai_webtoon      && npm test
 cd 000_sample_project/012_hybrid_slm_pipeline && python3 -m unittest discover -s tests -t .
 ```
 
+한꺼번에 돌리고 위 표의 「테스트」 숫자와 맞춰 보려면(설치는 위 명령으로 먼저 해 둡니다):
+
+```bash
+cd 000_sample_project && bash scripts/check-sample-tests.sh            # 12개 전부, 1분 안팎
+bash scripts/check-sample-tests.sh 003_fullstack_todo 009_scroll_video_hero   # 일부만
+```
+
+예제마다 README 숫자·통과·실패를 보여 주고, 하나라도 실패하거나 숫자가 다르면 종료 코드 1, 도구가 없어 건너뛴 예제가 있으면 2로 끝납니다. 브라우저 시험을 건너뛰면 통과 수가 줄어 「README 와 다름」으로 나옵니다.
+
 ### 참고
 
 - 급여·세금·근태 계산 규칙은 교육용으로 단순화한 것이며 실제 법정 기준과 다릅니다.
