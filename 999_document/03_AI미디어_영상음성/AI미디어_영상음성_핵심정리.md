@@ -14,7 +14,7 @@ AI로 영상·목소리·노래·이미지를 만들어 보려는 사람을 위�
 | 코드로 영상 | lemo-opuscar, 프롬프트 한 장, 리모션 | 도구 무료, 클로드 사용량 듦 | 생성물 라이선스·워터마크 걱정 없는 영상 |
 | 받아쓰기 | faster-whisper | 무료(MIT) | 자막 없는 영상 원문, 나레이션 재검사 |
 | 이미지·상세페이지 | 나노바나나 + 제미나이 | 무료 등급 있음 | 섹션별 판매 페이지 |
-| 웹 화면 디자인 | DESIGN.md · Taste Skill · Playwright | 무료(MIT·Apache) | AI 티 나는 화면 줄이기 |
+| 웹 화면 디자인 | DESIGN.md · Taste Skill · Hallmark · Playwright | 무료(MIT·Apache, Hallmark 사진은 사진별 CC 라이선스) | AI 티 나는 화면 줄이기, 실제 브라우저로 버릇 검사 |
 | 채널 운영 | 시청 지속 분석 스킬, 평균 대비 N배 수집 | 무료 | 사람들이 나간 대사·잘된 영상 찾기 |
 | AI 판별 | SynthID Detector | 무료(로그인) | AI 생성물 워터마크 확인 |
 | 에이전트 도구 | Agent Reach, REA, 헤르메스 | 무료(MIT 등) | 쓰기 전에 권한·약관부터 |
