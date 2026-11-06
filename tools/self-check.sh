@@ -66,8 +66,9 @@ for line in subprocess.run(['git', 'ls-files', '-z'], capture_output=True).stdou
             if s > 1_000_000: TIDY.append(f'1MB 넘는 파일 : {f} ({s // 1024}KB)')
         except OSError: pass
 
-# 내용이 같은 파일. 일부러 둔 것(훅, 빈 __init__.py, 스킬별 LICENSE, 예제마다 따로 두는 파일)은 뺀다
-INTENDED = re.compile(r'^\.githooks/|/__init__\.py$|/LICENSE(\.txt)?$|^000_sample_project/0\d\d_[^/]+/src/browser\.mjs$')
+# 내용이 같은 파일. 일부러 둔 것(훅, 빈 __init__.py, 스킬별 LICENSE, 예제마다 따로 두는 도우미·설정 파일)은 뺀다.
+# 예제는 폴더 하나만 받아도 돌아가야 하므로 browser.mjs·pytest.ini 가 예제끼리 같아도 합치지 않는다.
+INTENDED = re.compile(r'^\.githooks/|/__init__\.py$|/LICENSE(\.txt)?$|^000_sample_project/0\d\d_[^/]+/(src/browser\.mjs|pytest\.ini)$')
 by_hash = defaultdict(list)
 for line in git('ls-files', '-s').splitlines():
     _, h, _, f = line.split(None, 3)
