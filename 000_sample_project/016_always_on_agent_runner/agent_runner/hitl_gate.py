@@ -50,10 +50,14 @@ STATUS_EXPIRED = "expired"
 # (과잉 포착이 원칙이다 — 애매하면 승인을 물어본다.)
 KEYWORD_HINTS: Dict[str, tuple] = {
     PAYMENT: ("결제", "결제금", "구매", "지출", "결제 확인", "충전", "구독 결제", "pay", "checkout", "charge"),
-    EXTERNAL_SEND: ("발송", "메일 전송", "이메일 전송", "게시", "전송", "send_mail", "send email", "sns post"),
-    FORCE_PUSH: ("강제 푸시", "force push", "force-push", "브랜치 삭제", "delete branch", "push -f", "main 푸시"),
-    DB_DESTROY: ("영구 삭제", "드롭", "truncate", "drop table", "rm -rf", "데이터 삭제", "delete all"),
-    CONTRACT: ("계약", "약관 동의", "동의서", "서명", "구독 확정", "accept terms", "sign contract"),
+    EXTERNAL_SEND: ("발송", "메일 전송", "이메일 전송", "게시", "전송", "send_mail", "send email", "sns post",
+                    "보내기", "메일 보내", "뉴스레터", "send ", "newsletter"),
+    FORCE_PUSH: ("강제 푸시", "force push", "force-push", "브랜치 삭제", "delete branch", "push -f", "main 푸시",
+                 "--force", "push origin +", "push +", "repo delete", "저장소 삭제"),
+    DB_DESTROY: ("영구 삭제", "드롭", "truncate", "drop table", "rm -rf", "데이터 삭제", "delete all",
+                 "rm -r", "-delete", "delete from", "drop database", "drop schema"),
+    CONTRACT: ("계약", "약관 동의", "동의서", "서명", "구독 확정", "accept terms", "sign contract", "동의"),
+    # 둘째 줄 낱말들은 클라우드 세션이 2026-11-06 실측으로 보탰다(놓친 흔한 형태, tests/test_hitl_sniff_gaps.py).
 }
 
 
