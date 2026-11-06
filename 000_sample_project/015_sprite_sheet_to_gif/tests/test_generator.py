@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """generator 시험: 절차적 프레임 생성의 결정론·모션·시트 왕복을 검증한다."""
 
 from __future__ import annotations

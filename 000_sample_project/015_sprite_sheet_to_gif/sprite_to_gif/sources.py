@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """프레임·시트의 공급원. 로컬 절차 생성이 기본이고, 이미지 생성 API 는 갈아 끼울 수 있다.
 
 외부 API 를 붙일 때의 약속(가이드 수칙 1·10 대응):

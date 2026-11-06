@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """converter 시험: 가짜 3x2 시트를 만들어 6프레임 슬라이싱과 GIF 생성을 검증한다."""
 
 from __future__ import annotations

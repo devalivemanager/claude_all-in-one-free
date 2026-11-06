@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """sprite_to_gif — 스프라이트 시트/프레임 묶음을 무한 루프 GIF로 만드는 데브얼라이브 전용 도구.
 
 - converter : 3x2(기본) 스프라이트 시트 슬라이싱과 GIF 조립(속도·트리밍·팔레트 최적화)

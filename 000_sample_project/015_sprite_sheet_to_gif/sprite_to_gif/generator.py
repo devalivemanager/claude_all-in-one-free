@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """외부 API 없이 도트 캐릭터 프레임을 절차적으로 생성한다(클로드 코드 단독 실행의 기본 공급원).
 
 네 가지 기본 모션을 6프레임(3x2 시트용)으로 찍어 낸다:

@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """스프라이트 시트 슬라이싱과 무한 루프 GIF 조립.
 
 설계 원칙(가이드 문서 5절 「10대 안전·운영 수칙」 대응):

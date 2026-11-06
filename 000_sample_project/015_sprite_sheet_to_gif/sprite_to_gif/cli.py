@@ -1,3 +1,4 @@
+# Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """한 줄 CLI: `python -m sprite_to_gif.cli {generate|convert|batch}`.
 
 - generate : 절차적 도트 프레임을 직접 생성해 GIF(옵션으로 시트 PNG 까지)로 저장 — 외부 연결 0
