@@ -10,7 +10,10 @@ export const LIMITS = { minWidth: 360, maxWidth: 1080, minPanelHeight: 240, maxP
 export const DEFAULT_GAP = 32;
 
 // 특정 작가·작품의 그림체를 흉내 내라는 지시는 받지 않는다. 화풍은 선·색감 같은 특징으로 적는다.
-const IMITATION_PATTERNS = [/화풍/, /그림체/, /style of/i, /in the style/i];
+const IMITATION_PATTERNS = [
+  /화풍/, /그림체/, /(작가|작품|만화|웹툰|애니메이션)\S*\s*처럼/,
+  /style of/i, /in the style/i, /inspired by/i, /drawn like/i, /in the manner of/i,
+];
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
 
 export class EpisodeError extends Error {

@@ -78,7 +78,7 @@
 | [008_youtube_analyzer](008_youtube_analyzer/) | 유튜브 영상을 대본·장면 캡처·보고서로 변환해 Claude가 통째로 분석 | Python · yt-dlp · ffmpeg · pytest | 65개 |
 | [009_scroll_video_hero](009_scroll_video_hero/) | 영상을 프레임으로 쪼개 스크롤에 맞춰 재생·역재생하는 랜딩 페이지 히어로 | JavaScript · ffmpeg · Canvas · node:test · Playwright | 35개 |
 | [010_site_analyzer](010_site_analyzer/) | 웹사이트 구조·기술·디자인 특징을 분석 보고서로 정리(복제 없음, robots.txt 준수) | JavaScript · Playwright · node:test | 66개 |
-| [011_ai_webtoon](011_ai_webtoon/) | 대본 JSON 으로 세로 스크롤 웹툰 만들기(코드 그림 기본, 이미지 AI 연결 가능, 말풍선은 코드로, 기획 스킬·콘티 표·영어 프롬프트·연출 여백) | JavaScript · SVG · node:test · Playwright | 81개 |
+| [011_ai_webtoon](011_ai_webtoon/) | 대본 JSON 으로 세로 스크롤 웹툰 만들기(코드 그림 기본, 이미지 AI 연결 가능, 말풍선은 코드로, 기획 스킬·콘티 표·영어 프롬프트·연출 여백) | JavaScript · SVG · node:test · Playwright | 85개 |
 | [012_hybrid_slm_pipeline](012_hybrid_slm_pipeline/) | 로컬 소형 모델(Ollama)이 댓글·원문을 분류·요약하고 클로드 코드가 블로그 글·시나리오·보고서를 쓰는 2단계 파이프라인(스킬 3종 포함) | Python(표준 라이브러리) · Ollama · Claude Code · unittest | 29개 |
 
 ### 테스트 실행

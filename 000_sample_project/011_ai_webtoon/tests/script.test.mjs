@@ -57,11 +57,20 @@ describe("대본 검증", () => {
     assert.equal(validateEpisode(ep).filter((e) => e.includes("lines")).length, 0);
   });
 
-  for (const style of ["유명 작가 화풍으로", "그 웹툰 그림체", "in the style of someone"]) {
+  for (const style of [
+    "유명 작가 화풍으로", "그 웹툰 그림체", "in the style of someone",
+    // 2026-11-06 실측에서 통과하던 흉내 표현
+    "그 작가 작품처럼 그린 선", "inspired by someone's artwork", "drawn like someone",
+  ]) {
     it(`특정 화풍 흉내 지시를 거부한다: '${style}'`, () => {
       assert.ok(hasError(validateEpisode(sampleEpisode({ style })), "style"));
     });
   }
+
+  // 「스타일」은 「깔끔한 스타일」처럼 평범한 설명에도 쓰여서 막지 않는다(README 「주의」)
+  it("선·색감으로 쓴 평범한 설명은 통과한다: '깔끔한 스타일의 굵은 선, 사진처럼 선명한 색'", () => {
+    assert.ok(!hasError(validateEpisode(sampleEpisode({ style: "깔끔한 스타일의 굵은 선, 사진처럼 선명한 색" })), "style"));
+  });
 
   it("가로 폭·컷 높이 범위를 지킨다", () => {
     const ep = sampleEpisode({ width: 300 });
