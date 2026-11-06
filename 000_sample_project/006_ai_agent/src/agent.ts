@@ -50,6 +50,19 @@ export class MaxIterationsError extends Error {
   }
 }
 
+// 답변이 끝나지 않고 멈춘 경우(출력 한도 도달, 안전 정책에 따른 거절).
+// 잘린 답변이나 빈 답변을 정상 답변처럼 돌려주지 않도록 오류로 알린다.
+export class IncompleteAnswerError extends Error {
+  constructor(public readonly stopReason: 'max_tokens' | 'refusal') {
+    super(
+      stopReason === 'max_tokens'
+        ? '답변이 출력 한도(max_tokens)에 걸려 중간에 끊겼습니다. maxTokens 를 늘려 다시 시도하세요.'
+        : '모델이 이 요청에 답하지 않았습니다(refusal). 질문을 바꿔 다시 시도하세요.',
+    );
+    this.name = 'IncompleteAnswerError';
+  }
+}
+
 // 응답의 text 블록만 모아 최종 답변 문자열로 만든다.
 function extractText(message: Message): string {
   return message.content
@@ -81,7 +94,8 @@ export async function runAgent(options: RunAgentOptions): Promise<AgentResult> {
     question,
     model,
     maxIterations = 8,
-    maxTokens = 1024,
+    // 생각(thinking)도 이 한도 안에서 쓰이므로 넉넉히 둔다. 너무 작으면 답변이 끊긴다.
+    maxTokens = 16000,
     tools = toolDefinitions,
     executeTool = defaultExecuteTool,
     onToolCall,
@@ -102,7 +116,12 @@ export async function runAgent(options: RunAgentOptions): Promise<AgentResult> {
     // 2) 모델의 응답(도구 호출 포함)을 대화 기록에 그대로 남긴다.
     messages.push({ role: 'assistant', content: response.content });
 
-    // 3) 도구 호출이 아니면 최종 답변으로 보고 종료한다.
+    // 3) 끊기거나 거절된 응답은 답변으로 쓰지 않는다.
+    if (response.stop_reason === 'max_tokens' || response.stop_reason === 'refusal') {
+      throw new IncompleteAnswerError(response.stop_reason);
+    }
+
+    // 4) 도구 호출이 아니면 최종 답변으로 보고 종료한다.
     if (response.stop_reason !== 'tool_use') {
       return {
         answer: extractText(response),
@@ -112,7 +131,7 @@ export async function runAgent(options: RunAgentOptions): Promise<AgentResult> {
       };
     }
 
-    // 4) 요청된 도구를 모두 실행하고, 결과를 하나의 user 메시지로 묶어 돌려준다.
+    // 5) 요청된 도구를 모두 실행하고, 결과를 하나의 user 메시지로 묶어 돌려준다.
     const toolResults: ToolResultBlockParam[] = [];
     for (const block of response.content) {
       if (block.type !== 'tool_use') continue;

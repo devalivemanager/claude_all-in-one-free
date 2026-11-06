@@ -1,0 +1,190 @@
+{
+  "title": "금요일 오후 6시의 1원",
+  "episode": 1,
+  "width": 720,
+  "style": "굵기가 일정한 깔끔한 선, 밝은 파스텔 색감, 단순한 도형으로 그린 사무실 일상 웹툰",
+  "style_en": "clean lines of even weight, bright pastel colors, simple shapes, everyday office webtoon",
+  "characters": {
+    "hana": {
+      "name": "한나",
+      "name_en": "Hana",
+      "desc": "짧은 갈색 단발에 둥근 안경을 쓰고 파란 셔츠를 입은 20대 신입 개발자",
+      "desc_en": "woman in her twenties, junior developer, short brown bob hair, round glasses, blue shirt",
+      "look": {
+        "hair": "#6b4a3a",
+        "hairStyle": "short",
+        "skin": "#f3d6bd",
+        "shirt": "#4f86c6",
+        "glasses": true
+      }
+    },
+    "doyun": {
+      "name": "도윤",
+      "name_en": "Doyun",
+      "desc": "짧은 검은 머리에 초록 셔츠를 입은 30대 개발 팀장",
+      "desc_en": "man in his thirties, development team lead, short black hair, green shirt",
+      "look": {
+        "hair": "#222222",
+        "hairStyle": "short",
+        "skin": "#e9c4a6",
+        "shirt": "#5aa469"
+      }
+    },
+    "miso": {
+      "name": "미소",
+      "name_en": "Miso",
+      "desc": "어깨까지 오는 긴 검은 머리에 분홍 셔츠를 입은 인사팀 급여 담당자",
+      "desc_en": "payroll officer from HR, shoulder-length straight black hair, pink shirt",
+      "look": {
+        "hair": "#2b2b2b",
+        "hairStyle": "long",
+        "skin": "#f1d0b5",
+        "shirt": "#e58fa6"
+      }
+    }
+  },
+  "panels": [
+    {
+      "id": "p1",
+      "height": 480,
+      "background": "office",
+      "gap_after": 24,
+      "caption": "금요일 오후 5시 50분",
+      "scene": "사무실, 한나가 자리에서 두 팔을 들고 기뻐한다",
+      "scene_en": "office, Hana raises both arms in joy at her desk",
+      "cast": [
+        {
+          "who": "hana",
+          "x": 0.5,
+          "expression": "happy"
+        }
+      ],
+      "lines": [
+        {
+          "who": "hana",
+          "text": "급여 계산 API, 테스트 48개 전부 통과!"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "height": 520,
+      "background": "office",
+      "gap_after": 160,
+      "scene": "인사팀 미소가 놀란 얼굴로 한나에게 다가온다",
+      "scene_en": "Miso from HR walks up to Hana with a surprised face",
+      "cast": [
+        {
+          "who": "hana",
+          "x": 0.28,
+          "expression": "neutral"
+        },
+        {
+          "who": "miso",
+          "x": 0.72,
+          "expression": "surprised"
+        }
+      ],
+      "lines": [
+        {
+          "who": "miso",
+          "text": "한나 씨, 장기요양보험료가 1원 차이 나요."
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "height": 400,
+      "background": "monitor",
+      "gap_after": 48,
+      "caption": "과세 대상액 1,000,050원",
+      "scene": "모니터 화면에 계산 결과가 떠 있고 한 줄만 빨갛게 표시되어 있다",
+      "scene_en": "close-up of a monitor showing calculation results, only one line highlighted in red"
+    },
+    {
+      "id": "p4",
+      "height": 480,
+      "background": "office",
+      "gap_after": 16,
+      "scene": "한나가 모니터 앞에서 시무룩하게 고개를 갸웃한다",
+      "scene_en": "Hana tilts her head sadly in front of the monitor",
+      "cast": [
+        {
+          "who": "hana",
+          "x": 0.5,
+          "expression": "sad"
+        }
+      ],
+      "lines": [
+        {
+          "who": "hana",
+          "text": "테스트는 다 통과했는데… 왜지?"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "height": 600,
+      "background": "office",
+      "gap_after": 200,
+      "scene": "팀장 도윤이 한나의 자리 옆에 서서 차분하게 설명한다",
+      "scene_en": "team lead Doyun stands next to Hana's desk and calmly explains",
+      "cast": [
+        {
+          "who": "doyun",
+          "x": 0.3,
+          "expression": "neutral"
+        },
+        {
+          "who": "hana",
+          "x": 0.72,
+          "expression": "tired"
+        }
+      ],
+      "lines": [
+        {
+          "who": "doyun",
+          "text": "건강보험료를 먼저 원 단위로 자른 다음에 곱해야 해요."
+        },
+        {
+          "who": "doyun",
+          "text": "테스트가 그 중간 단계를 안 보고 있었던 거죠."
+        },
+        {
+          "who": "hana",
+          "text": "손으로 다시 계산해 볼게요."
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "height": 560,
+      "background": "night",
+      "caption": "오후 7시",
+      "scene": "창밖이 어두워진 사무실에서 두 사람이 웃으며 퇴근 준비를 한다",
+      "scene_en": "dark windows in the office at night, the two smile while getting ready to leave",
+      "cast": [
+        {
+          "who": "hana",
+          "x": 0.35,
+          "expression": "happy"
+        },
+        {
+          "who": "doyun",
+          "x": 0.7,
+          "expression": "happy"
+        }
+      ],
+      "lines": [
+        {
+          "who": "hana",
+          "text": "4,590원 맞았어요! 테스트도 하나 추가했어요."
+        },
+        {
+          "who": "doyun",
+          "text": "좋아요. 이제 진짜 퇴근합시다."
+        }
+      ]
+    }
+  ]
+}

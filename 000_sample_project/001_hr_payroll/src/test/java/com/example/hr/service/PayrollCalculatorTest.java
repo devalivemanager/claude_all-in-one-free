@@ -65,6 +65,18 @@ class PayrollCalculatorTest {
     }
 
     @Test
+    @DisplayName("장기요양보험료는 건강보험료를 먼저 절사한 뒤 계산한다 (절사를 한 번 건너뛰면 1원 차이)")
+    void longTermCareUsesTruncatedHealthInsurance() {
+        // 위 시험은 건강보험료가 딱 떨어지는 금액(70,900원)이라 중간 절사를 빼먹어도 통과한다.
+        // 건강보험료에 원 미만이 생기는 금액으로 중간 절사 여부를 구분한다.
+        PayrollResult r = calculator.calculate(won(1_000_050), won(0), won(0));
+
+        assertThat(r.healthInsurance()).isEqualByComparingTo("35451");      // 35,451.7725 → 절사
+        assertThat(r.longTermCareInsurance()).isEqualByComparingTo("4590"); // 35,451 × 12.95% = 4,590.9045
+        // 절사 없이 1,000,050 × 3.545% × 12.95% = 4,591.005... 로 계산하면 4,591원이 되어 틀린다.
+    }
+
+    @Test
     @DisplayName("기본급과 수당이 모두 0이면 모든 금액이 0이다")
     void zeroPay() {
         PayrollResult r = calculator.calculate(won(0), won(0), won(0));

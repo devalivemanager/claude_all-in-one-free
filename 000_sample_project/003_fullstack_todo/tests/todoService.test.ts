@@ -54,6 +54,11 @@ describe("TodoService", () => {
       expect(() => service.create({ title: "가".repeat(101), assignee: "김민수" })).toThrow(ValidationError);
     });
 
+    it("제목 100자, 담당자 30자까지는 받고 그보다 길면 거부한다 (README 의 1~100자, 1~30자)", () => {
+      expect(service.create({ title: "가".repeat(100), assignee: "나".repeat(30) }).title).toHaveLength(100);
+      expect(() => service.create({ title: "A", assignee: "나".repeat(31) })).toThrow(ValidationError);
+    });
+
     it("객체가 아닌 입력을 거부한다", () => {
       expect(() => service.create(null)).toThrow(ValidationError);
       expect(() => service.create([1, 2])).toThrow(ValidationError);
@@ -72,6 +77,15 @@ describe("TodoService", () => {
       service.create({ title: "11월 높음", assignee: "가", dueDate: "2026-11-05", priority: "high" });
       service.create({ title: "10월", assignee: "가", dueDate: "2026-10-20" });
       expect(service.list().map((t) => t.title)).toEqual(["10월", "11월 높음", "11월 낮음", "마감 없음", "완료됨"]);
+    });
+
+    it("마감일 없는 항목은 중간에 등록해도 뒤로 가고, 나머지 조건이 같으면 등록 순이다", () => {
+      // 마감 없음을 맨 처음에 등록하면 비교 함수가 틀려도 우연히 맞게 정렬된다. 일부러 중간에 넣는다.
+      service.create({ title: "같은 조건 1", assignee: "가", dueDate: "2026-11-05" });
+      service.create({ title: "마감 없음", assignee: "가" });
+      service.create({ title: "같은 조건 2", assignee: "가", dueDate: "2026-11-05" });
+      service.create({ title: "같은 조건 3", assignee: "가", dueDate: "2026-11-05" });
+      expect(service.list().map((t) => t.title)).toEqual(["같은 조건 1", "같은 조건 2", "같은 조건 3", "마감 없음"]);
     });
   });
 
@@ -116,6 +130,11 @@ describe("TodoService", () => {
     it("담당자 목록을 중복 없이 돌려준다", () => {
       expect(service.assignees()).toEqual(["김민수", "이지은"]);
     });
+
+    it("담당자 목록은 등록 순서와 상관없이 가나다순이다", () => {
+      service.create({ title: "추가", assignee: "강하늘" });
+      expect(service.assignees()).toEqual(["강하늘", "김민수", "이지은"]);
+    });
   });
 
   describe("수정과 삭제", () => {
@@ -123,6 +142,17 @@ describe("TodoService", () => {
       const created = service.create({ title: "원래 제목", assignee: "김민수", priority: "low" });
       const updated = service.update(created.id, { completed: true, dueDate: "2026-12-01" });
       expect(updated).toMatchObject({ title: "원래 제목", priority: "low", completed: true, dueDate: "2026-12-01" });
+    });
+
+    it("수정하면 updatedAt 만 바뀌고 createdAt 은 그대로다", () => {
+      let now = new Date(2026, 9, 31, 9, 0, 0);
+      const clocked = new TodoService(() => now);
+      const created = clocked.create({ title: "A", assignee: "가" });
+      now = new Date(2026, 9, 31, 10, 30, 0);
+      const updated = clocked.update(created.id, { completed: true });
+      expect(updated.createdAt).toBe(created.createdAt);
+      expect(updated.updatedAt).toBe(now.toISOString());
+      expect(updated.updatedAt).not.toBe(created.updatedAt);
     });
 
     it("dueDate 에 null 을 주면 마감일을 지운다", () => {

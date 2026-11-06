@@ -36,10 +36,19 @@ body {
   opacity: 0.8;
 }
 
+/* 키보드로 옮겨 갈 때만 보이는 포커스 표시. 어두운 바탕 위에서 대비가 큰 하늘색 */
+a:focus-visible {
+  outline: 2px solid #8fb8ff;
+  outline-offset: 3px;
+  border-radius: 2px;
+  opacity: 1;
+}
+
 /* 히어로: 섹션 높이만큼 스크롤하는 동안 영상이 재생됩니다 (길수록 천천히 재생) */
 .hero {
   position: relative;
   height: 400vh;
+  height: 400svh; /* 모바일 주소창이 나타나고 사라져도 스크롤 길이가 흔들리지 않게 */
 }
 
 /* 화면에 붙어 있는 영역. svh 는 모바일 주소창 높이 변화에도 흔들리지 않는 단위입니다 */
@@ -115,10 +124,13 @@ body {
 
 .hero__loader-bar span {
   display: block;
-  width: 0%;
+  width: 100%;
   height: 100%;
   background: #8fb8ff;
-  transition: width 0.1s;
+  /* width 를 바꾸면 매번 배치를 다시 계산한다. 늘이기(transform)는 그리기만 다시 한다 */
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.1s;
 }
 
 /* 일반 콘텐츠 섹션 */

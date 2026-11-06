@@ -3,16 +3,17 @@
 데브얼라이브(DevAlive) Claude 프로젝트 통합 저장소
 
 > 클로드 코드(Claude Code)와 AI 도구를 처음 쓰거나 조금 써 본 사람이 **참고하기 좋은 자료만** 추린 무료 묶음이다.
-> 시작용 프로젝트 틀 1개, 실습 샘플 10개, 스킬 8개, 핵심 정리 문서 5편이 들어 있다. 정리 2026-10-12, 무료 공개판으로 다듬음 2026-10-24, 실습 샘플 추가 2026-11-01.
-> 이용 조건 : `LICENSE.txt` (무료로 쓰고 고쳐 써도 되며, 출처를 밝히면 나눠 줄 수 있다. 묶음 판매는 안 된다). 단, 실습 샘플 코드(`001`~`010`)는 MIT로 판매하는 결과물에도 자유롭게 쓸 수 있다.
+> 시작용 프로젝트 틀 1개, 실습 샘플 16개, 스킬 8개, 핵심 정리 문서 5편이 들어 있다. 정리 2026-10-12, 무료 공개판으로 다듬음 2026-10-24, 실습 샘플 추가 2026-11-01~06.
+> 이용 조건 : `LICENSE.txt` (무료로 쓰고 고쳐 써도 되며, 출처를 밝히면 나눠 줄 수 있다. 묶음 판매는 안 된다). 단, 실습 샘플 코드(`001`~`016`)는 MIT로 판매하는 결과물에도 자유롭게 쓸 수 있다.
 
 ## 이 묶음에 있는 것
 
 | 폴더 | 내용 | 먼저 볼 파일 |
 |---|---|---|
-| `000_sample_project/` | 새 프로젝트에 복사해 쓰는 **시작용 틀**(CLAUDE.md 예시, 권한·훅 설정 예시, 예시 에이전트·스킬, 초급·중급·고급 안내서 11편)과 **실습 샘플 10개**(`001`~`010`) | `000_sample_project/README.md` |
+| `000_sample_project/` | 새 프로젝트에 복사해 쓰는 **시작용 틀**(CLAUDE.md 예시, 권한·훅 설정 예시, 예시 에이전트·스킬, 초급·중급·고급 안내서 11편)과 **실습 샘플 16개**(`001`~`016`) | `000_sample_project/README.md` |
 | `999_agent-kit/skills/` | 가져다 쓰는 스킬 8개. 도구가 필요한 스킬은 폴더 안에 도구·문서가 함께 있다 | `999_agent-kit/skills/README.md` |
 | `999_document/` | 영상·글을 학습하고 따져 본 내용을 주제별로 묶은 핵심 정리 5편 | `999_document/README.md` |
+| `transcripts/`, `tools/` | 유튜브 자막을 우리만의 언어 **데발링보**로 바꿔 보관하는 곳과 그 번역기(아래 「유튜브 자막과 데발링보」) | `transcripts/README.md` |
 
 ## 처음이라면 — 읽는 순서
 
@@ -31,7 +32,7 @@
 3. 스킬 `verification-loop`, `token-saving`부터 깔아 본다
 
 **직접 돌려 보며 배우고 싶다면 (실습 샘플)**
-- `000_sample_project/001`~`010` — ERP 인사·회계·재고·근태, 풀스택 웹, 게임, AI 에이전트, 유튜브·웹사이트 분석을 여러 언어로 만든 동작하는 예제. 모두 테스트가 들어 있다
+- `000_sample_project/001`~`016` — ERP 인사·회계·재고·근태, 풀스택 웹, 게임, AI 에이전트, 유튜브·웹사이트 분석, AI 웹툰, 로컬 소형 모델 파이프라인, AI 전자책 빌더, 유튜브→삽화 전자책, 스프라이트 시트 GIF 변환기, 올웨이즈온 자율 에이전트 러너를 여러 언어로 만든 동작하는 예제. 모두 테스트가 들어 있다
 - 목록과 실행 방법은 `000_sample_project/README.md`의 「실습 샘플」 절
 
 **3단계 : 팀·자동화로 넓히기 (고급)**
@@ -47,7 +48,7 @@
 **영상·음성·음악 콘텐츠를 만들고 싶다면**
 - `999_document/03_AI미디어_영상음성/AI미디어_영상음성_핵심정리.md`
 - 스킬 `youtube-to-skill`(영상을 학습 정리본·스킬로), `publishing-workflow`(블로그·전자책 원고)
-- 실습 샘플 `008_youtube_analyzer`(영상 → 대본·장면·컷 분석), `009_scroll_video_hero`(스크롤 영상 히어로)
+- 실습 샘플 `008_youtube_analyzer`(영상 → 대본·장면·컷 분석), `009_scroll_video_hero`(스크롤 영상 히어로), `014_youtube_to_ebook`(영상 → 삽화 전자책)
 
 **도구를 고를 때**
 - `999_document/04_무료·상업이용_도구/무료·상업이용_도구목록.md` — 무료이면서 상업 이용이 되는지 판정한 표
@@ -70,6 +71,45 @@
 | `publishing-workflow` | 블로그·전자책 원고 작성과 사실·저작권 점검 | 초급~중급 |
 
 쓰는 법 : 필요한 스킬 폴더만 `~/.claude/skills/`에 복사한다. 스킬 설명은 모든 세션에 실리므로 자주 쓰는 것만 넣는다.
+
+## 유튜브 자막과 데발링보(우리만의 언어)
+
+클라우드에서는 유튜브가 서버를 봇으로 보고 자막 받기를 자주 막는다. 그래서 **자막은 내 PC에서 받고, 분석은 클로드(클라우드)가 한다.**
+이때 자막 원문(남의 저작물)이 공개 저장소에 평문으로 드러나지 않도록, 우리만의 언어 **데발링보(Devalingvo)** 로 바꿔서 올린다.
+
+```
+DEVALINGVO-1
+cŭlèbó bababa bababi bolèfé fapabi derohó láfímè hédèpì húsivi jéhùtè tètùlù sísògè
+```
+
+- **문법** : 자음 16개(`b c d f g h j k l m n p r s t v`) × 모음 16개(`a e i o u á é í ó ú à è ì ò ù ŭ`). 음절 하나가 1바이트이고, 3음절이 한 단어, 12단어가 한 줄이다. 먼저 압축(gzip)한 뒤 쓰므로 긴 자막은 원문보다 짧아진다.
+- **자동 번역** : 커밋할 때 평문 → 데발링보로 자동 변환되고, 받을 때(`git pull`) 데발링보 → 평문으로 자동으로 풀린다. 키도 설정도 없다.
+- **적용 범위** : 데발링보는 유튜브 자막처럼 외부에서 가져온 원문(스킬·자료를 만들 때 쓰는 재료)에만 쓴다. 기존 md 문서·소스·스킬 파일은 지금처럼 평문 그대로 둔다. 번역기가 다루는 곳은 `transcripts/` 하나뿐이다.
+- **가림막이지 보안 장치가 아니다** : 저장소를 받은 누구나 풀 수 있다. 분석에 필요한 자막만 두고, 다 쓴 자막은 지운다.
+
+### PC에서 쓰는 법
+
+준비물은 `git` 뿐이다. Windows 는 **Git Bash**(Git for Windows 를 설치하면 함께 생김)를 열어서 하고, 맥·리눅스는 터미널을 쓴다. 번역기에 필요한 `bash`, `gzip`, `perl` 은 모두 기본으로 들어 있다.
+
+```bash
+# 1) 처음 한 번 : 저장소를 받고 자동 번역 훅을 켠다
+git clone https://github.com/devalivemanager/claude_all-in-one-free.git
+cd claude_all-in-one-free
+tools/transcripts.sh setup
+
+# 2) 자막 올리기 : 받은 자막을 plain/ 에 <영상ID>.txt 로 넣고 커밋
+cp ~/Downloads/받은자막.txt transcripts/plain/v-lYvViXXWA.txt
+git add -A && git commit -m "자막 추가: v-lYvViXXWA" && git push
+#    → 커밋할 때 transcripts/v-lYvViXXWA.txt.dvl(데발링보)만 올라간다
+
+# 3) 자막 읽기 : 받기만 하면 transcripts/plain/ 에 평문으로 풀린다
+git pull
+```
+
+- 영상 ID 는 주소의 `watch?v=` 뒤 11글자다(`https://www.youtube.com/watch?v=v-lYvViXXWA` → `v-lYvViXXWA`).
+- `transcripts/plain/` 은 git 에서 제외돼 있어 평문은 절대 올라가지 않는다. 억지로(`git add -f`) 넣어도 커밋 전 검사가 막는다.
+- 손으로 바꾸거나 풀 수도 있다 : `tools/transcripts.sh encode <자막.txt> <영상ID>`, `tools/transcripts.sh decode <영상ID>`.
+- 자세한 내용은 `transcripts/README.md`.
 
 ## 이 묶음 전체에 깔린 원칙
 
@@ -94,4 +134,4 @@ Copyright (c) 2026 devalive (데브얼라이브, https://devalive.tistory.com)
 | 대상 | 조건 | 할 수 있는 것 |
 |---|---|---|
 | 묶음 전체 (아래 예외 말고 전부) | [`LICENSE.txt`](LICENSE.txt) — 데브얼라이브 이용 조건 | 개인·업무에 자유롭게 쓰고 고치기, 출처를 밝히고 나눠 주기. **묶음이나 고친 판을 파는 것은 안 됨** |
-| 실습 샘플 코드 `000_sample_project/001_*`~`010_*` | [`000_sample_project/LICENSE-MIT`](000_sample_project/LICENSE-MIT) — MIT | 판매하는 결과물을 포함해 어디에든 자유롭게 사용. 저작권 표시와 MIT 문구만 남기면 됨 |
+| 실습 샘플 코드 `000_sample_project/001_*`~`016_*` | [`000_sample_project/LICENSE-MIT`](000_sample_project/LICENSE-MIT) — MIT | 판매하는 결과물을 포함해 어디에든 자유롭게 사용. 저작권 표시와 MIT 문구만 남기면 됨 |

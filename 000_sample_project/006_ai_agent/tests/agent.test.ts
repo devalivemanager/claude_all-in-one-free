@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ContentBlock, Message, MessageParam, StopReason } from '@anthropic-ai/sdk/resources/messages';
-import { MaxIterationsError, runAgent, type MessagesClient } from '../src/agent.js';
+import { IncompleteAnswerError, MaxIterationsError, runAgent, type MessagesClient } from '../src/agent.js';
 import { resetSubmittedExpenses } from '../src/tools.js';
 
 // 테스트에 필요한 필드만 채운 가짜 Message 를 만든다.
@@ -137,6 +137,24 @@ describe('runAgent 에이전트 루프', () => {
 
     const [toolResult] = lastToolResults(create.mock.calls[1][0].messages);
     expect(toolResult).toMatchObject({ is_error: true, content: '오류: HR 시스템 연결 실패' });
+  });
+
+  it('출력 한도에 걸려 끊긴 답변은 정상 답변으로 돌려주지 않는다', async () => {
+    const { client } = fakeClient([fakeMessage([text('김민준 님의 잔여 연차는')], 'max_tokens')]);
+    await expect(runAgent({ client, question: 'q', model: 'test-model' })).rejects.toBeInstanceOf(IncompleteAnswerError);
+  });
+
+  it('거절(refusal) 응답은 빈 답변 대신 오류로 알린다', async () => {
+    const { client } = fakeClient([fakeMessage([], 'refusal')]);
+    await expect(runAgent({ client, question: 'q', model: 'test-model' })).rejects.toMatchObject({
+      stopReason: 'refusal',
+    });
+  });
+
+  it('기본 출력 한도는 생각(thinking)까지 담을 만큼 넉넉하다', async () => {
+    const { client, create } = fakeClient([fakeMessage([text('답')], 'end_turn')]);
+    await runAgent({ client, question: 'q', model: 'test-model' });
+    expect(create.mock.calls[0][0].max_tokens).toBe(16000);
   });
 
   it('최대 반복 횟수를 넘으면 MaxIterationsError 를 던진다', async () => {

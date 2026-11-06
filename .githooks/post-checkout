@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# 받은 뒤: 변환본을 transcripts/plain/ 에 자동으로 푼다. 실패해도 git 작업은 막지 않는다.
+"$(git rev-parse --show-toplevel)/tools/transcripts.sh" sync-dec || true

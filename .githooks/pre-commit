@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# 커밋 전: plain/ 의 자막을 데발링보로 자동 변환하고, transcripts/ 에 데발링보 글만 올라가는지 검사한다.
+set -e
+T="$(git rev-parse --show-toplevel)/tools/transcripts.sh"
+"$T" sync-enc
+exec "$T" check

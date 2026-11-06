@@ -38,6 +38,12 @@ button:hover { background: #1d4ed8; }
 button.secondary { background: #e5e7eb; color: #374151; }
 button.danger { background: #fee2e2; color: #b91c1c; }
 
+/* 키보드로 옮겨 갈 때만 보이는 포커스 표시. 흰 카드 위에서 대비 3:1 이상인 파란색 */
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .error { color: #b91c1c; margin: 8px 0 0; min-height: 1em; white-space: pre-line; }
 
 .filters { display: flex; gap: 12px; align-items: end; margin-bottom: 12px; }

@@ -1,0 +1,4 @@
+# 도트 그림과 GIF 조립에 Pillow 한 가지면 충분하다
+pillow>=10
+# 시험 돌리기(선택): python -m unittest 로도 돈다
+pytest>=7
