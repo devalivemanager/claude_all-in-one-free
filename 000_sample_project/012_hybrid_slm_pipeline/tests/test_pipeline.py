@@ -239,5 +239,70 @@ class SkillFileTests(unittest.TestCase):
             self.assertIn("clean_data.json", text)
 
 
+# 가짜 claude 명령 : 받은 인자를 파일에 남기고, FAKE_CLAUDE 값에 따라 claude -p --output-format json 처럼 답한다
+FAKE_CLAUDE = """#!/usr/bin/env python3
+import json, os, sys
+sys.stdin.read()
+open(os.environ["FAKE_CLAUDE_ARGS"], "w", encoding="utf-8").write(json.dumps(sys.argv[1:], ensure_ascii=False))
+mode = os.environ.get("FAKE_CLAUDE", "ok")
+if mode == "ok":
+    print(json.dumps({"type": "result", "subtype": "success", "is_error": False, "result": "# 글\\n본문", "total_cost_usd": 0.01}))
+elif mode == "budget":
+    print(json.dumps({"type": "result", "subtype": "error_max_budget_usd", "is_error": True, "result": "", "total_cost_usd": 1.2}))
+    sys.exit(1)
+elif mode == "empty":
+    print(json.dumps({"type": "result", "subtype": "success", "is_error": False, "result": "   ", "total_cost_usd": 0.01}))
+"""
+
+
+class ClaudeHeadlessTests(unittest.TestCase):
+    """2단계 claude -p 호출 : 도구를 끄고(실측 비용 약 1/5), 결과 JSON 으로 성공을 판정한다(19장)."""
+
+    def setUp(self):
+        import os
+        self.tmp = tempfile.TemporaryDirectory()
+        bin_dir = Path(self.tmp.name)
+        exe = bin_dir / "claude"
+        exe.write_text(FAKE_CLAUDE, encoding="utf-8")
+        exe.chmod(0o755)
+        self.args_file = bin_dir / "args.json"
+        self.old_env = {k: os.environ.get(k) for k in ("PATH", "FAKE_CLAUDE", "FAKE_CLAUDE_ARGS")}
+        os.environ["PATH"] = f"{bin_dir}{os.pathsep}{os.environ.get('PATH', '')}"
+        os.environ["FAKE_CLAUDE_ARGS"] = str(self.args_file)
+
+    def tearDown(self):
+        import os
+        for k, v in self.old_env.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        self.tmp.cleanup()
+
+    def test_turns_tools_off_asks_json_and_caps_budget(self):
+        runner.run_claude_headless("지시")
+        args = json.loads(self.args_file.read_text(encoding="utf-8"))
+        self.assertEqual(args[args.index("--tools") + 1], "")
+        self.assertEqual(args[args.index("--output-format") + 1], "json")
+        self.assertGreater(float(args[args.index("--max-budget-usd") + 1]), 0)
+
+    def test_returns_only_the_written_text(self):
+        # JSON 껍데기 없이 글만, 파일 끝 줄바꿈 하나를 붙여 돌려준다
+        self.assertEqual(runner.run_claude_headless("지시"), "# 글\n본문\n")
+
+    def test_budget_stop_is_failure(self):
+        import os
+        os.environ["FAKE_CLAUDE"] = "budget"
+        with self.assertRaises(RuntimeError) as ctx:
+            runner.run_claude_headless("지시")
+        self.assertIn("error_max_budget_usd", str(ctx.exception))
+
+    def test_success_with_empty_answer_is_failure(self):
+        import os
+        os.environ["FAKE_CLAUDE"] = "empty"
+        with self.assertRaises(RuntimeError):
+            runner.run_claude_headless("지시")
+
+
 if __name__ == "__main__":
     unittest.main()

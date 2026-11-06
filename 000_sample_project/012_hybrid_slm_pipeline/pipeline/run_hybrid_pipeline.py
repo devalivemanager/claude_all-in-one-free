@@ -46,15 +46,32 @@ def build_instruction(skill: str, clean: dict) -> str:
     ])
 
 
+# 2단계 한 번에 쓸 수 있는 비용 상한(달러). 글 한 편은 보통 0.1달러 안팎이다.
+STAGE2_MAX_BUDGET_USD = "1.00"
+
+
 def run_claude_headless(instruction: str, timeout: int = 600) -> str:
-    """claude -p 로 2단계를 실행한다(사람 없이 한 번 답하고 끝나는 모드). 지시문은 표준 입력으로 넘긴다."""
+    """claude -p 로 2단계를 실행한다(사람 없이 한 번 답하고 끝나는 모드). 지시문은 표준 입력으로 넘긴다.
+
+    - 글쓰기에는 도구가 필요 없으므로 --tools "" 로 모두 끈다. 도구 설명이 빠져 입력이 크게 줄어든다
+      (실측 : 같은 짧은 지시에 $0.0897 → $0.0186).
+    - 종료 코드만 믿지 않고 --output-format json 의 subtype 과 빈 답을 검사한다(19장).
+    """
     result = subprocess.run(
-        ["claude", "-p", "표준 입력으로 받은 지시를 그대로 수행하라."],
+        ["claude", "-p", "표준 입력으로 받은 지시를 그대로 수행하라.",
+         "--tools", "", "--output-format", "json", "--max-budget-usd", STAGE2_MAX_BUDGET_USD],
         input=instruction, capture_output=True, text=True, encoding="utf-8", timeout=timeout,
     )
-    if result.returncode != 0 or not result.stdout.strip():
-        raise RuntimeError(f"claude -p 실패(종료 코드 {result.returncode}): {result.stderr.strip()[:300]}")
-    return result.stdout
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        raise RuntimeError(f"claude -p 실패(종료 코드 {result.returncode}): {result.stderr.strip()[:300]}") from None
+    if data.get("subtype") != "success" or data.get("is_error"):
+        raise RuntimeError(f"claude -p 실패({data.get('subtype')}, 종료 코드 {result.returncode})")
+    text = (data.get("result") or "").strip()
+    if not text:
+        raise RuntimeError("claude -p 가 성공으로 끝났지만 쓴 글이 비어 있습니다")
+    return text + "\n"
 
 
 def main(argv: list[str] | None = None, client: OllamaClient | None = None, claude_runner=None, which=shutil.which,

@@ -25,7 +25,7 @@ output/blog · output/scenario · output/reports   ← 게시는 사람이 확�
 - Python 3.11 이상, **표준 라이브러리만** 사용(설치할 패키지 없음)
 - PC: [Ollama](https://ollama.com) + 무료 + 상업 이용이 확인된 작은 모델(기본값 없음, 아래 「로컬 모델 고르기」)
 - 2단계: Claude Code CLI(`claude`)
-- 테스트: `unittest` 29개 — **가짜 Ollama 서버**로 돌아서 Ollama 없이도 된다
+- 테스트: `unittest` 33개 — **가짜 Ollama 서버**로 돌아서 Ollama 없이도 된다
 
 ## 폴더 구조
 
@@ -101,7 +101,7 @@ python -m pipeline.run_hybrid_pipeline --input data/samples/comments_sample.json
 ## 테스트
 
 ```bash
-python -m unittest discover -s tests -t .     # 29개, Ollama 없이 가짜 서버로
+python -m unittest discover -s tests -t .     # 33개, Ollama 없이 가짜 서버로
 ```
 
 - 연결: 모델을 정하지 않으면 서버에 묻기 전에 안내하고 멈춤, 모델 설치 확인(`:latest` 태그 포함), 모델 없음 → `ollama pull` 안내, 서버 없음 → `ollama serve` 안내, JSON 형식·한국어 규칙·temperature 0 을 보내는지, JSON 이 아닌 답은 실패, 실측값 계산
@@ -111,6 +111,7 @@ python -m unittest discover -s tests -t .     # 29개, Ollama 없이 가짜 서�
 - 요약: 형식 검사, 너무 많으면 잘라 내고 알림
 - 러너: 지시문 모드, 헤드리스 모드(가짜 `claude`), `claude` 없으면 지시문으로, 2단계 실패는 종료 코드 1, 서버 없으면 아무 파일도 만들지 않음, 분류 실패 경고
 - 스킬 3개의 형식
+- 2단계 호출(가짜 `claude`): 도구를 끄고(`--tools ""`) JSON 으로 받고 비용 상한을 거는지, 글만 돌려주는지, 비용 상한에 걸린 종료·성공인데 빈 답은 실패로 보는지
 
 ## 로컬 모델 고르기 (전제 : 무료 + 상업 이용 가능)
 
@@ -129,7 +130,9 @@ python -m unittest discover -s tests -t .     # 29개, Ollama 없이 가짜 서�
 ## 확인하지 못한 것 (PC 에서 직접 재서 채운다)
 
 - 이 클라우드 환경에는 Ollama 가 없어서 **실제 작은 모델의 속도·분류 품질은 재지 않았다.** README 의 숫자는 가짜 서버 값이다.
-- `claude -p` 가 표준 입력으로 지시를 받는 것은 이 환경에서 짧은 지시로 확인했다(답 `5`, 종료 코드 0). 실제 블로그 글 품질은 확인하지 않았다.
+- 2단계는 이 환경에서 진짜 `claude -p` 로 돌려 보았다(2026-11-06, 1단계는 가짜 서버). 블로그 글 한 편(약 4.7KB)이 30초 안팎에 나오고, JSON 에 없는 사실은 「[확인 필요]」로 남겼다.
+- 2단계는 글만 쓰므로 도구를 끈다(`--tools ""`). 같은 짧은 지시를 켜고·끄고 재 보니 비용이 $0.0897 → $0.0186, 블로그 글 한 편에서는 입력 토큰(캐시 포함)이 79,948 → 9,648 로 줄었다. 끄지 않으면 쓰지도 않는 도구 설명이 매번 실린다.
+- 성공 판정은 종료 코드가 아니라 결과 JSON 의 `subtype` 과 빈 답으로 한다. 한 번의 비용 상한은 `STAGE2_MAX_BUDGET_USD`(1달러)다.
 
 ## 주의
 
