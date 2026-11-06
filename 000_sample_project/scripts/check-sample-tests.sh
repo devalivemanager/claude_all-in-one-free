@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# 예제 14개의 시험을 모두 돌리고, 실제 통과 개수를 README.md 표의 「테스트」 칸과 맞춰 본다.
+# 예제 15개의 시험을 모두 돌리고, 실제 통과 개수를 README.md 표의 「테스트」 칸과 맞춰 본다.
 # 출간 전·문서 수정 뒤에 돌려 「README 숫자 = 실제 숫자」를 확인하는 동기화 점검용이다.
 #
 # 사용법 : bash scripts/check-sample-tests.sh [예제 폴더 이름 ...]
-#   인자가 없으면 12개 전부. 예) bash scripts/check-sample-tests.sh 003_fullstack_todo 009_scroll_video_hero
+#   인자가 없으면 15개 전부. 예) bash scripts/check-sample-tests.sh 003_fullstack_todo 009_scroll_video_hero
 # 종료 코드 : 0 모두 일치·통과 / 1 실패하거나 숫자가 다름 / 2 도구가 없어 돌리지 못한 예제가 있음
 #
 # 원본을 더럽히지 않는다 : pytest 캐시는 끄고(-p no:cacheprovider), 빌드 산출물(target/ 등)은 각 예제의 .gitignore 대상이다.
@@ -25,7 +25,7 @@ run_tests() {
                             .venv/bin/python -m pytest -q -p no:cacheprovider 2>&1 ;;
     005_inventory_api)      go test -count=1 -v ./... 2>&1 ;;
     007_attendance_cli)     cargo test -q 2>&1 ;;
-    012_hybrid_slm_pipeline|013_ai_ebook_builder|014_youtube_to_ebook) python3 -m unittest discover -s tests -t . 2>&1 ;;
+    012_hybrid_slm_pipeline|013_ai_ebook_builder|014_youtube_to_ebook|015_sprite_sheet_to_gif) python3 -m unittest discover -s tests -t . 2>&1 ;;
     *)                      npm test --silent 2>&1 ;;
   esac
 }
@@ -53,7 +53,7 @@ PY
     007_attendance_cli)
       pass=$(grep -oE 'ok\. [0-9]+ passed' <<<"$out" | grep -oE '[0-9]+' | paste -sd+ | bc)
       fail=$(grep -oE '[0-9]+ failed' <<<"$out" | grep -oE '[0-9]+' | paste -sd+ | bc) ;;
-    012_hybrid_slm_pipeline|013_ai_ebook_builder|014_youtube_to_ebook)
+    012_hybrid_slm_pipeline|013_ai_ebook_builder|014_youtube_to_ebook|015_sprite_sheet_to_gif)
       local ran; ran=$(grep -oE 'Ran [0-9]+ test' <<<"$out" | grep -oE '[0-9]+')
       fail=$(grep -oE '(failures|errors)=[0-9]+' <<<"$out" | grep -oE '[0-9]+' | paste -sd+ | bc)
       pass=$(( ${ran:-0} - ${fail:-0} )) ;;
@@ -77,7 +77,7 @@ missing_tool() {
     005_inventory_api) command -v go >/dev/null || echo go ;;
     007_attendance_cli) command -v cargo >/dev/null || echo cargo ;;
     012_hybrid_slm_pipeline) command -v python3 >/dev/null || echo python3 ;;
-    013_ai_ebook_builder|014_youtube_to_ebook) command -v python3 >/dev/null || echo python3 ;;
+    013_ai_ebook_builder|014_youtube_to_ebook|015_sprite_sheet_to_gif) command -v python3 >/dev/null || echo python3 ;;
     *) # 외부 패키지가 있는 예제만 node_modules 가 필요하다(009·010·011 은 node 내장 기능만 쓴다)
        if node -e 'const p=require(process.argv[1]);process.exit(Object.keys({...p.dependencies,...p.devDependencies}).length?0:1)' "$ROOT/$1/package.json"; then
          [[ -d "$ROOT/$1/node_modules" ]] || echo "node_modules(npm install)"

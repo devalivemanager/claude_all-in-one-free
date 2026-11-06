@@ -1,0 +1,7 @@
+# 시험·실행 산출물은 올리지 않는다
+__pycache__/
+*.pyc
+.pytest_cache/
+output/
+assets/gif/
+assets/sheets/_tmp/
