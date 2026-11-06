@@ -1,9 +1,11 @@
 # Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
-"""한 줄 CLI: `python -m sprite_to_gif.cli {generate|convert|batch}`.
+"""한 줄 CLI: `python -m sprite_to_gif.cli {generate|convert|batch}` + 벡터 모드.
 
 - generate : 절차적 도트 프레임을 직접 생성해 GIF(옵션으로 시트 PNG 까지)로 저장 — 외부 연결 0
 - convert  : 스프라이트 시트 한 장을 무한 루프 GIF 로
 - batch    : 폴더의 시트 전부를 일괄 변환(실패는 모아 보고하고 계속 진행한다)
+- --mode vector : 서브커맨드 없이 바로 벡터 모션. 예)
+  `python -m sprite_to_gif.cli --mode vector --preset lantern --size 256 --output lantern_loop.gif`
 """
 
 from __future__ import annotations
@@ -14,7 +16,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from . import converter, generator, sources
+from . import converter, generator, sources, vector_generator
 
 
 def _duration_args(args: argparse.Namespace) -> dict:
@@ -39,6 +41,20 @@ def cmd_generate(args: argparse.Namespace) -> int:
     info = converter.frames_to_gif(frames, args.output, duration_ms=args.duration or 333,
                                    colors=args.colors)
     _report("완료", info)
+    return 0
+
+
+def cmd_vector(args: argparse.Namespace) -> int:
+    """벡터 모션 엔진 한 돌기: 프리셋 하나로 칼선 무한 루프 GIF 를 뽑아 준다."""
+    preset = args.preset or vector_generator.PRESETS[0]
+    spec = vector_generator.VectorSpec(size=args.size)
+    frames = vector_generator.generate_vector_frames(preset, frames=args.frames, spec=spec)
+    # 벡터 모션은 움직임이 부드러운 게 얼굴이라 기본 표시 시간을 도트(333ms)보다 짧게 100ms 로 잡는다
+    ms = converter.compute_duration_ms(
+        args.fps, args.duration if (args.fps or args.duration) else 100, speed=args.speed
+    )
+    info = converter.frames_to_gif(frames, args.output, duration_ms=ms, colors=args.colors)
+    _report(f"벡터 완료({preset})", info)
     return 0
 
 
@@ -75,7 +91,20 @@ def cmd_batch(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sprite_to_gif", description="스프라이트 시트 → 무한 루프 GIF")
-    sub = parser.add_subparsers(dest="command", required=True)
+    # 최상단 옵션: 서브커맨드 없이 `--mode vector` 만으로 도는 벡터 모드용
+    parser.add_argument("--mode", default=None, choices=["vector"],
+                        help="생성 방식. vector = SVG 벡터 모션 엔진(서브커맨드 없이 바로 돈다)")
+    parser.add_argument("--preset", default=None, choices=vector_generator.PRESETS,
+                        help="벡터 프리셋: lantern|crosshair|pulse_ring|spin_emblem")
+    parser.add_argument("--frames", type=int, default=None, help="프레임 수(벡터 기본: 프리셋마다 6/8/12)")
+    parser.add_argument("--size", type=int, default=None, help="프레임 크기 px(벡터 기본 256)")
+    parser.add_argument("--output", default=None, help="저장 경로(벡터 기본 vector_loop.gif)")
+    parser.add_argument("--fps", type=float, default=None, help="초당 프레임 수(예: 3)")
+    parser.add_argument("--duration", type=int, default=None, help="프레임당 표시 시간 ms(예: 350)")
+    parser.add_argument("--speed", type=float, default=1.0, help="재생 속도 배수 0.25~2.0")
+    parser.add_argument("--colors", type=int, default=converter.DEFAULT_COLORS, help="팔레트 색 수")
+
+    sub = parser.add_subparsers(dest="command", required=False)
 
     def common(p: argparse.ArgumentParser) -> None:
         p.add_argument("--fps", type=float, default=None, help="초당 프레임 수(예: 3)")
@@ -119,6 +148,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.speed < 0.25 or args.speed > 2.0:
         parser.error("--speed 는 0.25~2.0 사이로")
+    if args.command is None:
+        # 서브커맨드 없이 --mode vector(--preset …) 로만 온 경우: 벡터 모드로 받는다
+        if args.mode == "vector" or args.preset:
+            args.size = args.size if args.size is not None else 256
+            args.output = args.output if args.output is not None else "vector_loop.gif"
+            return cmd_vector(args)
+        parser.error("명령을 하나 골라 주세요: generate|convert|batch (또는 --mode vector)")
     if getattr(args, "grid", None):
         args.cols, args.rows = (int(x) for x in args.grid.lower().split("x"))
     return args.fn(args)
