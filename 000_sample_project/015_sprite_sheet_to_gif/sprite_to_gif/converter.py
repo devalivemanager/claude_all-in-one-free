@@ -68,28 +68,40 @@ def compute_duration_ms(fps: float | None, duration_ms: int | None, speed: float
     return max(MIN_DURATION_MS, int(round(base / speed)))
 
 
-def _transparent_index(rgba_frame: Image.Image, palettized: Image.Image) -> int | None:
-    """투명 픽셀들이 빠진 팔레트 색 번호를 찾아 돌려준다(없으면 None)."""
-    alpha = rgba_frame.getchannel("A")
-    for y in range(rgba_frame.height):
-        for x in range(rgba_frame.width):
-            if alpha.getpixel((x, y)) < 128:
-                return palettized.getpixel((x, y))
-    return None
+TRANSPARENT_INDEX = 255  # 모든 투명 프레임이 함께 쓰는 투명색 번호(팔레트 맨 끝 칸)
+
+
+def _quantize_rgba(frame: Image.Image, colors: int) -> Image.Image:
+    """알파가 있는 프레임을 양자화하고 투명 픽셀을 고정 번호 TRANSPARENT_INDEX 로 모은다.
+
+    프레임마다 따로 양자화하면 투명색이 팔레트의 몇 번에 놓일지가 프레임마다 달라진다.
+    GIF 저장기는 투명색 번호를 프레임끼리 묶어 쓰므로, 번호가 어긋나면 그 프레임의 투명
+    자리가 검은 사각형으로 나와 배경이 깜빡인다. 그래서 그림 색은 0~254 번에만 두고,
+    투명 자리는 늘 255 번 한 곳으로 모은다.
+    """
+    colors = max(2, min(int(colors), TRANSPARENT_INDEX))
+    q = frame.quantize(colors=colors, method=Image.FASTOCTREE)
+    # 알파째 양자화한 팔레트에서 완전 투명 칸(알파 0)만 투명으로 옮긴다.
+    # 반투명 빛 번짐 칸은 예전처럼 색으로 남겨 그림 모양을 바꾸지 않는다.
+    rgba = q.getpalette("RGBA")
+    clear = {i for i in range(len(rgba) // 4) if rgba[i * 4 + 3] == 0}
+    mask = q.point([255 if i in clear else 0 for i in range(256)], "L")
+    palette = q.getpalette("RGB")[: TRANSPARENT_INDEX * 3]
+    palette += [0] * (TRANSPARENT_INDEX * 3 - len(palette))
+    q.putpalette(palette + [0, 0, 0])  # 255 번 = 투명 전용 칸
+    q.paste(TRANSPARENT_INDEX, mask=mask)
+    q.info["transparency"] = TRANSPARENT_INDEX
+    return q
 
 
 def to_palette(frames: list[Image.Image], colors: int = DEFAULT_COLORS) -> list[Image.Image]:
-    """GIF 는 256색 팔레트라서 양자화가 필요하다. 알파(투명)는 FASTOCTREE 로 함께 보존한다."""
+    """GIF 는 256색 팔레트라서 양자화가 필요하다. 알파(투명)는 고정 투명색 번호로 보존한다."""
     palettized = []
     for f in frames:
         if f.mode == "P":
             palettized.append(f)
         elif "A" in f.getbands():
-            q = f.quantize(colors=colors, method=Image.FASTOCTREE)
-            index = _transparent_index(f, q)
-            if index is not None:
-                q.info["transparency"] = index
-            palettized.append(q)
+            palettized.append(_quantize_rgba(f, colors))
         else:
             palettized.append(
                 f.convert("RGB").quantize(

@@ -139,5 +139,63 @@ class VectorGifTest(unittest.TestCase):
             self.assertEqual(gif.n_frames, 12)  # 기본 프리셋 lantern
 
 
+class TransparentBackgroundFlickerTest(unittest.TestCase):
+    """투명 배경 깜빡임 결함(2026-11-06 실측) 재현 시험.
+
+    프레임마다 양자화 팔레트의 투명색 번호가 달랐는데 저장기는 첫 프레임 번호만
+    모든 프레임에 썼다. 그래서 번호가 어긋난 프레임은 투명 자리가 검은 사각형으로
+    나와 배경이 투명 ↔ 검정으로 깜빡였다(lantern 에서 드러남). 모든 벡터 프리셋으로
+    만든 GIF 를 Pillow 로 프레임마다 RGBA 로 풀어 배경 자리가 늘 같은 상태인지 본다.
+    """
+
+    def setUp(self) -> None:
+        self.dir = Path(__file__).parent / "_tmp_flicker"
+        self.dir.mkdir(exist_ok=True)
+
+    def tearDown(self) -> None:
+        for f in self.dir.iterdir():
+            f.unlink()
+        self.dir.rmdir()
+
+    def _decode(self, path: Path) -> list[Image.Image]:
+        with Image.open(path) as gif:
+            decoded = []
+            for index in range(gif.n_frames):
+                gif.seek(index)
+                decoded.append(gif.convert("RGBA"))
+        return decoded
+
+    def test_background_stays_transparent_in_every_frame(self) -> None:
+        for preset in vector.PRESETS:
+            with self.subTest(preset=preset):
+                frames = vector.generate_vector_frames(preset, spec=vector.VectorSpec(size=64))
+                out = self.dir / f"{preset}.gif"
+                converter.frames_to_gif(frames, out, duration_ms=100)
+                decoded = self._decode(out)
+                self.assertEqual(len(decoded), len(frames))
+                w, h = frames[0].size
+                # 1) 네 모서리 픽셀: 모든 프레임에서 같은 값(투명)이어야 한다
+                for corner in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+                    values = {frame.getpixel(corner) for frame in decoded}
+                    self.assertEqual(len(values), 1, f"{corner} 가 프레임마다 다름: {values}")
+                    self.assertEqual(values.pop()[3], 0, f"{corner} 가 투명이 아님")
+                # 2) 원본에서 완전 투명인 자리는 GIF 에서도 모든 프레임이 투명이어야 한다
+                #    (모서리는 프레임 최적화로 잘려 나가 결함을 못 볼 수 있어 그림 둘레까지 본다)
+                for index, (source, frame) in enumerate(zip(frames, decoded)):
+                    src_alpha = source.getchannel("A").tobytes()
+                    gif_alpha = frame.getchannel("A").tobytes()
+                    leaked = sum(1 for s, g in zip(src_alpha, gif_alpha) if s == 0 and g != 0)
+                    self.assertEqual(leaked, 0, f"{index}번 프레임: 투명 자리 {leaked}px 이 불투명")
+
+    def test_all_frames_share_one_transparency_index(self) -> None:
+        """양자화한 프레임들이 같은 투명색 번호를 써야 저장기가 한 번호로 묶어도 안전하다."""
+        for preset in vector.PRESETS:
+            with self.subTest(preset=preset):
+                frames = vector.generate_vector_frames(preset, spec=vector.VectorSpec(size=64))
+                indices = {q.info.get("transparency") for q in converter.to_palette(frames)}
+                self.assertEqual(len(indices), 1, f"투명색 번호가 프레임마다 다름: {indices}")
+                self.assertIsNotNone(indices.pop())
+
+
 if __name__ == "__main__":
     unittest.main()
