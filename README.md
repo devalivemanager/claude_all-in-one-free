@@ -47,10 +47,10 @@
 - 실습 샘플 `008_youtube_analyzer`(영상 → 대본·장면·컷 분석), `009_scroll_video_hero`(스크롤 영상 히어로), `014_youtube_to_ebook`(영상 → 삽화 전자책)
 
 **도구를 고를 때**
-- `999_document/04_무료·상업이용_도구/무료·상업이용_도구목록.md` — 무료이면서 상업 이용이 되는지 판정한 표
+- `999_document/01_무료·상업이용_도구/무료·상업이용_도구목록.md` — 무료이면서 상업 이용이 되는지 판정한 표
 
 **SI·ERP 일을 한다면**
-- `999_document/05_일반SI_일반ERP/일반SI·ERP_핵심개념.md` — 인사·회계 정론, 실무 함정, AI 도구를 SI에 쓰는 법
+- `999_document/02_일반SI_일반ERP/일반SI·ERP_핵심개념.md` — 인사·회계 정론, 실무 함정, AI 도구를 SI에 쓰는 법
 - 실습 샘플 `001_hr_payroll`(급여), `002_fi_ledger`(총계정원장), `005_inventory_api`(재고), `007_attendance_cli`(근태), `006_ai_agent`(HR·회계 도우미 에이전트)
 
 ## 스킬 (`999_agent-kit/skills/`)

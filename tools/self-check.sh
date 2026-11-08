@@ -80,7 +80,7 @@ for fs in by_hash.values():
 
 # 도구표에서 같은 도구가 두 행에 나오는지(첫 칸 기준)
 import glob
-for p in glob.glob('999_document/04_*/*.md'):
+for p in glob.glob('999_document/01_*/*.md'):
     seen = defaultdict(list)
     for n, line in enumerate(open(p, encoding='utf-8').read().splitlines(), 1):
         if line.startswith('| ') and not line.startswith('|---'):

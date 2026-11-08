@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 DEFAULT_URL = "http://localhost:11434"
 # 기본 모델은 두지 않는다. 무료 + 상업 이용이 확인된(중국 계열 제외) 모델을 골라 SLM_MODEL 로 정한다.
-# 고르는 기준 : README 「로컬 모델 고르기」, 999_document/04_무료·상업이용_도구
+# 고르는 기준 : README 「로컬 모델 고르기」, 999_document/01_무료·상업이용_도구
 DEFAULT_MODEL = None
 
 KOREAN_ONLY = "반드시 한국어로만 간결하게 답한다. 추측하지 말고 주어진 본문에 있는 내용만 쓴다. 출력은 JSON 하나뿐이다."
