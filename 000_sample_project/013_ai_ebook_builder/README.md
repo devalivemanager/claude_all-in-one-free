@@ -75,3 +75,7 @@ python3 -m unittest discover -s 000_sample_project/013_ai_ebook_builder/tests \
 1. (선택) 본문 다듬기 — 챕터 청크를 클로드 코드에 넣어 「같은 사실, 같은 인물명」을 지키며 다듬고 `data/refined/` 에 저장.
 2. `python -m ebook_builder.cli build data/refined/*.txt --title … --outdir output`
 3. `output/webbook.zip` 을 버셀 드롭에 올려 링크로 배포하거나, `book.epub` 을 리더에서 열어 확인.
+
+---
+
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)

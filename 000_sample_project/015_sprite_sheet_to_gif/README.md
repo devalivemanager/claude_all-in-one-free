@@ -94,3 +94,7 @@ python3 -m pytest -q
 3. 챗GPT Images 2.6 으로 그린 시트는 `convert` 로 받아 들여 같은 후처리(속도·용량 최적화)를 태운다.
 
 가이드 전문(PROMPT-0/1/2, 10대 수칙, 챗GPT 프롬프트 부록)은 발송 문서 `documents/devalive_claude_code_chatgpt_gif_pipeline_guide.md` 를 본다.
+
+---
+
+Copyright (c) 2026 devalive · [MIT 라이선스](../LICENSE-MIT)
