@@ -18,7 +18,7 @@ description: Use when designing, reviewing, or running a loop instead of a one-o
 
 | 종류 | 무엇이 반복되나 | 어디에 적혀 있나 |
 |---|---|---|
-| **검증 루프** | 만들기 → 재기 → 고치기 (과제 하나) | `verification-loop` 스킬 (네 줄 틀) |
+| **검증 루프** | 만들기 → 재기 → 고치기 (과제 하나) | 과제마다 확인 방법·끝나는 조건을 정해 둔다 |
 | **실행 루프** | 일 찾기 → 처리 → 검증 → 다음 일 (일정·이벤트로 무인 실행) | 이 문서 §2 |
 | **분석 루프** | 주제를 여러 축으로 펼치고, 축마다 핵심 변수를 따라 깊이 파고든 뒤 교차 종합 | 이 문서 §3 (BHIAZT 보완판) |
 
@@ -116,7 +116,6 @@ description: Use when designing, reviewing, or running a loop instead of a one-o
 
 ## 5. 다른 스킬과의 관계
 
-- `verification-loop` — 과제 하나짜리 검증 루프의 틀(네 줄 틀 · 눈으로 볼 곳 3개 · 상한)
 - `youtube-to-skill` — 두 독립 분석 교차 검증 = 분석 루프 B 모드의 「갈래 독립성」과 같은 원리
 - `token-saving` — 루프는 토큰을 빠르게 태운다. 서브에이전트는 두 번째 의견이 비용값을 할 때만
 - `/loop`·`/schedule`·Workflow — 실행 루프를 실제로 돌리는 Claude Code 기능. Workflow 는 사용자가 명시적으로 요청할 때만

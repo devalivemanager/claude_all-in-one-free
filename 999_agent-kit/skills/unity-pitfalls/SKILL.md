@@ -7,7 +7,7 @@ description: Use when starting, building, testing, or exporting a Unity (유니�
 
 > MCP 시험 프로젝트(2D 플랫포머)와 연습용 러너 게임을 만들며 **실제로 겪은 것**과 영상 학습 정리본을 한 장으로 모았다.
 > 각 항목 끝 괄호는 출처다. 「실측」은 작성자 PC에서 직접 확인한 것이고, 영상 정리본은 이 묶음 `999_document/02_게임개발/`에 있다.
-> 새 함정이 **두 번** 나오면 여기에 올린다(`verification-loop` 스킬 승격 규칙). 고도는 `godot-pitfalls` 스킬.
+> 새 함정이 **두 번** 나오면 여기에 올린다. 고도는 `godot-pitfalls` 스킬.
 
 ## 0. 준비물 (작성자가 확인한 판 기준)
 

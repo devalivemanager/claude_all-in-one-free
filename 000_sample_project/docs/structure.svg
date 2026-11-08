@@ -30,9 +30,9 @@
     <text x="142" y="732">├── 📁 015_sprite_sheet_to_gif/</text>
     <text x="142" y="758">└── 📁 016_always_on_agent_runner/</text>
     <text x="106" y="784" font-weight="700" fill="#166534">├── 📁 999_agent-kit/skills/</text>
-    <text x="142" y="810">├── verification-loop · token-saving</text>
-    <text x="142" y="836">├── youtube-to-skill · loop-engineering</text>
-    <text x="142" y="862">├── game-dev-planning · godot · unity</text>
+    <text x="142" y="810">├── token-saving · youtube-to-skill</text>
+    <text x="142" y="836">├── loop-engineering · game-dev-planning</text>
+    <text x="142" y="862">├── godot-pitfalls · unity-pitfalls</text>
     <text x="142" y="888">└── publishing-workflow</text>
     <text x="106" y="914" font-weight="700" fill="#9a3412">└── 📁 999_document/</text>
     <text x="142" y="940">├── 01 클로드코드·AI도구 · 02 게임개발</text>
@@ -63,10 +63,10 @@
     <text x="560" y="706">유튜브 → 삽화 전자책 · Python</text>
     <text x="560" y="732">스프라이트 시트 → GIF · Python</text>
     <text x="560" y="758">24시간 에이전트·승인 게이트 · Python</text>
-    <text x="560" y="784">가져다 쓰는 스킬 8개</text>
-    <text x="560" y="810">검증 루프 · 토큰 절약</text>
-    <text x="560" y="836">영상→스킬 · 자율 루프</text>
-    <text x="560" y="862">게임 기획 · 엔진 함정</text>
+    <text x="560" y="784">가져다 쓰는 스킬 7개</text>
+    <text x="560" y="810">토큰 절약 · 영상→스킬</text>
+    <text x="560" y="836">자율 루프 · 게임 기획</text>
+    <text x="560" y="862">엔진 함정</text>
     <text x="560" y="888">블로그·전자책 원고</text>
     <text x="560" y="914">핵심 정리 5편</text>
   </g>

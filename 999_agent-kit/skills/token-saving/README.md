@@ -86,6 +86,5 @@
 
 - 자체 실측 : 2026-07~10 작성자의 실제 개발 프로젝트 세션들 (위임 손익분기·스킬 주입량·세션 파일 비대·effort 조정·기억 색인)
 - [Claude Code 공식 모범사례](https://code.claude.com/docs/en/best-practices)
-- 「AI 검증 루프 키트」(방구석컴퍼니, 2026-09-29) — 원 배포처에서 받는다(이 묶음에는 넣지 않음)
 - 「클로드 코드 토큰 계량기 · 108회 실측 원본」(방구석컴퍼니, 2026-09-22) — 계량기 아이디어와 108회 기록. `tools/token-meter.py` 는 독립 구현이며 원본과 토큰 수를 대조 검증했다(시험 G)
 - [lazyowen 가이드](https://lazyowen.com/guides) 중 토큰 절약·PDF·pxpipe·Graphify·필수설정 — 장점만 흡수

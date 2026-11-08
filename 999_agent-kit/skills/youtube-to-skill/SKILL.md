@@ -46,5 +46,4 @@ description: Use when the user gives a YouTube video (URL or pasted transcript) 
 
 ## 관련
 
-- `verification-loop` 스킬 — 네 줄 틀(과제·지켜야 할 선·확인 방법·끝나는 조건)이 위 지시문의 바탕이다
 - `token-saving` 스킬
