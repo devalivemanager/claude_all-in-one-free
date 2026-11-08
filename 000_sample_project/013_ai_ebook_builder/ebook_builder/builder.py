@@ -13,7 +13,11 @@
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import json
+import re
+import uuid
 import zipfile
 from dataclasses import asdict, dataclass
 from io import BytesIO
@@ -68,6 +72,15 @@ def _validate(meta: BookMeta, chapters: list[Chapter]) -> None:
         raise ValueError("챕터가 하나도 없다. 원문을 먼저 읽었는지 확인한다")
 
 
+def _svg_data_uri(svg: str) -> str:
+    """SVG 를 base64 데이터 URI 로 만든다.
+
+    SVG 를 그대로 넣으면 색상 「#1a2332」 의 # 가 주소의 조각(fragment) 표시로 읽혀
+    그 뒤가 모두 잘리고 표지가 깨진다. base64 로 감싸면 그런 글자가 남지 않는다.
+    """
+    return "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode("ascii")
+
+
 def _cover_data_uri(meta: BookMeta) -> str:
     spec = CoverSpec(
         title=meta.title,
@@ -75,8 +88,17 @@ def _cover_data_uri(meta: BookMeta) -> str:
         author=meta.author,
         preset=meta.preset,
     )
-    svg = generate_cover_svg(spec)
-    return "data:image/svg+xml;charset=utf-8," + svg.replace("\n", "").replace('"', "%22")
+    return _svg_data_uri(generate_cover_svg(spec))
+
+
+def _book_uid(meta: BookMeta) -> str:
+    """EPUB 고유번호. `urn:uuid:` + UUID 4 형식(epubcheck OPF-085 기준).
+
+    제목·저자에서 결정론적으로 만들어, 같은 책을 다시 빌드해도 번호가 같다
+    (리더가 개정판을 같은 책으로 알아본다). 버전·변형 비트는 UUID 4 규격대로 둔다.
+    """
+    digest = hashlib.sha256(f"{meta.title}\n{meta.author}".encode("utf-8")).digest()
+    return "urn:uuid:" + str(uuid.UUID(bytes=digest[:16], version=4))
 
 
 def _viewer_css(meta: BookMeta) -> str:
@@ -168,50 +190,29 @@ def _body_to_html(body: str) -> str:
     return "\n".join(out)
 
 
+# 인라인 코드(`…`)는 먼저 떼어 두어 안의 밑줄·별표가 꾸미기로 바뀌지 않게 한다.
+_MD_CODE_SPAN = re.compile(r"`([^`]+)`")
+_MD_BOLD = re.compile(r"\*\*(?=\S)(.+?)(?<=\S)\*\*|__(?=\S)(.+?)(?<=\S)__")
+# 기울임 _x_ 는 낱말 경계에서만(snake_case_name 같은 식별자의 밑줄은 그대로 둔다). *x* 는 어디서나.
+# 안에 태그(<, >)를 품지 않게 해 굵게와 엇갈린 태그(XHTML 오류)가 생기지 않게 한다.
+_MD_ITALIC = re.compile(
+    r"(?<!\w)_(?=\S)([^<>]+?)(?<=\S)_(?!\w)|(?<!\*)\*(?=[^\s*])([^<>]+?)(?<=[^\s*])\*(?!\*)"
+)
+
+
 def _inline_md(text: str) -> str:
     """굵게·기울임·코드만. 문장 안의 낮은 복병(마크다운 오용)을 줄인다."""
-    escaped = _escape(text)
-    # 굵게: **b** 또는 __b__
-    escaped = _md_bold(escaped)
-    escaped = _md_italic(escaped)
-    escaped = _md_code(escaped)
-    return escaped
+    codes: list[str] = []
 
+    def keep_code(match: re.Match[str]) -> str:
+        codes.append(f"<code>{_escape(match.group(1))}</code>")
+        return f"\x00{len(codes) - 1}\x00"
 
-def _md_bold(text: str) -> str:
-    parts = text.split("**")
-    if len(parts) >= 3 and len(parts) % 2 == 1:
-        out = parts[0]
-        for i in range(1, len(parts), 2):
-            out += f"<strong>{parts[i]}</strong>"
-            if i + 1 < len(parts):
-                out += parts[i + 1]
-        return out
-    return text
-
-
-def _md_italic(text: str) -> str:
-    parts = text.split("_")
-    if len(parts) >= 3 and len(parts) % 2 == 1:
-        out = parts[0]
-        for i in range(1, len(parts), 2):
-            out += f"<em>{parts[i]}</em>"
-            if i + 1 < len(parts):
-                out += parts[i + 1]
-        return out
-    return text
-
-
-def _md_code(text: str) -> str:
-    parts = text.split("`")
-    if len(parts) >= 3 and len(parts) % 2 == 1:
-        out = parts[0]
-        for i in range(1, len(parts), 2):
-            out += f"<code>{parts[i]}</code>"
-            if i + 1 < len(parts):
-                out += parts[i + 1]
-        return out
-    return text
+    protected = _MD_CODE_SPAN.sub(keep_code, text)
+    escaped = _escape(protected)
+    escaped = _MD_BOLD.sub(lambda m: f"<strong>{m.group(1) or m.group(2)}</strong>", escaped)
+    escaped = _MD_ITALIC.sub(lambda m: f"<em>{m.group(1) or m.group(2)}</em>", escaped)
+    return re.sub(r"\x00(\d+)\x00", lambda m: codes[int(m.group(1))], escaped)
 
 
 def _toc_html(chapters: list[Chapter]) -> str:
@@ -232,7 +233,7 @@ def build_html(meta: BookMeta, chapters: list[Chapter], cover: str | None = None
     svg = cover if cover is not None else generate_cover_svg(
         CoverSpec(title=meta.title, subtitle=meta.subtitle, author=meta.author, preset=meta.preset)
     )
-    cover_uri = "data:image/svg+xml;charset=utf-8," + svg.replace("\n", "").replace('"', "%22")
+    cover_uri = _svg_data_uri(svg)
 
     body_parts: list[str] = [
         f'<div class="cover"><img src="{cover_uri}" alt="표지"></div>',
@@ -369,18 +370,28 @@ table, blockquote, pre {{ break-inside: avoid; }}
 """
 
 
+_CONTAINER_XML = """<?xml version="1.0" encoding="utf-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+<rootfiles>
+<rootfile full-path="package.opf" media-type="application/oebps-package+xml"/>
+</rootfiles>
+</container>
+"""
+
+
 def build_epub(meta: BookMeta, chapters: list[Chapter], cover: str | None = None) -> bytes:
     """EPUB 3 전자책 바이트를 만든다. 표준 라이브러리 zipfile 만 쓴다.
 
-    - mimetype 은 압축 없이(store) 맨 앞에 와야 한다.
-    - 이미지·폰트 없이 XHTML+CSS 만으로 꾸민다. 리더 호환성이 가장 높다.
+    - mimetype 은 압축 없이(store) 맨 앞에 와야 하고, 바로 뒤에 META-INF/container.xml 이
+      package.opf 의 위치를 알려 준다.
+    - 표지 SVG 는 cover-image 로 등록하고, 본문은 XHTML+CSS 만으로 꾸민다. 리더 호환성이 가장 높다.
     """
     _validate(meta, chapters)
     svg = cover if cover is not None else generate_cover_svg(
         CoverSpec(title=meta.title, subtitle=meta.subtitle, author=meta.author, preset=meta.preset)
     )
     theme = _preset(meta.preset)
-    uid = "urn:uuid:" + __import__("hashlib").sha256(meta.title.encode()).hexdigest()[:32]
+    uid = _book_uid(meta)
 
     def xhtml(ch: Chapter, index: int) -> str:
         return f"""<?xml version="1.0" encoding="utf-8"?>
@@ -400,18 +411,22 @@ def build_epub(meta: BookMeta, chapters: list[Chapter], cover: str | None = None
         f'<item id="ch{i}" href="ch{i}.xhtml" media-type="application/xhtml+xml"/>'
         for i in range(len(chapters))
     )
+    # 값이 빈 dc 항목은 쓰지 않는다(빈 태그는 epubcheck RSC-005 ERROR).
+    optional_meta = "".join(
+        f"<dc:{tag}>{_escape(value.strip())}</dc:{tag}>\n"
+        for tag, value in (("creator", meta.author), ("description", meta.subtitle))
+        if value.strip()
+    )
     package = f"""<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
 <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
 <dc:identifier id="uid">{uid}</dc:identifier>
 <dc:title>{_escape(meta.title)}</dc:title>
 <dc:language>ko</dc:language>
-<dc:creator>{_escape(meta.author)}</dc:creator>
-<dc:description>{_escape(meta.subtitle)}</dc:description>
-<meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>
+{optional_meta}<meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>
 </metadata>
 <manifest>
-<item id="cover" href="cover.svg" media-type="image/svg+xml" properties="svg"/>
+<item id="cover" href="cover.svg" media-type="image/svg+xml" properties="cover-image"/>
 <item id="css" href="style.css" media-type="text/css"/>
 <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
 {manifest}
@@ -444,6 +459,8 @@ h1 {{ color: {theme['accent']}; }}
             "application/epub+zip",
             compress_type=zipfile.ZIP_STORED,
         )
+        # 리더가 package.opf 를 찾는 길잡이. 없으면 epubcheck RSC-002 FATAL.
+        zf.writestr("META-INF/container.xml", _CONTAINER_XML)
         zf.writestr("cover.svg", svg)
         zf.writestr("style.css", css)
         zf.writestr("nav.xhtml", nav)

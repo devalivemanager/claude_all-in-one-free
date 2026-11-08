@@ -29,6 +29,7 @@ class Chapter:
 # - 마크다운 제목(#, ##)
 # - 「제1장」「제 12 장」처럼 붙는 장 표기
 # - 「3. 병사의 하루」처럼 「숫자.」로 시작하는 줄
+#   (문서에 마크다운 제목이 하나라도 있으면 이 줄은 번호 목록으로 보고 제목으로 세지 않는다)
 _MD_HEADING = re.compile(r"^#{1,3}\s+(.+?)\s*#*\s*$")
 _NUM_HEADING = re.compile(r"^제\s*(\d+)\s*장\s*[:.·]?\s*(.*)$")
 _DOT_HEADING = re.compile(r"^(\d{1,2})\.\s*(\S.*)$")
@@ -76,6 +77,8 @@ def split_into_chapters(
 ) -> list[Chapter]:
     """원문을 챕터 목록으로 나눈다.
 
+    - 마크다운 제목(#)이 하나라도 있으면 「N.」 줄은 번호 목록으로 보고 제목에서 뺀다.
+    - 코드 블록(```) 안의 줄은 제목으로 보지 않는다.
     - 제목 줄이 하나도 없으면 원문 전체를 「서문」 한 챕터로 묶는다(파일이 여러 개여도
       파일명이 곧 챕터가 되지 않게, 「내용이 챕터 수를 정한다」).
     - 제목 아래에 본문이 `min_chapter_chars` 미만인 껍데기 제목은 앞 챕터의 본문으로 합친다.
@@ -84,12 +87,26 @@ def split_into_chapters(
         return []
 
     lines = text.splitlines()
-    found: list[tuple[str, int]] = []
+    candidates: list[tuple[str, int, bool]] = []  # (제목, 줄 번호, 마크다운 제목인가)
+    in_code = False
     for index, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            # 코드 블록 안의 「# 주석」「1. 」 줄은 제목이 아니다.
+            continue
         if looks_like_heading(line):
             title = heading_text(line)
             if title:
-                found.append((title, index))
+                candidates.append((title, index, bool(_MD_HEADING.match(stripped))))
+
+    # 마크다운 제목(#)이 하나라도 있으면 그 문서는 # 로 장을 나눈 것이다.
+    # 이때 「1. …」 줄은 번호 목록이므로 장 제목으로 세지 않는다.
+    if any(is_md for _, _, is_md in candidates):
+        candidates = [item for item in candidates if item[2]]
+    found: list[tuple[str, int]] = [(title, index) for title, index, _ in candidates]
 
     if not found:
         return [Chapter(title="서문", body=text.strip(), source=source).with_chunks()]

@@ -31,6 +31,32 @@ class SplitTests(unittest.TestCase):
         chapters = split_into_chapters(text)
         self.assertEqual([ch.title for ch in chapters], ["병사의 하루", "유배길"])
 
+    def test_numbered_list_under_markdown_heading_is_not_chapter(self):
+        # 마크다운 제목이 있으면 「N.」 줄은 번호 목록이지 장 제목이 아니다.
+        text = (
+            "# 01 첫 세션\n\n들어가는 말이다.\n\n## 1. 세션 열기\n\n"
+            "1. 터미널에서 프로젝트 폴더로 이동한다.\n"
+            "2. `claude`를 입력하면 세션이 열린다. 클로드는 이 폴더만 다룬다.\n"
+            "3. 처음이면 `/init`을 입력한다.\n\n"
+            "## 2. 첫 요청은 읽기로\n\n" + ("읽기부터 시킨다. " * 6)
+        )
+        chapters = split_into_chapters(text)
+        self.assertEqual(
+            [ch.title for ch in chapters], ["01 첫 세션", "1. 세션 열기", "2. 첫 요청은 읽기로"]
+        )
+        self.assertIn("1. 터미널에서 프로젝트 폴더로 이동한다.", chapters[1].body)
+        self.assertIn("3. 처음이면", chapters[1].body)
+
+    def test_heading_inside_code_block_is_not_chapter(self):
+        # 코드 블록 안의 「# 주석」·「1. 」 줄은 제목이 아니다.
+        text = (
+            "# 설치\n\n" + ("설치 순서를 본다. " * 5) + "\n\n```bash\n# 패키지 설치\npip install x\n```\n\n"
+            "# 실행\n\n" + ("실행해 본다. " * 6)
+        )
+        chapters = split_into_chapters(text)
+        self.assertEqual([ch.title for ch in chapters], ["설치", "실행"])
+        self.assertIn("# 패키지 설치", chapters[0].body)
+
     def test_no_heading_becomes_one_preface(self):
         text = "제목이라 쓸 만한 줄이 없는\n그냥 이야기 원문이다.\n\n계속된다."
         chapters = split_into_chapters(text)

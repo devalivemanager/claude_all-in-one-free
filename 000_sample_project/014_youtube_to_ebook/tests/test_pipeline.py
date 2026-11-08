@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import io
+import struct
 import tempfile
 import unittest
+import zipfile
+import zlib
 from pathlib import Path
 
 from youtube_to_ebook import extractor, pipeline
@@ -14,9 +18,28 @@ def cue(start: float, end: float, text: str) -> extractor.Cue:
 
 
 def make_frame(directory: Path, timestamp: float, index: int) -> extractor.Frame:
+    # epubcheck 이 깨진 이미지(PKG-021)로 보지 않도록 진짜 PNG 를 쓴다.
     path = directory / f"still_{index:04d}.png"
-    path.write_bytes(b"\x89PNG\r\n\x1a\nfake")
+    path.write_bytes(tiny_png(index))
     return extractor.Frame(timestamp, path)
+
+
+def tiny_png(index: int) -> bytes:
+    """1×1 짜리 진짜 PNG. index 로 색을 바꿔 파일마다 내용이 다르게 한다."""
+
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data)) + kind + data
+            + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+        )
+
+    pixel = bytes([0, index % 256, (index * 7) % 256, (index * 13) % 256])  # 필터 0 + RGB
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(pixel))
+        + chunk(b"IEND", b"")
+    )
 
 
 class ChaptersFromCuesTest(unittest.TestCase):
@@ -151,6 +174,10 @@ class BuildBookTest(unittest.TestCase):
         self.assertIn("epub", result.outputs)
         self.assertTrue(result.outputs["html"].exists())
         self.assertTrue(result.outputs["epub"].exists())
+        # 스틸컷 2장이 EPUB 에 실제로 들어가고, 리더가 여는 길잡이(container.xml)도 있다.
+        zf = zipfile.ZipFile(io.BytesIO(result.outputs["epub"].read_bytes()))
+        self.assertIn("META-INF/container.xml", zf.namelist())
+        self.assertEqual(len([n for n in zf.namelist() if n.startswith("images/")]), 2)
 
     def test_html_only(self):
         result = self.build(formats=("html",))

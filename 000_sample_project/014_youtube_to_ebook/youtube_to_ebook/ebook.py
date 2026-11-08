@@ -16,7 +16,11 @@
 from __future__ import annotations
 
 import base64
+import hashlib
+import struct
+import uuid
 import zipfile
+import zlib
 from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
@@ -52,15 +56,55 @@ def _escape(text: str) -> str:
     )
 
 
+_PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+
+def _is_valid_png(data: bytes) -> bool:
+    """PNG 서명과 덩어리(chunk) 구조·CRC 를 훑어 깨지지 않은 PNG 인지 본다.
+
+    캡처가 중간에 끊겨 깨진 파일을 EPUB 에 넣으면 리더가 못 보여 주고
+    epubcheck 도 PKG-021(깨진 이미지) ERROR 를 낸다.
+    """
+    if not data.startswith(_PNG_SIGNATURE):
+        return False
+    pos = len(_PNG_SIGNATURE)
+    first = True
+    while pos + 12 <= len(data):
+        length = struct.unpack(">I", data[pos:pos + 4])[0]
+        kind = data[pos + 4:pos + 8]
+        end = pos + 12 + length
+        if end > len(data):
+            return False
+        body = data[pos + 8:pos + 8 + length]
+        crc = struct.unpack(">I", data[pos + 8 + length:end])[0]
+        if zlib.crc32(kind + body) & 0xFFFFFFFF != crc:
+            return False
+        if first and (kind != b"IHDR" or length != 13):
+            return False
+        first = False
+        if kind == b"IEND":
+            return end == len(data)
+        pos = end
+    return False
+
+
+def _read_still(path: Path) -> bytes | None:
+    """스틸컷을 읽는다. 지워졌거나 깨진 파일이면 None(삽화에서만 빼고 본문은 살린다)."""
+    try:
+        data = Path(path).read_bytes()
+    except OSError:
+        return None
+    return data if _is_valid_png(data) else None
+
+
 def _collect_images(sections: list) -> list[_Image]:
     """챕터에 배정된 스틸컷을 전부 읽어 출력용 자산으로 정리한다. 없으면 빈 목록."""
     images: list[_Image] = []
     for order, section in enumerate(sections, start=1):
         for frame in section.images:
-            try:
-                data = Path(frame.path).read_bytes()
-            except OSError:
-                continue  # 지워진 캡처는 삽화에서만 빼고 본문은 살린다
+            data = _read_still(frame.path)
+            if data is None:
+                continue  # 지워졌거나 깨진 캡처는 삽화에서만 빼고 본문은 살린다
             images.append(
                 _Image(
                     name=f"images/img_{order:03d}_{Path(frame.path).stem}.png",
@@ -77,6 +121,26 @@ def _validate(meta: BookMeta, sections: list) -> None:
         raise ValueError("책 제목이 비어 있다")
     if not sections:
         raise ValueError("챕터가 하나도 없다. 자막을 먼저 읽었는지 확인한다")
+
+
+def _book_uid(meta: BookMeta) -> str:
+    """EPUB 고유번호. `urn:uuid:` + UUID 4 형식(epubcheck OPF-085 기준).
+
+    제목·저자에서 결정론적으로 만들어, 같은 책을 다시 빌드해도 번호가 같다.
+    버전·변형 비트는 UUID 4 규격대로 둔다.
+    """
+    digest = hashlib.sha256(f"{meta.title}\n{meta.author}".encode("utf-8")).digest()
+    return "urn:uuid:" + str(uuid.UUID(bytes=digest[:16], version=4))
+
+
+# 리더가 package.opf 를 찾는 길잡이. 없으면 epubcheck RSC-002 FATAL.
+_CONTAINER_XML = """<?xml version="1.0" encoding="utf-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+<rootfiles>
+<rootfile full-path="package.opf" media-type="application/oebps-package+xml"/>
+</rootfiles>
+</container>
+"""
 
 
 def _data_uri(image: _Image) -> str:
@@ -145,31 +209,41 @@ figcaption {{ font-size: 0.85rem; color: #8c4a2f; margin-top: 4px; }}
 def build_epub(meta: BookMeta, sections: list) -> bytes:
     """삽화가 번들링된 EPUB 3 바이트를 만든다. 표준 라이브러리 zipfile 만 쓴다.
 
-    - mimetype 은 압축 없이(store) 맨 앞에 와야 한다.
+    - mimetype 은 압축 없이(store) 맨 앞에 와야 하고, 바로 뒤에 META-INF/container.xml 이
+      package.opf 의 위치를 알려 준다.
     - 이미지는 `images/` 폴더로 넣고 매니페스트에 등록한다(EPUB 이미지 번들링 규격).
+      읽지 못한(지워진·깨진) 캡처는 매니페스트·본문에서도 빼서 없는 파일을 가리키지 않게 한다.
     """
     _validate(meta, sections)
-    # 챕터별 이미지 배분(EPUB 내부 경로 images/img_0001.png 로 이름을 다시 붙인다)
+    # 챕터별 이미지 배분(EPUB 내부 경로 images/img_0000.png 로 이름을 다시 붙인다)
     per_chapter: list[list[_Image]] = []
     counter = 0
     for section in sections:
         batch: list[_Image] = []
         for frame in section.images:
-            path = Path(frame.path)
+            data = _read_still(frame.path)
+            if data is None:
+                continue  # 지워졌거나 깨진 캡처는 삽화에서만 빼고 본문은 살린다
             batch.append(
                 _Image(
                     name=f"images/img_{counter:04d}.png",
                     mime="image/png",
-                    data=path.read_bytes() if path.exists() else b"",
+                    data=data,
                     caption=extractor.format_timestamp(frame.timestamp),
                 )
             )
             counter += 1
         per_chapter.append(batch)
     collected = [img for batch in per_chapter for img in batch]
-    uid = "urn:uuid:" + __import__("hashlib").sha256(meta.title.encode()).hexdigest()[:32]
+    uid = _book_uid(meta)
+    # 값이 빈 dc 항목은 쓰지 않는다(빈 태그는 epubcheck RSC-005 ERROR).
+    optional_meta = "".join(
+        f"<dc:{tag}>{_escape(value.strip())}</dc:{tag}>\n"
+        for tag, value in (("creator", meta.author), ("description", meta.subtitle))
+        if value.strip()
+    )
 
-    def xhtml(section: Section, index: int, images: list[_Image]) -> str:
+    def xhtml(section, index: int, images: list[_Image]) -> str:
         figures = "\n".join(
             f'<figure><img src="{_escape(img.name)}" alt="{img.caption} 장면"/>'
             f"<figcaption>{img.caption} 장면</figcaption></figure>"
@@ -206,9 +280,7 @@ def build_epub(meta: BookMeta, sections: list) -> bytes:
 <dc:identifier id="uid">{uid}</dc:identifier>
 <dc:title>{_escape(meta.title)}</dc:title>
 <dc:language>ko</dc:language>
-<dc:creator>{_escape(meta.author)}</dc:creator>
-<dc:description>{_escape(meta.subtitle)}</dc:description>
-<meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>
+{optional_meta}<meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>
 </metadata>
 <manifest>
 <item id="css" href="style.css" media-type="text/css"/>
@@ -234,23 +306,6 @@ def build_epub(meta: BookMeta, sections: list) -> bytes:
 """
     css = "body { color: #2b2118; line-height: 1.9; }\nh1 { color: #8c4a2f; }\nfigure { text-align: center; margin: 1.2em 0; }\nfigure img { max-width: 100%; }\nfigcaption { font-size: 0.85em; color: #8c4a2f; }\n"
 
-    # 챕터별 이미지 배분(EPUB 내부 경로로 다시 이름을 붙인다)
-    per_chapter: list[list[_Image]] = []
-    counter = 0
-    for section in sections:
-        batch: list[_Image] = []
-        for frame in section.images:
-            batch.append(
-                _Image(
-                    name=f"images/img_{counter:04d}.png",
-                    mime="image/png",
-                    data=Path(frame.path).read_bytes() if Path(frame.path).exists() else b"",
-                    caption=extractor.format_timestamp(frame.timestamp),
-                )
-            )
-            counter += 1
-        per_chapter.append(batch)
-
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr(
@@ -258,14 +313,14 @@ def build_epub(meta: BookMeta, sections: list) -> bytes:
             "application/epub+zip",
             compress_type=zipfile.ZIP_STORED,
         )
+        zf.writestr("META-INF/container.xml", _CONTAINER_XML)
         zf.writestr("style.css", css)
         zf.writestr("nav.xhtml", nav)
         zf.writestr("package.opf", package)
         for i, (section, batch) in enumerate(zip(sections, per_chapter)):
             zf.writestr(f"ch{i}.xhtml", xhtml(section, i, batch))
             for img in batch:
-                if img.data:
-                    zf.writestr(img.name, img.data)
+                zf.writestr(img.name, img.data)
     return buffer.getvalue()
 
 

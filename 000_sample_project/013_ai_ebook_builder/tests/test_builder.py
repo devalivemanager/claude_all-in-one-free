@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
+import base64
 import io
 import json
+import re
 import tempfile
+import urllib.parse
 import unittest
 import zipfile
 from contextlib import redirect_stdout
 from pathlib import Path
 from xml.etree import ElementTree
+
+OPF_NS = {"opf": "http://www.idpf.org/2007/opf", "dc": "http://purl.org/dc/elements/1.1/"}
+CONTAINER_NS = {"c": "urn:oasis:names:tc:opendocument:xmlns:container"}
+UUID4 = re.compile(r"^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 
 from ebook_builder.builder import (
     BookMeta,
@@ -68,6 +75,31 @@ class HtmlTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_html(meta(), [])
 
+    def test_cover_data_uri_keeps_whole_svg(self):
+        # 표지 SVG 의 색상 「#1a2332」 의 # 가 그대로 들어가면 주소가 거기서 잘려 표지가 깨진다.
+        html = build_html(meta(), split_into_chapters(SAMPLE))
+        src = re.search(r'<div class="cover"><img src="([^"]+)"', html).group(1)
+        self.assertNotIn("#", src)
+        self.assertTrue(src.startswith("data:image/svg+xml"))
+        svg = _decode_data_uri(src)
+        self.assertIn("#1a2332", svg)
+        self.assertTrue(svg.rstrip().endswith("</svg>"))
+        ElementTree.fromstring(svg)
+
+    def test_inline_code_underscore_not_italic(self):
+        # 파일 이름의 밑줄이 기울임으로 바뀌면 안 된다(`03_초급_CLAUDE.md`).
+        html = build_html(meta(), split_into_chapters("# 제\n\n`03_초급_CLAUDE.md` 와 snake_case_name 을 본다. _강조_ 는 된다."))
+        self.assertIn("<code>03_초급_CLAUDE.md</code>", html)
+        self.assertIn("snake_case_name", html)
+        self.assertIn("<em>강조</em>", html)
+
+
+def _decode_data_uri(src: str) -> str:
+    header, _, payload = src.partition(",")
+    if header.endswith(";base64"):
+        return base64.b64decode(payload).decode("utf-8")
+    return urllib.parse.unquote(payload)
+
 
 class PrintTests(unittest.TestCase):
     def test_page_break_per_chapter(self):
@@ -76,6 +108,12 @@ class PrintTests(unittest.TestCase):
         self.assertIn("h1 { page-break-before: always; break-after: avoid; }", html)
         self.assertIn("break-inside: avoid", html)
         self.assertEqual(html.count('<section class="chapter"'), 2)
+
+    def test_print_cover_data_uri_keeps_whole_svg(self):
+        html = build_print_html(meta(), split_into_chapters(SAMPLE))
+        src = re.search(r'<div class="cover">\s*<img src="([^"]+)"', html).group(1)
+        self.assertNotIn("#", src)
+        self.assertTrue(_decode_data_uri(src).rstrip().endswith("</svg>"))
 
 
 class EpubTests(unittest.TestCase):
@@ -100,6 +138,56 @@ class EpubTests(unittest.TestCase):
         for name in zf.namelist():
             if name.endswith(".xhtml"):
                 ElementTree.fromstring(zf.read(name))
+
+    def test_epub_has_container_xml(self):
+        # container.xml 이 없으면 리더가 package.opf 를 못 찾는다(epubcheck RSC-002 FATAL).
+        zf = zipfile.ZipFile(io.BytesIO(build_epub(meta(), split_into_chapters(SAMPLE))))
+        names = zf.namelist()
+        self.assertEqual(names[0], "mimetype")
+        self.assertIn("META-INF/container.xml", names)
+        root = ElementTree.fromstring(zf.read("META-INF/container.xml"))
+        rootfiles = root.findall("c:rootfiles/c:rootfile", CONTAINER_NS)
+        self.assertEqual(len(rootfiles), 1)
+        self.assertEqual(rootfiles[0].get("full-path"), "package.opf")
+        self.assertEqual(rootfiles[0].get("media-type"), "application/oebps-package+xml")
+        self.assertIn(rootfiles[0].get("full-path"), names)
+
+    def test_epub_no_empty_metadata(self):
+        # 부제·저자가 비면 dc:description·dc:creator 를 아예 쓰지 않는다(빈 태그는 RSC-005 ERROR).
+        zf = zipfile.ZipFile(io.BytesIO(build_epub(meta(subtitle="", author=""), split_into_chapters(SAMPLE))))
+        package = ElementTree.fromstring(zf.read("package.opf"))
+        for tag in ("dc:description", "dc:creator"):
+            self.assertEqual(package.findall(f"opf:metadata/{tag}", OPF_NS), [], tag)
+        for element in package.find("opf:metadata", OPF_NS):
+            if element.tag.startswith("{" + OPF_NS["dc"]):
+                self.assertTrue((element.text or "").strip(), element.tag)
+
+    def test_epub_keeps_filled_metadata(self):
+        zf = zipfile.ZipFile(io.BytesIO(build_epub(meta(), split_into_chapters(SAMPLE))))
+        package = ElementTree.fromstring(zf.read("package.opf"))
+        self.assertEqual(package.find("opf:metadata/dc:description", OPF_NS).text, "1~2편")
+        self.assertEqual(package.find("opf:metadata/dc:creator", OPF_NS).text, "데브얼라이브")
+
+    def test_epub_cover_manifest_properties(self):
+        # 표지 SVG 이미지는 cover-image 속성. 정의되지 않은 properties="svg" 를 이미지에 붙이지 않는다.
+        zf = zipfile.ZipFile(io.BytesIO(build_epub(meta(), split_into_chapters(SAMPLE))))
+        package = ElementTree.fromstring(zf.read("package.opf"))
+        items = {item.get("id"): item for item in package.findall("opf:manifest/opf:item", OPF_NS)}
+        cover = items["cover"]
+        self.assertEqual(cover.get("media-type"), "image/svg+xml")
+        self.assertEqual(cover.get("properties"), "cover-image")
+        for item in items.values():
+            if item.get("media-type") != "application/xhtml+xml":
+                self.assertNotIn("svg", (item.get("properties") or "").split())
+
+    def test_epub_identifier_is_uuid(self):
+        zf = zipfile.ZipFile(io.BytesIO(build_epub(meta(), split_into_chapters(SAMPLE))))
+        package = ElementTree.fromstring(zf.read("package.opf"))
+        uid = package.find("opf:metadata/dc:identifier", OPF_NS).text
+        self.assertRegex(uid, UUID4)
+        # 같은 책을 다시 빌드해도 고유번호가 같아 리더가 같은 책으로 알아본다.
+        again = zipfile.ZipFile(io.BytesIO(build_epub(meta(), split_into_chapters(SAMPLE))))
+        self.assertIn(uid, again.read("package.opf").decode())
 
     def test_style_presets_ten(self):
         self.assertEqual(len(STYLE_PRESETS), 10)

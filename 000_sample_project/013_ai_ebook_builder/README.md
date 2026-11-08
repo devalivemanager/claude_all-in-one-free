@@ -4,7 +4,7 @@
 **브라우저 복붙 없이 CLI 한 줄**로 돈다.
 
 > 설계 원칙 :
-> - **목차 분할을 모델 없이 규칙으로 한다.** 마크다운 제목·「제N장」·「N.」 번호만으로 챕터를 찾으므로 결과가 늘 같고 비용이 0원이다. 주제 단위 재분할이 꼭 필요할 때만 클로드 코드에게 맡긴다.
+> - **목차 분할을 모델 없이 규칙으로 한다.** 마크다운 제목·「제N장」·「N.」 번호만으로 챕터를 찾으므로(마크다운 제목이 하나라도 있는 문서에서는 「1. …」 줄을 번호 목록으로 보고 제목으로 세지 않는다. 코드 블록 안의 줄도 제목이 아니다) 결과가 늘 같고 비용이 0원이다. 주제 단위 재분할이 꼭 필요할 때만 클로드 코드에게 맡긴다.
 > - **표지는 코드(SVG)로 그린다.** 생성 이미지 AI를 쓰지 않으므로 한글 글자가 뭉개지지 않고, 같은 입력은 언제나 같은 표지가 나온다.
 > - **본문 다시 쓰기(요약·문장 정리)는 여기서 하지 않는다.** 그것은 클로드 코드의 일이다. 이 패키지는 읽고 묶는 일만 하고, 챕터별 청크(`Chapter.chunks`)를 재생성 단위로 남긴다.
 > - **API 키가 어디에도 필요 없다.** HTML 산출물에 비밀값이 들어갈 자리 자체가 없다.
@@ -12,7 +12,7 @@
 ## 기술 스택
 
 - Python 3.10 이상, **표준 라이브러리만**(설치할 패키지 없음)
-- 테스트: `unittest`(원하는 경우 `pytest` 로도 돈다)
+- 테스트: `unittest` 45개(원하는 경우 `pytest` 로도 돈다)
 
 ## 폴더 구조
 
@@ -54,13 +54,15 @@ python -m ebook_builder.cli build data/*.txt \
 ## 시험 방법
 
 ```bash
-python3 -m unittest discover -s tests -t .. -v   # 폴더 안에서
+python3 -m unittest discover -s tests -t . -v    # 폴더 안에서, 45개
 # 또는
 python3 -m unittest discover -s 000_sample_project/013_ai_ebook_builder/tests \
     -t 000_sample_project/013_ai_ebook_builder
 ```
 
-시험은 챕터 분할(마크다운 제목·「제N장」·「N.」), 껍데기 제목 병합, 청크 분할, SVG 표지 결정론성·XML 유효성·이스케이프, EPUB mimetype 무압축 규격, 웹북 manifest, CLI 한 줄 빌드까지 본다.
+시험은 챕터 분할(마크다운 제목·「제N장」·「N.」, 제목 아래 번호 목록·코드 블록은 제목으로 세지 않음), 껍데기 제목 병합, 청크 분할, SVG 표지 결정론성·XML 유효성·이스케이프, 뷰어·인쇄용 표지 데이터 URI(base64) 온전함, 인라인 코드 안 밑줄 보존, EPUB 규격(mimetype 무압축 첫 항목·`META-INF/container.xml`·빈 메타데이터 생략·표지 `cover-image`·`urn:uuid:` UUID 4 고유번호), 웹북 manifest, CLI 한 줄 빌드까지 본다.
+
+EPUB 은 [EPUBCheck](https://www.w3.org/publishing/epubcheck/) 5.2.1 로 「No errors or warnings detected」 를 확인했다(입력 `docs/01*.md 02*.md 03*.md`, `--preset novel`). 판매·배포 전에는 만든 책을 EPUBCheck 로 한 번 더 돌려 본다.
 
 ## 10대 운영 수칙 중 이 패키지가 직접 지키는 것
 

@@ -26,7 +26,8 @@ output/ebook.html · output/ebook.epub
 - **자막 우선순위**: 수동 자막을 먼저 찾고, 없으면 자동 생성 자막(기계 번역본 제외)을 씁니다.
   여러 언어를 한꺼번에 받으면 유튜브 요청 과다(429)에 걸리기 쉬워 **하나만** 받습니다.
 - **챕터 나눔**: 영상에 공식 챕터(챕터 표시)가 있으면 그 경계를 따르고, 없으면 60초 간격으로 묶습니다.
-- **삽화 배치**: 스틸컷이 캡처된 시점으로 어느 챕터 구간에 속하는지 정하고, 캡션에 그 시각(00:01:23 장면)을 달아 줍니다.
+- **삽화 배치**: 스틸컷이 캡처된 시점으로 어느 챕터 구간에 속하는지 정하고, 캡션에 그 시각(00:01:23 장면)을 달아 줍니다. 지워졌거나 깨진 PNG 는 삽화에서만 빼고 본문은 살립니다.
+- **EPUB 규격**: `META-INF/container.xml`·`urn:uuid:` 고유번호를 넣고, 값이 빈 저자·설명 항목은 쓰지 않습니다. 시험의 가짜 입력으로 만든 EPUB 이 EPUBCheck 5.2.1 에서 「No errors or warnings detected」 로 통과합니다.
 - **폴백**: 자막이 아예 없는 영상은 `faster-whisper` 로컬 받아쓰기로 자막을 만들 수 있습니다(`local_transcribe`, 선택 설치).
 
 ## 기술 스택
@@ -46,7 +47,7 @@ output/ebook.html · output/ebook.epub
 │   ├── extractor.py    # 자막 추출·중복 제거 + ffmpeg 스틸컷 캡처 (008 연계)
 │   ├── pipeline.py     # 챕터화 + 스틸컷 매칭 + 전체 오케스트레이션
 │   └── ebook.py        # 삽화 포함 HTML 뷰어·EPUB 생성 (013 연계)
-├── tests/              # unittest 48개 (네트워크·ffmpeg 없이 실행)
+├── tests/              # unittest 53개 (네트워크·ffmpeg 없이 실행)
 ├── requirements.txt
 ├── pytest.ini
 └── .gitignore          # output/·영상·전자책 결과물은 커밋하지 않는다
@@ -88,9 +89,9 @@ HTML 을 브라우저에서 열고 인쇄 → PDF 저장을 하면 PDF 도 된�
 ## 테스트
 
 ```bash
-python3 -m unittest discover -s tests -t .        # 48개
+python3 -m unittest discover -s tests -t .        # 53개
 # 또는
-.venv/bin/python -m pytest -q                     # pytest 로도 같은 48개
+.venv/bin/python -m pytest -q                     # pytest 로도 같은 53개
 ```
 
 테스트는 yt-dlp·ffmpeg·네트워크 없이 돈다. 외부 연결(정보 조회·자막·영상·캡처)은
