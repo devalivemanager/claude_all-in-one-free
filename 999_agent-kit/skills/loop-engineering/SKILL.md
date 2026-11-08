@@ -106,6 +106,5 @@ description: Use when designing, reviewing, or running a loop instead of a one-o
 
 ## 5. 다른 스킬과의 관계
 
-- `youtube-to-skill` — 두 독립 분석 교차 검증 = 분석 루프 B 모드의 「갈래 독립성」과 같은 원리
 - `token-saving` — 루프는 토큰을 빠르게 태운다. 서브에이전트는 두 번째 의견이 비용값을 할 때만
 - `/loop`·`/schedule`·Workflow — 실행 루프를 실제로 돌리는 Claude Code 기능. Workflow 는 사용자가 명시적으로 요청할 때만
