@@ -16,11 +16,10 @@ Usage:
 
 Pricing model (USD per 1M tokens): cache write 5m = 1.25 x input, cache write 1h = 2 x input,
 cache read = 0.1 x input; thinking tokens are billed as output. The unit prices below are
-DEFAULT list prices from a 2026-09 external source - check the official pricing page and
+DEFAULT list prices as of 2026-09 - check the official pricing page and
 override with --price. Subscription users: read the cost% column as "share of my limit".
 
-Idea credit: 「클로드 코드 토큰 계량기」(방구석컴퍼니, 2026-09-22) - this is an independent
-implementation for token-saving-kit. Written 2026-10-02.
+Written 2026-10-02 for token-saving-kit.
 """
 import argparse
 import datetime as dt
@@ -31,10 +30,10 @@ import re
 import sys
 
 PRICES = {  # model-id prefix : (input, output) USD per 1M tokens. Longer prefixes FIRST (startswith match).
-    "claude-opus-5-5": (4.0, 20.0),    # [external 2026-09] not back-solved yet - verify
-    "claude-sonnet-5-5": (2.0, 10.0),  # [external 2026-09] - verify
+    "claude-opus-5-5": (4.0, 20.0),    # [2026-09 default] not back-solved yet - verify
+    "claude-sonnet-5-5": (2.0, 10.0),  # [2026-09 default] not back-solved yet - verify
     "claude-opus-5": (5.0, 25.0),      # [back-solved] recorded costUSD 29.4393 matches exactly with 1h cache write
-    "claude-sonnet-5": (2.0, 10.0),    # [back-solved] 108-run benchmark cost matches exactly (ratio 1.000)
+    "claude-sonnet-5": (2.0, 10.0),    # [2026-09 default] not back-solved yet - verify
     "claude-haiku-4-5": (1.0, 5.0),    # [back-solved] recorded costUSD matches (+2 web searches)
 }
 # Claude Code writes cache with the 1-hour TTL (logged as ephemeral_1h) -> 2 x input price.

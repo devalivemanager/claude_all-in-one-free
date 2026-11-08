@@ -30,7 +30,7 @@ echo "  $CFG  ($NOTE)"
 echo "  project : $PROJ"
 
 echo
-echo "== [2] effort (agent definition overrides global)  -> principles 13,15 =="
+echo "== [2] effort (agent definition overrides global)  -> principles 12,13 =="
 PY="$(command -v python3 || command -v python)"
 # top-level effortLevel only (a grep would also catch the values inside modelSettings)
 topeffort() {
@@ -79,7 +79,7 @@ for d in "$CFG/agents" "$PROJ/.claude/agents"; do
 done
 
 echo
-echo "== [3] always loaded every session (token figures are rough)  -> principles 27-32 =="
+echo "== [3] always loaded every session (token figures are rough)  -> principles 24-28 =="
 for p in "$PROJ/CLAUDE.md" "$PROJ/AGENTS.md" "$CFG/CLAUDE.md" "$CFG/projects/$KEY/memory/MEMORY.md"; do
   [ -f "$p" ] || continue
   b=$(wc -c < "$p" | tr -d ' ')
@@ -118,7 +118,7 @@ echo "  (MCP actually loaded may be smaller with deferred tool loading - check /
 [ -d "$CFG/plugins" ] && echo "  plugin skills (SKILL.md, includes marketplace copies) : $(find "$CFG/plugins" -name SKILL.md | wc -l | tr -d ' ')"
 
 echo
-echo "== [4] subagent calls actually recorded (all projects)  -> principles 10-12,38 =="
+echo "== [4] subagent calls actually recorded (all projects)  -> principles 10-11,34 =="
 METAS="$(find "$CFG/projects" -path '*subagents*' -name '*.meta.json' 2>/dev/null)"
 if [ -n "$METAS" ]; then
   echo "  total calls : $(printf '%s\n' "$METAS" | wc -l | tr -d ' ')"
@@ -131,7 +131,7 @@ fi
 echo "  (model is mostly NOT recorded in meta - infer from agent definition, label it [inferred])"
 
 echo
-echo "== [5] session files of this project (top 5 by size)  -> principles 33-35 =="
+echo "== [5] session files of this project (top 5 by size)  -> principles 29-31 =="
 SD="$CFG/projects/$KEY"
 if [ -d "$SD" ]; then
   cnt=$(find "$SD" -maxdepth 1 -name '*.jsonl' | wc -l | tr -d ' ')

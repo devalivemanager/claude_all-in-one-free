@@ -44,7 +44,7 @@ Write-Host ("  project : {0}" -f $ProjectDir)
 
 # --- [2] effort: global and per-agent (agent effort overrides global) -------
 Write-Host ''
-Write-Host '== [2] effort (agent definition overrides global)  -> principles 13,15 =='
+Write-Host '== [2] effort (agent definition overrides global)  -> principles 12,13 =='
 $settings = Join-Path $cfg 'settings.json'
 if (Test-Path $settings) {
     try {
@@ -81,7 +81,7 @@ foreach ($ad in @((P $cfg 'agents'), (P $ProjectDir '.claude' 'agents'))) {
 
 # --- [3] always-loaded files (paid every session) ---------------------------
 Write-Host ''
-Write-Host '== [3] always loaded every session (token figures are rough)  -> principles 27-32 =='
+Write-Host '== [3] always loaded every session (token figures are rough)  -> principles 24-28 =='
 $projKey = ($ProjectDir -replace '[^A-Za-z0-9]', '-')
 $memDir = P $cfg 'projects' $projKey 'memory'
 $always = @(
@@ -147,7 +147,7 @@ foreach ($sf in @((P $cfg 'settings.json'), (P $ProjectDir '.claude' 'settings.j
 
 # --- [4] delegation actually used (not just defined) ------------------------
 Write-Host ''
-Write-Host '== [4] subagent calls actually recorded (all projects)  -> principles 10-12,38 =='
+Write-Host '== [4] subagent calls actually recorded (all projects)  -> principles 10-11,34 =='
 $metas = @(Get-ChildItem (Join-Path $cfg 'projects') -Recurse -Filter *.meta.json -ErrorAction SilentlyContinue |
            Where-Object { $_.FullName -match 'subagents' })
 $byType = @{}
@@ -163,7 +163,7 @@ Write-Host '  (model is mostly NOT recorded in meta - infer from agent definitio
 
 # --- [5] session bloat: line count matters more than size ----------------
 Write-Host ''
-Write-Host ('== [5] session files of this project (top {0} by size)  -> principles 33-35 ==' -f $Top)
+Write-Host ('== [5] session files of this project (top {0} by size)  -> principles 29-31 ==' -f $Top)
 $sessDir = P $cfg 'projects' $projKey
 if (Test-Path $sessDir) {
     $js = @(Get-ChildItem $sessDir -Filter *.jsonl -ErrorAction SilentlyContinue | Sort-Object Length -Descending)

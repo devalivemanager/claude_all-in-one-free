@@ -16,7 +16,7 @@
 | 스킬 | 언제 쓰나 | 폴더 안에 함께 있는 것 | 수준 |
 |---|---|---|---|
 | `token-saving` | 위임 손익분기·effort·상시 적재 파일을 점검해 토큰을 아낀다 | 원칙·지시문·점검표, 점검 도구(PowerShell·bash), 요금 계량기(Python) | 초급~중급 |
-| `youtube-to-skill` | 유튜브 영상을 두 번 독립 분석해 둘 다 찾은 내용만 믿고, 학습 정리본이나 스킬로 만든다 | 원칙·지시문, 자막 도구(Python), 스킬 틀, 완성 예시 | 중급 |
+| `youtube-to-skill` | 유튜브 영상을 두 번 독립 분석해 둘 다 찾은 내용만 믿고, 확정 단계를 정리하거나 스킬로 만든다 | 원칙·지시문, 자막 도구(Python), 스킬 틀 | 중급 |
 | `loop-engineering` | 자율 루프·재귀 분석 루프를 설계하고 검토할 때 | — | 중급 |
 | `game-dev-planning` | 엔진과 상관없는 작은 인디 게임 기획·검사·출시 점검 | — | 초급~중급 |
 | `godot-pitfalls` | 고도 4 게임 제작·테스트·웹 내보내기 함정 | — | 중급 |
@@ -24,17 +24,3 @@
 | `publishing-workflow` | 블로그·전자책 원고 작성, 사실·저작권 점검, 발행, EPUB 묶기 | — | 초급~중급 |
 
 처음이라면 `token-saving`부터 넣어 본다. 나머지는 해당 일을 할 때 넣는다.
-
-## 남이 만든 스킬 (이 묶음에 넣지 않음, 출처에서 받는다)
-
-라이선스가 제각각이라 넣지 않았다. 필요하면 원 저장소에서 받고, 받기 전에 라이선스를 확인한다.
-
-| 스킬 | 용도 | 받는 곳 |
-|---|---|---|
-| gstack 묶음(review·qa·ship·design-review 등) | 리뷰·QA·배포 워크플로 | gstack |
-| gsd 묶음(gsd-*) | 단계별 기획·실행·검증 | Get Shit Done |
-| `impeccable` | 프론트엔드 디자인 점검(Apache-2.0) | impeccable |
-| `design-taste-frontend`, `supanova-design` | 랜딩 페이지·「AI 티」 없는 화면 | 각 저장소 |
-| `prompt-master` | 도구별 프롬프트 작성 | 원 저장소 |
-| `find-skills` | 스킬 검색·설치 | skills.sh |
-| `agent-browser` | 브라우저 자동화 CLI | vercel-labs |

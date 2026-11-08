@@ -5,8 +5,8 @@ description: Use when the user gives a YouTube video (URL or pasted transcript) 
 
 # 유튜브 영상 → 학습·스킬
 
-> 이 폴더 하나에 절차(이 파일)·원칙·지시문·틀·도구·완성 예시가 모두 들어 있다(v1.0, 2026-10-03). 사람이 처음 읽을 안내는 `README.md`다.
-> `<스킬폴더>`는 이 폴더를 복사해 둔 자리다(예 : `~/.claude/skills/youtube-to-skill`). 지시문 원문은 `02_지시문.md`, 완성 예시는 `examples/claude-cost-cut/`을 본다.
+> 이 폴더 하나에 절차(이 파일)·원칙·지시문·틀·도구가 모두 들어 있다(v1.0, 2026-10-03). 사람이 처음 읽을 안내는 `README.md`다.
+> `<스킬폴더>`는 이 폴더를 복사해 둔 자리다(예 : `~/.claude/skills/youtube-to-skill`). 지시문 원문은 `02_지시문.md`를 본다.
 
 **한 줄 원칙** : 영상을 두 번 독립적으로 분석해서 **두 번 다 나온 내용만 믿는다.** 한 번만 나온 내용은 모델이 지어냈을 가능성이 높다.
 

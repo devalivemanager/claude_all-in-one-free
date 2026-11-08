@@ -5,8 +5,8 @@ description: Use when starting, building, testing, or exporting a Unity (유니�
 
 # 유니티 6 함정 모음 (한 장 안내서)
 
-> MCP 시험 프로젝트(2D 플랫포머)와 연습용 러너 게임을 만들며 **실제로 겪은 것**과 영상 학습 정리본을 한 장으로 모았다.
-> 각 항목 끝 괄호는 출처다. 「실측」은 작성자 PC에서 직접 확인한 것이고, 영상 정리본은 이 묶음 `999_document/02_게임개발/`에 있다.
+> MCP 시험 프로젝트(2D 플랫포머)와 연습용 러너 게임을 만들며 **실제로 겪은 것**을 한 장으로 모았다.
+> 각 항목 끝 괄호는 출처다. 「실측」은 작성자 PC에서 직접 확인한 것이다.
 > 새 함정이 **두 번** 나오면 여기에 올린다. 고도는 `godot-pitfalls` 스킬.
 
 ## 0. 준비물 (작성자가 확인한 판 기준)
@@ -23,12 +23,11 @@ description: Use when starting, building, testing, or exporting a Unity (유니�
 ## 1. 시작할 때
 
 1. **허브 로그인 없이 에디터를 띄우면 라이선스 단계에서 죽는다** — 로그에 「Access token is unavailable」「entitlement … not found」 뒤 `Crash!!!`. 백그라운드(`-batchmode -createProject`)도 같다. 로그인은 사람이 한다(AI가 비밀번호를 대신 입력하지 않는다)(실측)
-2. **CLI·에디터 설치는 공식 경로로** — 윈도우 앱 설치 명령(winget)으로 받은 CLI는 샌드박스 앱이라 설치 실패. 순서는 **에디터 먼저, 라이선스 나중**(유니티공식스킬31 영상)
-3. **프로젝트를 만들면 바로 `git init` + 첫 커밋** — AI가 장면·프리팹을 고치므로 되돌릴 지점이 먼저다. `.gitignore`에 `Library/ Temp/ Logs/ UserSettings/ obj/ Builds/ *.csproj *.sln`(실측)
-4. **MCP 패키지는 `Packages/manifest.json`에 한 줄** 넣고 에디터를 열면 받아진다. 처음 열 때 수 분 걸린다(실측)
-5. **입력 방식 확인** — `ProjectSettings.asset`의 `activeInputHandler`(0 기존, 1 새 입력 시스템, 2 둘 다). 기존 `Input.GetKeyDown`은 0·2에서만 동작(실측 : 시험 프로젝트 0, 러너 2)
-6. **`PlayerSettings.runInBackground = true`** — 안 켜면 유니티 창이 다른 창에 가려질 때 **플레이 모드가 멈춘다**. MCP 시험에서 frameCount가 그대로면 이것부터 의심(실측, 유니티공식스킬31 영상도 같은 함정)
-7. **남의 게임 이름·캐릭터·그림·소리 금지**, 강의 소스 그림은 연습용으로만(연습용 러너 판정)
+2. **프로젝트를 만들면 바로 `git init` + 첫 커밋** — AI가 장면·프리팹을 고치므로 되돌릴 지점이 먼저다. `.gitignore`에 `Library/ Temp/ Logs/ UserSettings/ obj/ Builds/ *.csproj *.sln`(실측)
+3. **MCP 패키지는 `Packages/manifest.json`에 한 줄** 넣고 에디터를 열면 받아진다. 처음 열 때 수 분 걸린다(실측)
+4. **입력 방식 확인** — `ProjectSettings.asset`의 `activeInputHandler`(0 기존, 1 새 입력 시스템, 2 둘 다). 기존 `Input.GetKeyDown`은 0·2에서만 동작(실측 : 시험 프로젝트 0, 러너 2)
+5. **`PlayerSettings.runInBackground = true`** — 안 켜면 유니티 창이 다른 창에 가려질 때 **플레이 모드가 멈춘다**. MCP 시험에서 frameCount가 그대로면 이것부터 의심(실측)
+6. **남의 게임 이름·캐릭터·그림·소리 금지**, 강의 소스 그림은 연습용으로만(연습용 러너 판정)
 
 ## 2. MCP 연결·운영 (CoplayDev)
 
@@ -40,7 +39,6 @@ description: Use when starting, building, testing, or exporting a Unity (유니�
 - 도구 49개(장면·게임 오브젝트·컴포넌트·스크립트·머티리얼·빌드·테스트·`execute_code`·`execute_menu_item`·`read_console`·`manage_camera` 스크린샷 등)
 - **`refresh_unity` 직후 첫 호출은 「not ready」로 실패하기 쉽다** — 8초 간격으로 몇 번 재시도(실측)
 - **오래 걸리는 메뉴(빌드)는 MCP 호출이 시간 초과**된다 — 결과를 파일(`Builds/build_result.txt`)에 쓰게 하고 그 파일을 기다린다(실측)
-- 유니티 공식 「실시간 에디터 연결」은 구독이 필요하다고 한다. 이 스킬은 무료 CoplayDev 기준이다(유니티공식스킬31 영상)
 
 ## 3. 만들 때 (C#·장면)
 
@@ -59,8 +57,6 @@ description: Use when starting, building, testing, or exporting a Unity (유니�
 - **애니메이터 파라미터 이름은 컨트롤러에 실제로 있는 이름**(대소문자 포함)으로(실측 `state`)
 - **점수 글자는 기본 `Text`로도 충분** — TMP는 Essentials 임포트가 필요하다. 기본 글꼴은 `Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")`(실측)
 - **텍스처 Quad 스크롤 속도는 「월드 속도 × 타일링 / 폭」**으로 UV에 넣어야 바닥과 물체 속도가 맞는다(실측)
-- **에디터에서 채운 값이 플레이 때 비는 경우**(색·참조) — 런타임 생성 오브젝트는 코드에서 다시 채운다(유니티공식스킬31 영상)
-- **엔진을 옮길 때 앞 방향(축)이 반대**일 수 있다 — 검사는 값이 정상이라 못 잡고 화면으로만 보인다(고도→유니티 전환 영상)
 
 ## 4. 시험할 때 (MCP)
 
@@ -86,11 +82,10 @@ description: Use when starting, building, testing, or exporting a Unity (유니�
 
 - **WebGL** : 첫 빌드 약 20분(실측 57MB). 로컬 파이썬 서버로 열려면 압축 끔(`WebGLCompressionFormat.Disabled`). 로컬 확인 포트는 8080·8888 피해서
 - **Android** : 첫 빌드 약 20분, APK 31.9MB(arm64). **빌드 보고서 `totalSize`(686MB)는 중간 산출물 합계라 APK 크기가 아니다** — 파일 크기를 직접 잰다. 시험용은 `buildAppBundle=false`(apk), 스토어용은 aab
-- 「빌드 성공」 표시만으로 완료가 아니다. **실행해 봐야 한다**(유니티공식스킬31 영상 : 빌드 성공 후 실행 즉시 종료 미해결)
+- 「빌드 성공」 표시만으로 완료가 아니다. **실행해 봐야 한다**
 - 빌드 결과(`Builds/`)는 깃에 넣지 않는다
 
 ## 7. 비용·라이선스
 
-- 유니티 개인용 무료 조건 : 연 매출+투자 합계 약 2억 9천만 원 미만(유니티공식스킬31 영상, 공식 약관으로 재확인할 것 `[확인 못 함]`)
-- 무료 3D 에셋(KayKit·Quaternius 등)은 라이선스 원문을 받아 `LICENSES.md`에 기록(영상은 「조건 없이」라고만 함)
-- 엔진 고르기(작성자 판단) : **작은 2D 모바일 게임은 고도가 가볍다**, 유니티는 3D·연출·광고 SDK가 필요할 때. 같은 작은 2D 게임을 두 엔진으로 하루씩 만들어 비교한 뒤 정한다(`999_document/02_게임개발/게임개발_핵심정리.md`)
+- 무료 3D 에셋(KayKit·Quaternius 등)은 라이선스 원문을 받아 `LICENSES.md`에 기록
+- 엔진 고르기(작성자 판단) : **작은 2D 모바일 게임은 고도가 가볍다**, 유니티는 3D·연출·광고 SDK가 필요할 때. 같은 작은 2D 게임을 두 엔진으로 하루씩 만들어 비교한 뒤 정한다
