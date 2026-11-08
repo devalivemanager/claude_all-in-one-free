@@ -83,7 +83,7 @@
 | [013_ai_ebook_builder](013_ai_ebook_builder/) | 대본·기획서·소설 원고를 목차 분할·SVG 표지까지 거쳐 HTML 뷰어·EPUB·인쇄용 HTML·웹북 ZIP 4종으로 묶는 전자책 파이프라인 | Python(표준 라이브러리) · unittest · pytest | 35개 |
 | [014_youtube_to_ebook](014_youtube_to_ebook/) | 유튜브 URL 하나로 자막 대본·스틸컷 삽화를 뽑아 삽화가 박힌 HTML 뷰어·EPUB 전자책을 만드는 파이프라인(008+013 결합) | Python · yt-dlp · ffmpeg · unittest · pytest | 48개 |
 | [015_sprite_sheet_to_gif](015_sprite_sheet_to_gif/) | 도트 캐릭터 프레임을 코드로 직접 찍거나 챗GPT 스프라이트 시트를 받아 잘라 무한 루프 GIF로 만드는 변환기(클로드 코드 단독 실행형) | Python · Pillow · unittest · pytest | 51개 |
-| [016_always_on_agent_runner](016_always_on_agent_runner/) | 사람 없이 돌아가는 비동기 태스크 큐·백그라운드 워커에, 위험 작업 전 사람 승인 토큰을 기다리는 HITL 승인 게이트(레드라인 5종)를 얹은 올웨이즈온 자율 에이전트 러너 | Python(표준 라이브러리) · asyncio · unittest · pytest | 26개 |
+| [016_always_on_agent_runner](016_always_on_agent_runner/) | 사람 없이 돌아가는 비동기 태스크 큐·백그라운드 워커에, 위험 작업 전 사람 승인 토큰을 기다리는 HITL 승인 게이트(레드라인 5종)를 얹은 올웨이즈온 자율 에이전트 러너 | Python(표준 라이브러리) · asyncio · unittest · pytest | 38개 |
 
 ### 테스트 실행
 

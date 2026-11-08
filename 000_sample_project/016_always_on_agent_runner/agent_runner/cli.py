@@ -24,6 +24,9 @@ from .task_queue import TaskQueue
 
 DEFAULT_STATE_DIR = "output/agent_runner_state"
 
+#: 승인·반려가 거절됐을 때의 종료 코드(틀린 토큰·이미 쓴 토큰·만료·반려 후 승인 등).
+EXIT_REFUSED = 2
+
 
 def make_handlers() -> Dict[str, Any]:
     """기본 데모 핸들러. 실제 업무 핸들러는 클로드 코드가 register_handler 로 붙인다."""
@@ -77,7 +80,12 @@ def main(argv=None) -> int:
         except json.JSONDecodeError as exc:
             print(f"payload 는 JSON 이어야 한다: {exc}", file=sys.stderr)
             return 2
-        task = queue.add(args.handler, payload=payload, max_attempts=args.max_attempts)
+        try:
+            task = queue.add(args.handler, payload=payload, max_attempts=args.max_attempts)
+        except KeyError:  # 오타 난 처리기 이름도 traceback 없이 한 줄로 알린다
+            names = ", ".join(sorted(make_handlers()))
+            print(f"등록되지 않은 처리기: {args.handler} (쓸 수 있는 처리기 : {names})", file=sys.stderr)
+            return 2
         print(json.dumps({"id": task.id, "status": task.status, "token": task.approval_token},
                          ensure_ascii=False))
         return 0
@@ -100,17 +108,22 @@ def main(argv=None) -> int:
 
     if args.cmd == "pending":
         rows = [{"task": t.id, "token": t.approval_token,
-                 "action_type": t.payload.get("action_type")} for t in queue.pending_approvals()]
+                 "action_type": t.payload.get("action_type") or (t.redlines[0] if t.redlines else None),
+                 "redlines": t.redlines} for t in queue.pending_approvals()]
         print(json.dumps(rows, ensure_ascii=False, indent=2))
         return 0
 
-    if args.cmd == "approve":
-        task = queue.approve(args.token)
-        print(json.dumps({"id": task.id, "status": task.status}, ensure_ascii=False))
-        return 0
-
-    if args.cmd == "reject":
-        task = queue.reject(args.token, reason=args.reason)
+    if args.cmd in ("approve", "reject"):
+        verb = "승인" if args.cmd == "approve" else "반려"
+        try:
+            if args.cmd == "approve":
+                task = queue.approve(args.token)
+            else:
+                task = queue.reject(args.token, reason=args.reason)
+        except LookupError as exc:  # InvalidToken 포함. 거절은 정상 동작이라 traceback 없이 한 줄로 알린다
+            detail = exc.args[0] if exc.args else args.token
+            print(f"{verb} 거절: {detail} (pending 으로 승인 대기 토큰을 확인하라)", file=sys.stderr)
+            return EXIT_REFUSED
         print(json.dumps({"id": task.id, "status": task.status}, ensure_ascii=False))
         return 0
 

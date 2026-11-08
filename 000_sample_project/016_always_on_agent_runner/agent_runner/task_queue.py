@@ -22,6 +22,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
+from .hitl_gate import HITLGate
+
 # 태스크가 가질 수 있는 상태. blocked 는 「승인을 기다리며 멈춰 있는 것」으로,
 # 실패가 아니라 게이트가 정상 작동한 상태다.
 STATUS_QUEUED = "queued"
@@ -33,6 +35,15 @@ STATUS_BLOCKED = "blocked"
 #: 태스크가 다루는 외부 세계의 위험 종류(hitl_gate.REDLINES 의 키).
 #: payload 또는 태스크 등록 시 action_type 으로 명시하면 그것을 우선 본다.
 ACTION_TYPE_KEY = "action_type"
+
+
+def _flatten_payload(value: Any) -> str:
+    """payload 의 키와 값을 모두 문자열로 펼친다(중첩된 dict·list 포함). sniff 대상이다."""
+    if isinstance(value, dict):
+        return "\n".join(f"{k}\n{_flatten_payload(v)}" for k, v in value.items())
+    if isinstance(value, (list, tuple, set)):
+        return "\n".join(_flatten_payload(v) for v in value)
+    return "" if value is None else str(value)
 
 
 @dataclass
@@ -48,6 +59,7 @@ class Task:
     result: Optional[Any] = None
     error: Optional[str] = None
     approval_token: Optional[str] = None  # blocked 상태일 때 발급된 승인 토큰
+    redlines: List[str] = field(default_factory=list)  # 이 태스크에 묶인 레드라인(이름표·처리기·payload 판정)
     created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
 
@@ -75,6 +87,7 @@ class TaskQueue:
 
     def __init__(self, state_path: Optional[str] = None, hitl=None) -> None:
         self._handlers: Dict[str, Callable[[Dict[str, Any]], Any]] = {}
+        self._handler_redlines: Dict[str, List[str]] = {}
         self._tasks: Dict[str, Task] = {}
         self._counter = 0
         self.state_path = state_path
@@ -83,15 +96,32 @@ class TaskQueue:
             self.load(state_path)
 
     # ------------------------------------------------------------------ 등록
-    def register_handler(self, name: str, handler: Callable[[Dict[str, Any]], Any]) -> None:
-        """태스크 종류 하나를 실행부(핸들러)와 묶는다. 코루틴 함수도 받는다."""
+    def register_handler(self, name: str, handler: Callable[[Dict[str, Any]], Any],
+                         redlines: Optional[List[str]] = None) -> None:
+        """태스크 종류 하나를 실행부(핸들러)와 묶는다. 코루틴 함수도 받는다.
+
+        redlines 를 주면 이 핸들러로 쌓는 작업은 payload 와 상관없이 언제나 그 레드라인으로
+        승인을 기다린다(예: 결제 핸들러에 [PAYMENT]). 레드라인 5종 밖의 값은 거절한다.
+        """
         if not callable(handler):
             raise TypeError(f"핸들러는 호출 가능해야 한다: {name!r}")
+        bound: List[str] = []
+        for action in redlines or []:
+            resolved = self._classify(action)
+            if resolved is None:
+                raise ValueError(f"레드라인 5종이 아니다: {action!r}")
+            if resolved not in bound:
+                bound.append(resolved)
         self._handlers[name] = handler
+        self._handler_redlines[name] = bound
 
     def add(self, name: str, payload: Optional[Dict[str, Any]] = None,
             max_attempts: int = 1, action_type: Optional[str] = None) -> Task:
-        """작업을 큐에 쌓는다. action_type 이 레드라인이면 즉시 blocked 로 만든다."""
+        """작업을 큐에 쌓는다. 레드라인이 하나라도 걸리면 즉시 blocked 로 만든다.
+
+        레드라인은 action_type(인자 → payload 이름표), 핸들러에 묶인 레드라인,
+        payload 전체를 펼친 글의 sniff 결과를 모두 모은 것이다.
+        """
         if name not in self._handlers:
             raise KeyError(f"등록되지 않은 핸들러: {name!r}")
         self._counter += 1
@@ -101,11 +131,10 @@ class TaskQueue:
             payload=dict(payload or {}),
             max_attempts=max(1, int(max_attempts)),
         )
-        resolved_type = action_type or task.payload.get(ACTION_TYPE_KEY)
-        if self.hitl is not None and resolved_type and self.hitl.is_redline(resolved_type):
-            approval = self.hitl.request(resolved_type, description=task.id)
-            task.approval_token = approval.token
-            task.status = STATUS_BLOCKED
+        if self.hitl is not None:
+            task.redlines = self._collect_redlines(task, action_type)
+            if task.redlines:
+                self._block(task)
         self._tasks[task.id] = task
         self.save()
         return task
@@ -143,15 +172,12 @@ class TaskQueue:
     async def _run_one(self, task: Task) -> None:
         # 승인을 한 번도 받지 못한 레드라인 작업만 다시 잡는다.
         # approve 로 풀려 나온 태스크(approval_token 이 있고 승인 완료)는 실행한다.
-        if (self.hitl is not None and task.approval_token is None
-                and self._is_redline_task(task)):
-            approval = self.hitl.request(
-                self._action_type(task), description=task.id
-            )
-            task.approval_token = approval.token
-            task.status = STATUS_BLOCKED
-            task.touch()
-            return
+        # (고치기 전에 쌓인 tasks.json 의 태스크도 여기서 payload 까지 다시 살핀다.)
+        if self.hitl is not None and task.approval_token is None:
+            task.redlines = self._collect_redlines(task, None, keep=task.redlines)
+            if task.redlines:
+                self._block(task)
+                return
         handler = self._handlers[task.name]
         task.status = STATUS_RUNNING
         task.attempts += 1
@@ -171,12 +197,36 @@ class TaskQueue:
                 task.status = STATUS_QUEUED
         task.touch()
 
-    def _action_type(self, task: Task) -> Optional[str]:
-        return task.payload.get(ACTION_TYPE_KEY)
+    @staticmethod
+    def _classify(action: Any) -> Optional[str]:
+        return HITLGate.classify(str(action))
 
-    def _is_redline_task(self, task: Task) -> bool:
-        action = self._action_type(task)
-        return bool(action and self.hitl.is_redline(action))
+    def _collect_redlines(self, task: Task, action_type: Optional[str],
+                          keep: Optional[List[str]] = None) -> List[str]:
+        """태스크에 걸리는 레드라인을 모두 모은다. 이름표가 맨 앞, 중복은 뺀다."""
+        found: List[str] = list(keep or [])
+
+        def push(action: Any) -> None:
+            resolved = self._classify(action) if action else None
+            if resolved and resolved not in found:
+                found.append(resolved)
+
+        push(action_type)
+        push(task.payload.get(ACTION_TYPE_KEY))
+        for action in self._handler_redlines.get(task.name, []):
+            push(action)
+        # 이름표가 있든 없든 payload 전체를 sniff 한다(이름표가 더 위험한 내용을 가리지 못하게).
+        for action in self.hitl.sniff(_flatten_payload(task.payload)):
+            push(action)
+        return found
+
+    def _block(self, task: Task) -> None:
+        """레드라인 묶음 전체에 대해 승인 토큰 하나를 발행하고 태스크를 멈춘다."""
+        description = f"{task.id} 레드라인: {', '.join(task.redlines)}"
+        approval = self.hitl.request(task.redlines[0], description=description)
+        task.approval_token = approval.token
+        task.status = STATUS_BLOCKED
+        task.touch()
 
     # ------------------------------------------------------------------ 승인 연동
     def approve(self, token: str) -> Task:

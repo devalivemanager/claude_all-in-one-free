@@ -152,7 +152,7 @@ class HITLGate:
     def _get(self, token: str) -> Approval:
         approval = self._approvals.get(token)
         if approval is None:
-            raise InvalidToken(token)
+            raise InvalidToken(f"발급된 적 없는 토큰: {token}")
         return approval
 
     # ------------------------------------------------------------------ 결정

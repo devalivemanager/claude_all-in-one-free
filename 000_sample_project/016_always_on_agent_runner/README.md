@@ -25,6 +25,8 @@
 # 태스크 등록(일반 작업은 바로 queued, 레드라인 작업은 자동 blocked + 토큰 발행)
 python3 -m agent_runner.cli add compose_chapter --payload '{"chapter": "58화"}'
 python3 -m agent_runner.cli add echo --payload '{"kind": "메일 발송", "action_type": "EXTERNAL_SEND"}'
+# 이름표(action_type)가 없어도 payload 에 위험 낱말이 있으면 blocked 다
+python3 -m agent_runner.cli add echo --payload '{"command": "git push --force origin main"}'
 
 # 큐가 빌 때까지 워커 실행 → 레드라인 작업은 blocked 로 남는다
 python3 -m agent_runner.cli run
@@ -37,6 +39,9 @@ python3 -m agent_runner.cli run
 # 반려도 가능하다
 python3 -m agent_runner.cli reject <토큰> --reason "내용 다시 다듬고 보내자"
 ```
+
+틀린 토큰·이미 쓴 토큰·만료된 토큰·반려된 토큰으로 `approve`/`reject` 하면 오류 추적 없이
+`승인 거절: …` 한 줄을 표준 오류로 내고 **종료 코드 2** 로 끝난다(정상 처리는 0).
 
 상태 파일은 `output/agent_runner_state/` 아래 `tasks.json`·`approvals.json` 으로 남는다(커밋 대상 아님).
 
@@ -55,11 +60,19 @@ python3 -m agent_runner.cli reject <토큰> --reason "내용 다시 다듬고 �
 - **큐(`task_queue.py`)** — 핸들러를 이름으로 등록하고(`register_handler`), `add` 로 쌓고,
   `run_until_empty` 로 돈다. 실패는 `max_attempts` 만큼만 재시도하고 소진되면 `failed` 로 남긴다.
   코루틴 핸들러도 받는다. `blocked` 는 실패가 아니라 「승인을 기다리는 정상 상태」다.
+- **레드라인 판정 순서** — 큐는 태스크마다 레드라인을 모두 모아(`Task.redlines`) 하나라도 있으면
+  승인 토큰 하나로 묶어 멈춘다. ① `add(..., action_type=)` 인자 ② payload 의 `action_type` 이름표
+  ③ 핸들러에 묶은 레드라인(`register_handler(name, fn, redlines=[PAYMENT])`) ④ payload 의 키·값을
+  중첩까지 모두 펼친 글을 `sniff` 한 결과. 이름표가 있어도 ④는 늘 보므로, 이름표가 더 위험한 내용을
+  가리지 못한다. 실행 직전에도 한 번 더 살펴, 예전에 토큰 없이 쌓인 태스크도 막는다.
+  (2026-11-06 실측 전에는 ①②만 봐서 이름표 없는 「메일 발송」·「git push --force」가 승인 없이 done 이 됐다.)
 - **게이트(`hitl_gate.py`)** — `classify` 로 레드라인 5종을 판정하고, `request` 가 1회성
   만료 토큰을 발행한다. `approve`·`reject` 외의 길은 없고, 잘못된·만료된 토큰은 전부 거절된다.
-  `sniff` 로 자유 텍스트에서 레드라인 후보를 의심할 수 있다(과잉 포착이 원칙).
+  `sniff` 로 자유 텍스트에서 레드라인 후보를 의심한다(과잉 포착이 원칙). 낱말 판정이라
+  예컨대 `payroll` 안의 `pay` 로 PAYMENT 가 함께 잡히기도 하고, 낱말 목록에 없는 표현은 놓칠 수 있다.
+  확실히 막아야 하는 핸들러는 ③처럼 등록 때 레드라인을 묶어 두는 편이 안전하다.
 - **CLI(`cli.py`)** — 위 여섯 동작의 명령줄 진입점. 실제 업무 핸들러는 클로드 코드가
-  `register_handler` 로 붙인다(데모 핸들러 3종 내장).
+  `register_handler` 로 붙인다(데모 핸들러 3종 내장). `pending` 은 태스크마다 묶인 `redlines` 도 보여 준다.
 
 ## 테스트
 
@@ -67,8 +80,14 @@ python3 -m agent_runner.cli reject <토큰> --reason "내용 다시 다듬고 �
 python3 -m unittest discover -s tests -t .
 ```
 
+시험 38개(큐 10 · 게이트 14 · 낱말 판정 보강 2 · 이름표 없는 레드라인 8 · CLI 거절 안내 4).
+
 - 큐: 등록 규칙, 순차 실행, 실패·재시도 상한, 비동기 핸들러, 상태 영속화, 승인 연동(멈춤→승인→실행, 반려 부활 없음)
 - 게이트: 레드라인 5종 판정, 비레드라인 통과, 토큰 발행·만료·1회성, 잘못된 토큰 거절, 장부 영속화
+- 낱말 판정 보강(`test_hitl_sniff_gaps.py`): 흔한 위험 명령 10가지 포착, 평범한 작업 통과
+- 이름표 없는 레드라인(`test_redline_payload.py`): 메일 발송·`git push --force`·`rm -r -f`·`DELETE FROM`·중첩 payload 는 blocked,
+  평범한 작업은 done, 이름표+payload 레드라인 묶음, 핸들러 등록 레드라인, 예전 상태 파일의 태스크
+- CLI 거절 안내(`test_cli_errors.py`): 틀린·이미 쓴·반려된 토큰과 오타 난 처리기 이름에 traceback 없이 한 줄 안내, 종료 코드 2
 
 ## 데브얼라이브 실전 시나리오
 
