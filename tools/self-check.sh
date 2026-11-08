@@ -92,6 +92,18 @@ for p in glob.glob('999_document/04_*/*.md'):
         if len(ns) > 1:
             TIDY.append(f'도구표에 두 번 나옴 : {k} ({p} {ns}줄)')
 
+# 예제를 더했는데 MIT 범위·구조도가 옛 번호에 멈춰 있는지(라이선스 범위 밖 예제는 「판매 금지」로 읽힌다)
+nums = sorted({int(m.group(1)) for f in files
+               for m in [re.match(r'000_sample_project/(\d{3})_[^/]+/', f)] if m})
+if nums:
+    last = nums[-1]
+    lic = re.search(r'`000_sample_project/001_\*` ~ `(\d{3})_\*`', open('LICENSE.txt', encoding='utf-8').read())
+    if not lic or int(lic.group(1)) < last:
+        TIDY.append(f'LICENSE.txt 의 MIT 범위가 마지막 예제({last:03d})까지 닿지 않음')
+    svg = open('000_sample_project/docs/structure.svg', encoding='utf-8').read()
+    if f'{last:03d}_' not in svg:
+        TIDY.append(f'구조도(000_sample_project/docs/structure.svg)에 마지막 예제({last:03d})가 없음')
+
 # 3) 결과 ----------------------------------------------------------------------
 for x in HARM: print('[해로움]', x)
 for x in TIDY: print('[정리 후보]', x)

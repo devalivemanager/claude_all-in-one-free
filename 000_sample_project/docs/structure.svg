@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="984" viewBox="0 0 1000 984" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
-  <rect width="1000" height="984" fill="#f8f9fb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1088" viewBox="0 0 1000 1088" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <rect width="1000" height="1088" fill="#f8f9fb"/>
   <text x="40" y="50" font-size="24" font-weight="700" fill="#1f2937">claude_all-in-one-free 구조도</text>
-  <text x="40" y="76" font-size="14" fill="#6b7280">데브얼라이브(DevAlive) 클로드 코드 무료 참고 묶음 · 2026-11-02 기준</text>
-  <rect x="40" y="100" width="920" height="844" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <text x="40" y="76" font-size="14" fill="#6b7280">데브얼라이브(DevAlive) 클로드 코드 무료 참고 묶음 · 2026-11-08 기준</text>
+  <rect x="40" y="100" width="920" height="948" rx="12" fill="#fff" stroke="#d1d5db"/>
   <text x="60" y="132" font-size="17" font-weight="700" fill="#1f2937">폴더 구조</text>
   <g font-family="'D2Coding','Consolas',monospace" font-size="14" fill="#374151">
     <text x="70" y="160">📁 claude_all-in-one-free/</text>
@@ -24,16 +24,20 @@
     <text x="142" y="576">├── 📁 009_scroll_video_hero/</text>
     <text x="142" y="602">├── 📁 010_site_analyzer/</text>
     <text x="142" y="628">├── 📁 011_ai_webtoon/</text>
-    <text x="142" y="654">└── 📁 012_hybrid_slm_pipeline/</text>
-    <text x="106" y="680" font-weight="700" fill="#166534">├── 📁 999_agent-kit/skills/</text>
-    <text x="142" y="706">├── verification-loop · token-saving</text>
-    <text x="142" y="732">├── youtube-to-skill · loop-engineering</text>
-    <text x="142" y="758">├── game-dev-planning · godot · unity</text>
-    <text x="142" y="784">└── publishing-workflow</text>
-    <text x="106" y="810" font-weight="700" fill="#9a3412">└── 📁 999_document/</text>
-    <text x="142" y="836">├── 01 클로드코드·AI도구 · 02 게임개발</text>
-    <text x="142" y="862">├── 03 AI미디어(영상·음성) · 04 무료·상업이용 도구</text>
-    <text x="142" y="888">└── 05 일반 SI·ERP</text>
+    <text x="142" y="654">├── 📁 012_hybrid_slm_pipeline/</text>
+    <text x="142" y="680">├── 📁 013_ai_ebook_builder/</text>
+    <text x="142" y="706">├── 📁 014_youtube_to_ebook/</text>
+    <text x="142" y="732">├── 📁 015_sprite_sheet_to_gif/</text>
+    <text x="142" y="758">└── 📁 016_always_on_agent_runner/</text>
+    <text x="106" y="784" font-weight="700" fill="#166534">├── 📁 999_agent-kit/skills/</text>
+    <text x="142" y="810">├── verification-loop · token-saving</text>
+    <text x="142" y="836">├── youtube-to-skill · loop-engineering</text>
+    <text x="142" y="862">├── game-dev-planning · godot · unity</text>
+    <text x="142" y="888">└── publishing-workflow</text>
+    <text x="106" y="914" font-weight="700" fill="#9a3412">└── 📁 999_document/</text>
+    <text x="142" y="940">├── 01 클로드코드·AI도구 · 02 게임개발</text>
+    <text x="142" y="966">├── 03 AI미디어(영상·음성) · 04 무료·상업이용 도구</text>
+    <text x="142" y="992">└── 05 일반 SI·ERP</text>
   </g>
   <g font-size="12.5" fill="#6b7280">
     <text x="560" y="186">묶음 소개·읽는 순서</text>
@@ -42,7 +46,7 @@
     <text x="560" y="264">시작용 틀 + 실습 샘플</text>
     <text x="560" y="290">틀: 규칙·권한·훅·예시 에이전트·스킬</text>
     <text x="560" y="316">초급·중급·고급 안내서 11편, 이 구조도</text>
-    <text x="560" y="342">샘플 코드 001~012 라이선스</text>
+    <text x="560" y="342">샘플 코드 001~016 라이선스(MIT)</text>
     <text x="560" y="368">ERP 인사 급여 · Java/Spring Boot</text>
     <text x="560" y="394">ERP 회계 원장 · Python/FastAPI</text>
     <text x="560" y="420">할 일 관리 웹 · TypeScript/Express</text>
@@ -55,12 +59,16 @@
     <text x="560" y="602">웹사이트 분석 · JS/Playwright</text>
     <text x="560" y="628">AI 웹툰 만들기 · JS/SVG</text>
     <text x="560" y="654">로컬 소형 모델 + 클로드 · Python</text>
-    <text x="560" y="680">가져다 쓰는 스킬 8개</text>
-    <text x="560" y="706">검증 루프 · 토큰 절약</text>
-    <text x="560" y="732">영상→스킬 · 자율 루프</text>
-    <text x="560" y="758">게임 기획 · 엔진 함정</text>
-    <text x="560" y="784">블로그·전자책 원고</text>
-    <text x="560" y="810">핵심 정리 5편</text>
+    <text x="560" y="680">원고 → 전자책(EPUB) · Python</text>
+    <text x="560" y="706">유튜브 → 삽화 전자책 · Python</text>
+    <text x="560" y="732">스프라이트 시트 → GIF · Python</text>
+    <text x="560" y="758">24시간 에이전트·승인 게이트 · Python</text>
+    <text x="560" y="784">가져다 쓰는 스킬 8개</text>
+    <text x="560" y="810">검증 루프 · 토큰 절약</text>
+    <text x="560" y="836">영상→스킬 · 자율 루프</text>
+    <text x="560" y="862">게임 기획 · 엔진 함정</text>
+    <text x="560" y="888">블로그·전자책 원고</text>
+    <text x="560" y="914">핵심 정리 5편</text>
   </g>
-  <text x="60" y="930" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더와 스킬 내부 파일은 생략 · 이용 조건: 묶음 LICENSE.txt, 샘플 코드 MIT</text>
+  <text x="60" y="1034" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더와 스킬 내부 파일은 생략 · 이용 조건: 묶음 LICENSE.txt, 샘플 코드 MIT</text>
 </svg>
