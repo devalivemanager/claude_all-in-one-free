@@ -1,4 +1,4 @@
-"""toc_generator 시험. 성희 님 대본에서 흔한 형식(제N장, N., 마크다운 #)을 그대로 본다."""
+"""toc_generator 시험. 실제 대본에서 흔한 형식(제N장, N., 마크다운 #)을 그대로 본다."""
 
 from __future__ import annotations
 

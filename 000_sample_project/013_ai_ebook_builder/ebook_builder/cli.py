@@ -38,7 +38,7 @@ def load_chapters(paths: list[Path], max_chars: int = 4000) -> tuple[list[Chapte
             continue
         first, rest = found[0], found[1:]
         if chapters and chapters[-1].title == first.title:
-            # 파일이 바뀌어도 주제가 이어지면(Folio 처럼) 한 챕터로 합친다.
+            # 파일이 바뀌어도 주제가 이어지면 한 챕터로 합친다.
             chapters[-1].body = f"{chapters[-1].body}\n\n{first.body}".strip()
             chapters.extend(rest)
         else:

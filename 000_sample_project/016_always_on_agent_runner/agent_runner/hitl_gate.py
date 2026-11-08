@@ -1,8 +1,8 @@
 # Handcrafted by Pickle 🥒 for DevAlive Claude Code Pipeline
 """hitl_gate — HITL(Human-In-The-Loop) 승인 브레이크.
 
-자율 에이전트의 방패다. 원본 아키텍처(OpenAI Dots · Meta Muse 공통 기둥 ④)의
-「위험 작업 전 스마트폰 팝업 승인」을 데브얼라이브 환경으로 옮긴 것이다.
+자율 에이전트의 방패다. 「위험 작업 전 사람 승인」을
+1회성 토큰 발행·승인 장치로 만든 것이다.
 
 동작은 단순하다.
 1. 레드라인 5종에 걸리는 작업인지 classify 한다.
