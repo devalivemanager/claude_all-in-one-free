@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1088" viewBox="0 0 1000 1088" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
-  <rect width="1000" height="1088" fill="#f8f9fb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1062" viewBox="0 0 1000 1062" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <rect width="1000" height="1062" fill="#f8f9fb"/>
   <text x="40" y="50" font-size="24" font-weight="700" fill="#1f2937">claude_all-in-one-free 구조도</text>
   <text x="40" y="76" font-size="14" fill="#6b7280">데브얼라이브(DevAlive) 클로드 코드 무료 참고 묶음 · 2026-11-08 기준</text>
-  <rect x="40" y="100" width="920" height="948" rx="12" fill="#fff" stroke="#d1d5db"/>
+  <rect x="40" y="100" width="920" height="922" rx="12" fill="#fff" stroke="#d1d5db"/>
   <text x="60" y="132" font-size="17" font-weight="700" fill="#1f2937">폴더 구조</text>
   <g font-family="'D2Coding','Consolas',monospace" font-size="14" fill="#374151">
     <text x="70" y="160">📁 claude_all-in-one-free/</text>
@@ -35,9 +35,8 @@
     <text x="142" y="862">├── godot-pitfalls · unity-pitfalls</text>
     <text x="142" y="888">└── publishing-workflow</text>
     <text x="106" y="914" font-weight="700" fill="#9a3412">└── 📁 999_document/</text>
-    <text x="142" y="940">├── 01 클로드코드·AI도구 · 02 게임개발</text>
-    <text x="142" y="966">├── 03 AI미디어(영상·음성) · 04 무료·상업이용 도구</text>
-    <text x="142" y="992">└── 05 일반 SI·ERP</text>
+    <text x="142" y="940">├── 04 무료·상업이용 도구</text>
+    <text x="142" y="966">└── 05 일반 SI·ERP</text>
   </g>
   <g font-size="12.5" fill="#6b7280">
     <text x="560" y="186">묶음 소개·읽는 순서</text>
@@ -68,7 +67,7 @@
     <text x="560" y="836">자율 루프 · 게임 기획</text>
     <text x="560" y="862">엔진 함정</text>
     <text x="560" y="888">블로그·전자책 원고</text>
-    <text x="560" y="914">핵심 정리 5편</text>
+    <text x="560" y="914">정리 문서 2편</text>
   </g>
-  <text x="60" y="1034" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더와 스킬 내부 파일은 생략 · 이용 조건: 묶음 LICENSE.txt, 샘플 코드 MIT</text>
+  <text x="60" y="1008" font-size="12" fill="#9ca3af">.git, node_modules, target, .venv 등 빌드·의존성 폴더와 스킬 내부 파일은 생략 · 이용 조건: 묶음 LICENSE.txt, 샘플 코드 MIT</text>
 </svg>
