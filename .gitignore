@@ -2,3 +2,7 @@
 transcripts/*
 !transcripts/*.txt.dvl
 !transcripts/README.md
+
+# 파이썬 실행·문법 확인 산출물
+__pycache__/
+*.pyc
